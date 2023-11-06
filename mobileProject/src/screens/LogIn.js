@@ -21,12 +21,12 @@ const LogIn = ({ onLoginSuccess }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold' }}>로그인 꾸며주세요</Text>
+      <Text style={{ fontSize: 20, fontWeight: 'bold' }}>구글 로그인 테스트</Text>
       <TouchableOpacity onPress={handleGoogleLogin} style={styles.button}>
         <Text>로그인</Text>
       </TouchableOpacity>
       <Text style={{ fontSize: 16 }}>
-        {userData ? `당신의 이름은 : ${userData.displayName}` : '여기 꾸며주세요 :)'}
+        {userData ? `당신의 이름은 : ${userData.displayName}` : '로그인 버튼을 눌러주세요 :)'}
       </Text>
     </View>
   );
