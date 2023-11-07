@@ -27,7 +27,7 @@
 
 import "react-native-gesture-handler";
 import React, { useState } from 'react';
-import { View,Button,Text } from 'react-native';
+import { View, Button, Text } from 'react-native';
 
 //1) 네비게이션 기능이 필요한 컴포넌트를 감싸줄 큰형님 NavigationContainer '수입'
 import { NavigationContainer } from "@react-navigation/native";
@@ -58,13 +58,16 @@ import MyTaxiInfo from "./screens/MyTaxiInfo";
 
 const App = (Props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
   const BTab = createBottomTabNavigator(); // 5) createBottomTabNavigator 메서드 인스턴스화
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = (userData) => {
     setIsLoggedIn(true);
+    setUserData(userData);
+    console.log(userData)
   };
 
-  const BottomNavigator = () => (
+  const BottomNavigator = ({ userData }) => (
     // 선택한 탭 색깔은 검정, 선택하지 않은 것은 회색
     <BTab.Navigator
       tabBarOptions={{ activeTintColor: "black", inactiveTintColor: "gray" }}
@@ -117,13 +120,14 @@ const App = (Props) => {
       {/* //스택네비게이터가 둥지틀 장소  */}
       <BTab.Screen
         name="내정보"
-        component={MyInfo}
         options={{
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons name="account" size={size} color={color} />
           ),
         }}
-      />
+      >
+        {() => <MyInfo userData={userData} />}
+      </BTab.Screen>
     </BTab.Navigator>
   );
 
@@ -131,7 +135,7 @@ const App = (Props) => {
   // BottomNavigator에 둥지 틀러갈 컴포넌트
   const StackNavigator = () => (
     <Stack.Navigator>
-       <Stack.Screen name="LogIn" component={LogIn} />
+      <Stack.Screen name="LogIn" component={LogIn} />
       <Stack.Screen name="나의 리뷰 정보" component={MyReviewInfo} />
       <Stack.Screen name="나의 택시 정보" component={MyTaxiInfo} />
     </Stack.Navigator>
@@ -145,7 +149,7 @@ const App = (Props) => {
         <LogIn onLoginSuccess={handleLoginSuccess} />
       ) : (
         // 로그인 되었을 때 메인 네비게이션을 렌더링합니다.
-        <BottomNavigator />
+        <BottomNavigator userData={userData} />
       )}
     </NavigationContainer>
   );

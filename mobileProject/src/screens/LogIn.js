@@ -11,8 +11,8 @@ const LogIn = ({ onLoginSuccess }) => {
     signInWithPopup(auth, provider)
       .then((data) => {
         setUserData(data.user);
-        console.log(data);
-        onLoginSuccess();
+        //console.log(data);
+        onLoginSuccess(data.user);
       })
       .catch((err) => {
         console.log(err);
