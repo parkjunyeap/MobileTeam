@@ -26,7 +26,8 @@
 // export default App;
 
 import "react-native-gesture-handler";
-import React from "react";
+import React, { useState } from 'react';
+import { View,Button,Text } from 'react-native';
 
 //1) 네비게이션 기능이 필요한 컴포넌트를 감싸줄 큰형님 NavigationContainer '수입'
 import { NavigationContainer } from "@react-navigation/native";
@@ -56,7 +57,12 @@ import MyReviewInfo from "./screens/MyReviewInfo";
 import MyTaxiInfo from "./screens/MyTaxiInfo";
 
 const App = (Props) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const BTab = createBottomTabNavigator(); // 5) createBottomTabNavigator 메서드 인스턴스화
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
 
   const BottomNavigator = () => (
     // 선택한 탭 색깔은 검정, 선택하지 않은 것은 회색
@@ -125,18 +131,22 @@ const App = (Props) => {
   // BottomNavigator에 둥지 틀러갈 컴포넌트
   const StackNavigator = () => (
     <Stack.Navigator>
+       <Stack.Screen name="LogIn" component={LogIn} />
       <Stack.Screen name="나의 리뷰 정보" component={MyReviewInfo} />
       <Stack.Screen name="나의 택시 정보" component={MyTaxiInfo} />
     </Stack.Navigator>
   );
-  // 이거 잘안됨 ㅋ;;
 
   return (
     //네비게이션 기능이 필요한 컴포넌트를 감싸는 큰형님 NavigationContainer 로 감싸고
     //렌더링할 BottomNavigator 컴포넌트 호출
     <NavigationContainer>
-      <LogIn />
-      <BottomNavigator />
+      {!isLoggedIn ? (
+        <LogIn onLoginSuccess={handleLoginSuccess} />
+      ) : (
+        // 로그인 되었을 때 메인 네비게이션을 렌더링합니다.
+        <BottomNavigator />
+      )}
     </NavigationContainer>
   );
 };
