@@ -147,7 +147,7 @@ const App = (Props) => {
         // 로그인 되었을 때 메인 네비게이션을 렌더링합니다.
         <BottomNavigator />
       )}
-    </NavigationContainer>
+    </NavigationContainer>//메롱
   );
 };
 
