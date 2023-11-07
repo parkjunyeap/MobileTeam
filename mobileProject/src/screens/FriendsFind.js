@@ -1,13 +1,13 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
+import { SearchFriends } from "./SearchFriends";
 const FriendsFInd = () => {
   const navigation = useNavigation();
 
   const navigateToSearchPage = () => {
     // Navigate to the SearchPage component
-    navigation.navigate("SearchPage");
+    navigation.navigate("SearchFriends");
   };
 
   return (

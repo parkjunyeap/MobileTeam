@@ -129,11 +129,13 @@ const App = (Props) => {
       <Stack.Screen name="나의 택시 정보" component={MyTaxiInfo} />
     </Stack.Navigator>
   );
+  // 이거 잘안됨 ㅋ;;
 
   return (
     //네비게이션 기능이 필요한 컴포넌트를 감싸는 큰형님 NavigationContainer 로 감싸고
     //렌더링할 BottomNavigator 컴포넌트 호출
     <NavigationContainer>
+      <LogIn />
       <BottomNavigator />
     </NavigationContainer>
   );

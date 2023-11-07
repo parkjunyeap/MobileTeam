@@ -1,9 +1,9 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
-const LogIn = () => {
+const SearchFriends = () => {
   return (
     <View style={styles.container}>
-      <Button title={"구글로 로그인"} onPress={() => {}} />
+      <Text>친구검색</Text>
     </View>
   );
 };
@@ -16,4 +16,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LogIn;
+export default SearchFriends;
