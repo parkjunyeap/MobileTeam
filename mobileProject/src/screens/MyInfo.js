@@ -30,11 +30,17 @@ function MyInfo({ navigation }) {
       </TouchableOpacity>
       <View style={styles.separator} />
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("PaymentDetails")}
       >
         <Text style={styles.buttonText}>결제 내역</Text>
+      </TouchableOpacity> */}
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("Review")}
+      >
+        <Text style={styles.buttonText}>리뷰</Text>
       </TouchableOpacity>
     </View>
   );

@@ -5,8 +5,10 @@ import MyInfo from "../screens/MyInfo";
 import ReviewTaxiMateMyInfo from "../screens/ReviewTaxiMateMyInfo";
 import ReviewTaxiMyInfo from "../screens/ReviewTaxiMyInfo";
 import MyTaxiMateInfo from "../screens/MyTaxiMateInfo";
-import PaymentDetails from "../screens/PaymentDetails";
+// import PaymentDetails from "../screens/PaymentDetails";
 
+import Review from "../screens/Review";
+// 이거는 리뷰 등록하는 스크린인데 테스트 때문에 일단 씀.
 const Stack = createStackNavigator();
 
 function MyInfoStackNavigator() {
@@ -22,10 +24,15 @@ function MyInfoStackNavigator() {
         component={MyTaxiMateInfo}
         options={{ title: "MyTaxiMateInfo" }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="PaymentDetails"
         component={PaymentDetails}
         options={{ title: "PaymentDetails" }}
+      /> */}
+      <Stack.Screen
+        name="Review"
+        component={Review}
+        options={{ title: "Review" }}
       />
       <Stack.Screen
         name="ReviewTaxiMyInfo"
