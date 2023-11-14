@@ -1,30 +1,3 @@
-// import { StatusBar } from "expo-status-bar";
-// import { StyleSheet, Text, View } from "react-native";
-// import { NavigationContainer } from "@react-navigation/native";
-// import { BottomTabNavigationApp } from "./navigations/BottomTabNavigationApp";
-// const App = () => {
-//   return (
-//     <NavigationContainer>
-//       <View style={styles.container}>
-//         <Text>한달남았따</Text>
-//         <StatusBar style="auto" />
-//         <BottomTabNavigationApp />
-//       </View>
-//     </NavigationContainer>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#fff",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-// });
-
-// export default App;
-
 import "react-native-gesture-handler";
 import React, { useState } from 'react';
 import { View, Button, Text } from 'react-native';
@@ -38,23 +11,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 //2-2) 하부탭네비게이터에 '둥지'틀 스택네비게이터 기능을 활용할 수 있도록 '수입'
 import { createStackNavigator } from "@react-navigation/stack";
 
-//3) 활용할 아이콘 '수입'
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import BottomTabNavigator from "./navigations/BottomTabNavigator";
 
-//4) 렌더링할 컴포넌트 '수입'
-// import WelcomeScreen from "./app/screens/WelcomeScreen";
-// import LoginScreen from "./app/screens/LoginScreen";
-// import ProductScreen from "./app/screens/ProductsScreen";
-// import ProductDetailsScreen from "./app/screens/ProductDetailsScreen";
 import LogIn from "./screens/LogIn";
-import Chatting from "./screens/Chatting";
-import FriendsFInd from "./screens/FriendsFind";
-import FriendsList from "./screens/FriendsList";
-import TaxiTouch from "./screens/TaxiTouch";
-import MyInfo from "./screens/MyInfo";
-
-import MyReviewInfo from "./screens/MyReviewInfo";
-import MyTaxiInfo from "./screens/MyTaxiInfo";
 
 const App = (Props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
-
+import { MapView } from "react-native-maps";
 const TaxiTouch = () => {
   return (
     <View style={styles.container}>
-      <Text>택시잡기</Text>
+      {/* <MapView style={styles.maps} /> */}
+      <Text> 택시맵 </Text>
     </View>
   );
 };
@@ -13,6 +14,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  maps: {
+    width: 100,
+    height: 100,
   },
 });
 
