@@ -1,21 +1,17 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 
-const FriendsFInd = () => {
-  const navigation = useNavigation();
-
-  const navigateToSearchPage = () => {
-    // Navigate to the SearchPage component
-    navigation.navigate("SearchPage");
-  };
-
+const FriendsFind = ({ navigation }) => {
   return (
     // 친구 찾기 누르면 친구 찾기 페이지로 이동
-
-    <TouchableOpacity style={styles.button} onPress={navigateToSearchPage}>
-      <Text style={styles.buttonText}>친구 찾기</Text>
-    </TouchableOpacity>
+    <View>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("FriendsFindDetail")}
+      >
+        <Text style={styles.buttonText}>친구 찾기</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -34,4 +30,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FriendsFInd;
+export default FriendsFind;
