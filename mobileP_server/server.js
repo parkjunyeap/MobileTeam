@@ -8,7 +8,7 @@ const server = http.createServer(app);
 // Socket.IO 인스턴스를 생성하고 HTTP 서버에 바인딩합니다.
 const io = socketio(server, {
   cors: {
-    origin: "*", // 프로덕션 환경에서는 이 값을 프론트엔드 서비스의 실제 URL로 설정해야 합니다.
+    origin: "http://localhost:27017", // 프로덕션 환경에서는 이 값을 프론트엔드 서비스의 실제 URL로 설정해야 합니다.
     methods: ["GET", "POST"]
   }
 });
