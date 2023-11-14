@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { StyleSheet, Text, View ,Image} from "react-native";
 
 const MyInfo = ({ userData }) => {
@@ -24,55 +23,6 @@ const displayName = user.displayName;
   const email = user.email;
   const photoURL = user.photoURL;
   const emailVerified = user.emailVerified;
-=======
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-
-function MyInfo({ navigation }) {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>내정보</Text>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("ReviewTaxiMyInfo")}
-      >
-        <Text style={styles.buttonText}>택시기사리뷰</Text>
-      </TouchableOpacity>
-      <View style={styles.separator} />
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("ReviewTaxiMateMyInfo")}
-      >
-        <Text style={styles.buttonText}>택시탑승자리뷰</Text>
-      </TouchableOpacity>
-      <View style={styles.separator} />
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("MyTaxiMateInfo")}
-      >
-        <Text style={styles.buttonText}>택시 친구 정보</Text>
-      </TouchableOpacity>
-      <View style={styles.separator} />
-
-      {/* <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("PaymentDetails")}
-      >
-        <Text style={styles.buttonText}>결제 내역</Text>
-      </TouchableOpacity> */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("Review")}
-      >
-        <Text style={styles.buttonText}>리뷰</Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
->>>>>>> Parkjunyeop
 
   // The user's ID, unique to the Firebase project. Do NOT use
   // this value to authenticate with your backend server, if
