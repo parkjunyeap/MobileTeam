@@ -4,13 +4,13 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 function MyInfo({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>내정보</Text>
+      {/* <Text style={styles.title}>내정보</Text> */}
 
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("ReviewTaxiMyInfo")}
       >
-        <Text style={styles.buttonText}>택시기사리뷰</Text>
+        <Text style={styles.buttonText}>내가 남긴 택시 기사 리뷰</Text>
       </TouchableOpacity>
       <View style={styles.separator} />
 
@@ -18,7 +18,7 @@ function MyInfo({ navigation }) {
         style={styles.button}
         onPress={() => navigation.navigate("ReviewTaxiMateMyInfo")}
       >
-        <Text style={styles.buttonText}>택시탑승자리뷰</Text>
+        <Text style={styles.buttonText}>내가 남긴 택시 친구 리뷰</Text>
       </TouchableOpacity>
       <View style={styles.separator} />
 
@@ -26,21 +26,23 @@ function MyInfo({ navigation }) {
         style={styles.button}
         onPress={() => navigation.navigate("MyTaxiMateInfo")}
       >
-        <Text style={styles.buttonText}>택시 친구 정보</Text>
+        <Text style={styles.buttonText}>나의 택시 친구 정보</Text>
       </TouchableOpacity>
       <View style={styles.separator} />
 
-      {/* <TouchableOpacity
+      <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("PaymentDetails")}
       >
         <Text style={styles.buttonText}>결제 내역</Text>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
+      <View style={styles.separator} />
+
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("Review")}
       >
-        <Text style={styles.buttonText}>리뷰</Text>
+        <Text style={styles.buttonText}>리뷰(임시)</Text>
       </TouchableOpacity>
     </View>
   );

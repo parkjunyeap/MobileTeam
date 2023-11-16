@@ -9,9 +9,22 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import TimePicker from "../components/TImePicker";
 
+import { useNavigation } from "@react-navigation/native";
+
 const FriendsFindDetail = () => {
   const [selectedProvince, setSelectedProvince] = useState("충청남도");
   const [selectedCity, setSelectedCity] = useState("아산시");
+  const [favoriteStartLocation, setFavoriteStartLocation] = useState("");
+  const [favoriteEndLocation, setFavoriteEndLocation] = useState("");
+
+  const [favoriteTime1, setFavoriteTime1] = useState({
+    hour: "01",
+    minute: "00",
+  });
+  const [favoriteTime2, setFavoriteTime2] = useState({
+    hour: "01",
+    minute: "00",
+  });
 
   // useState 로 관리하는거 즐겨타는 출발지 , 목적지 , 시간 도 해야되는데,,
 
@@ -42,12 +55,51 @@ const FriendsFindDetail = () => {
     // ... 다른 시 목록이 있다면 추가
   ];
 
+  const handleStartLocationChange = (value) => {
+    setFavoriteStartLocation(value);
+  };
+
+  const handleEndLocationChange = (value) => {
+    setFavoriteEndLocation(value);
+  };
+
+  const handleTime1Change = (value) => {
+    setFavoriteTime1(value);
+  };
+
+  const handleTime2Change = (value) => {
+    setFavoriteTime2(value);
+  };
+
+  const handleReviewButtonClick = () => {
+    // 리뷰 보기 버튼 클릭 시 실행할 코드 작성
+  };
+
+  const navigation = useNavigation(); // 네비게이션 객체 가져오기
+
+  const handleSaveButtonClick = () => {
+    console.log("선택한 도:", selectedProvince);
+    console.log("선택한 시:", selectedCity);
+    console.log("즐겨타는 출발지:", favoriteStartLocation);
+    console.log("즐겨타는 목적지:", favoriteEndLocation);
+    console.log(
+      "즐겨타는 시간대 1:",
+      favoriteTime1.hour + ":" + favoriteTime1.minute
+    );
+    console.log(
+      "즐겨타는 시간대 2:",
+      favoriteTime2.hour + ":" + favoriteTime2.minute
+    );
+
+    // 이 정보들을 서버로 전송하거나 다른 작업을 수행할 수 있습니다.
+    navigation.goBack();
+  };
+
   return (
     <View>
       <Text> 택시를 이용하는 지역</Text>
       {/* Province Picker */}
       <Text>도 : {selectedProvince}</Text>
-
       <Picker
         selectedValue={selectedProvince}
         onValueChange={(itemValue) => setSelectedProvince(itemValue)}
@@ -77,14 +129,13 @@ const FriendsFindDetail = () => {
             container: { flex: 0 },
             textInput: { paddingLeft: 20, height: "some value" },
           }}
-          onPress={(data) => console.log(data)}
+          onPress={(data) => handleStartLocationChange(data.description)}
           onFail={(e) => {
             console.log("GooglePlacesAutocomplete onFail : ", e);
           }}
           query={{ key: MAP_KEY, language: "ko", components: "country:kr" }}
           debounce={400}
         />
-
         <View style={styles.locationIcon}>
           <MaterialCommunityIcons name="map-marker" size={20} />
         </View>
@@ -98,32 +149,54 @@ const FriendsFindDetail = () => {
             container: { flex: 0 },
             textInput: { paddingLeft: 20, height: 40 },
           }}
-          onPress={(data) => console.log(data)}
+          onPress={(data) => handleEndLocationChange(data.description)}
           onFail={(e) => {
             console.log("GooglePlacesAutocomplete onFail : ", e);
           }}
           query={{ key: MAP_KEY, language: "ko", components: "country:kr" }}
           debounce={400}
         />
-
         <View style={styles.locationIcon}>
           <MaterialCommunityIcons name="map-marker" size={20} />
         </View>
       </View>
+
       <Text> 즐겨타는 시간대 1</Text>
-      <TimePicker />
+      <TimePicker
+        selectedHour={favoriteTime1.hour}
+        selectedMinute={favoriteTime1.minute}
+        onHourChange={(hour) => setFavoriteTime1((prev) => ({ ...prev, hour }))}
+        onMinuteChange={(minute) =>
+          setFavoriteTime1((prev) => ({ ...prev, minute }))
+        }
+      />
 
       <Text> 즐겨타는 시간대 2</Text>
-      <TimePicker />
+      <TimePicker
+        selectedHour={favoriteTime2.hour}
+        selectedMinute={favoriteTime2.minute}
+        onHourChange={(hour) => setFavoriteTime2((prev) => ({ ...prev, hour }))}
+        onMinuteChange={(minute) =>
+          setFavoriteTime2((prev) => ({ ...prev, minute }))
+        }
+      />
 
       {/* 버튼 style 먹이느라 */}
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
-          <Button title="초기화" onPress={() => {}} color="#28a745" />
+          <Button
+            title="초기화"
+            onPress={handleReviewButtonClick}
+            color="#28a745"
+          />
         </View>
         <View style={{ width: 20 }} />
         <View style={styles.buttonWrapper}>
-          <Button title="검색" onPress={() => {}} color="#28a745" />
+          <Button
+            title="검색"
+            onPress={handleSaveButtonClick}
+            color="#28a745"
+          />
         </View>
       </View>
     </View>

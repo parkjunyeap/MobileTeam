@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
-const TimePicker = () => {
-  const [selectedHour, setSelectedHour] = useState("01");
-  const [selectedMinute, setSelectedMinute] = useState("00");
-
+const TimePicker = ({
+  selectedHour,
+  selectedMinute,
+  onHourChange,
+  onMinuteChange,
+}) => {
   // 1시부터 24시까지의 시간 배열을 생성합니다.
   const hours = Array.from({ length: 24 }, (_, i) =>
     (i + 1).toString().padStart(2, "0")
@@ -20,7 +22,7 @@ const TimePicker = () => {
     <View style={styles.container}>
       <Picker
         selectedValue={selectedHour}
-        onValueChange={(itemValue, itemIndex) => setSelectedHour(itemValue)}
+        onValueChange={(itemValue) => onHourChange(itemValue)}
         style={styles.picker}
       >
         {hours.map((hour, index) => (
@@ -29,7 +31,7 @@ const TimePicker = () => {
       </Picker>
       <Picker
         selectedValue={selectedMinute}
-        onValueChange={(itemValue, itemIndex) => setSelectedMinute(itemValue)}
+        onValueChange={(itemValue) => onMinuteChange(itemValue)}
         style={styles.picker}
       >
         {minutes.map((minute, index) => (

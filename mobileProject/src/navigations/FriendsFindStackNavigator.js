@@ -12,12 +12,12 @@ function FriendsFindStackNavigator() {
       <Stack.Screen
         name="FriendsFind"
         component={FriendsFind}
-        options={{ title: "친구목록" }}
+        options={{ title: "친구찾기" }}
       />
       <Stack.Screen
         name="FriendsFindDetail"
         component={FriendsFindDetail}
-        options={{ title: "친구찾기" }}
+        options={{ title: "친구찾기검색" }}
       />
     </Stack.Navigator>
   );

@@ -4,13 +4,12 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 // 화면 컴포넌트 임포트
-import FriendsList from "../screens/FriendsList";
 import TaxiTouch from "../screens/TaxiTouch";
 import Chatting from "../screens/Chatting";
 
 import MyInfoStackNavigator from "./MyInfoStackNavigator"; // StackNavigator import
 import FriendsFindStackNavigator from "./FriendsFindStackNavigator";
-
+import FriendsListStackNavigator from "./FriendsListStackNavigator";
 const BTab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
@@ -23,7 +22,7 @@ const BottomTabNavigator = () => {
       {/* MaterialCommunityIcons 중에서 두가지 고르고, 크기와 색깔은 부모 컴포넌트(BTab.Navigator)에 따라서 적용 */}
       <BTab.Screen
         name="친구목록"
-        component={FriendsList}
+        component={FriendsListStackNavigator}
         options={{
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons
