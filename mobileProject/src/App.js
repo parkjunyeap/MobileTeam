@@ -15,7 +15,7 @@ import BottomTabNavigator from "./navigations/BottomTabNavigator";
 import LogIn from "./screens/LogIn";
 
 const App = (Props) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const BTab = createBottomTabNavigator(); // 5) createBottomTabNavigator 메서드 인스턴스화
 
   const handleLoginSuccess = () => {
