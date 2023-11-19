@@ -13,12 +13,15 @@ import { createStackNavigator } from "@react-navigation/stack";
 import BottomTabNavigator from "./navigations/BottomTabNavigator";
 
 import LogIn from "./screens/LogIn";
+import MyInfo from "./screens/MyInfo";
 
 const App = (Props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
   const BTab = createBottomTabNavigator(); // 5) createBottomTabNavigator 메서드 인스턴스화
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = (user) => {
+    setUserData(user);
     setIsLoggedIn(true);
   };
 
@@ -37,10 +40,16 @@ const App = (Props) => {
       {!isLoggedIn ? (
         <LogIn onLoginSuccess={handleLoginSuccess} />
       ) : (
-        // 로그인 되었을 때 메인 네비게이션을 렌더링합니다.
-        <BottomTabNavigator />
+        <BottomTabNavigator>
+          <BTab.Screen
+            name="MyInfo"
+            component={MyInfo}
+            initialParams={{ userData: userData }} // userData를 MyInfo 컴포넌트에 전달
+          />
+        </BottomTabNavigator>
       )}
     </NavigationContainer>
+
   );
 };
 

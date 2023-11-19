@@ -1,11 +1,21 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-function MyInfo({ navigation }) {
+function MyInfo({ userData }) {
+  console.log("userData:", userData);
   return (
     <View style={styles.container}>
       {/* <Text style={styles.title}>내정보</Text> */}
-
+      {/* 로그인한 사용자의 프로필 사진을 표시합니다. */}
+      {userData && userData.photoURL ? (
+        <Image
+          source={{ uri: userData.photoURL }}
+          style={styles.profilePic}
+        />
+      ) : null}
+      <Text style={styles.title}>
+        {userData ? ` ${userData.displayName}` : '로그인 정보가 없습니다.'}
+      </Text>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("ReviewTaxiMyInfo")}

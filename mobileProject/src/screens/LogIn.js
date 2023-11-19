@@ -11,8 +11,7 @@ const LogIn = ({ onLoginSuccess }) => {
     signInWithPopup(auth, provider)
       .then((data) => {
         setUserData(data.user);
-        console.log(data);
-        onLoginSuccess();
+        onLoginSuccess(data.user);
       })
       .catch((err) => {
         console.log(err);
@@ -22,6 +21,7 @@ const LogIn = ({ onLoginSuccess }) => {
   return (
     <View style={styles.container}>
       <Text style={{ fontSize: 20, fontWeight: 'bold' }}>구글 로그인</Text>
+
       <TouchableOpacity onPress={handleGoogleLogin} style={styles.button}>
         <Text>로그인</Text>
       </TouchableOpacity>
