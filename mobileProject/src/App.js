@@ -1,3 +1,5 @@
+// web 525975453327-5jl51lsjlonujatql95jg1j1782vndk0.apps.googleusercontent.com
+// client 525975453327-0a4qs2h2mqkksp7gcojnfdfom1odhrp0.apps.googleusercontent.com
 import "react-native-gesture-handler";
 import React, { useState } from "react";
 

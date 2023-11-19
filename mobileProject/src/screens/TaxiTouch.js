@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import { MapView } from "react-native-maps";
+// import { MapView } from "react-native-maps";
 const TaxiTouch = () => {
   return (
     <View style={styles.container}>
