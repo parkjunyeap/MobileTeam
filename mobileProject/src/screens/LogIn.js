@@ -21,7 +21,7 @@ const LogIn = ({ onLoginSuccess }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold' }}>구글 로그인 테스트</Text>
+      <Text style={{ fontSize: 20, fontWeight: 'bold' }}>구글 로그인</Text>
       <TouchableOpacity onPress={handleGoogleLogin} style={styles.button}>
         <Text>로그인</Text>
       </TouchableOpacity>
