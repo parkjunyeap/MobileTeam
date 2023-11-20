@@ -11,12 +11,15 @@ import Review from "../screens/Review";
 // 이거는 리뷰 등록하는 스크린인데 테스트 때문에 일단 씀.
 const Stack = createStackNavigator();
 
-function MyInfoStackNavigator() {
+function MyInfoStackNavigator({ route }) {
+  const { userData } = route.params;
+
   return (
     <Stack.Navigator initialRouteName="MyInfo">
       <Stack.Screen
         name="MyInfo"
         component={MyInfo}
+        initialParams={{ userData: userData }}
         options={{ title: "내 정보" }}
       />
       <Stack.Screen

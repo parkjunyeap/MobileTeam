@@ -12,7 +12,7 @@ import FriendsFindStackNavigator from "./FriendsFindStackNavigator";
 import FriendsListStackNavigator from "./FriendsListStackNavigator";
 const BTab = createBottomTabNavigator();
 
-const BottomTabNavigator = () => {
+const BottomTabNavigator = ({userData }) => {
   return (
     <BTab.Navigator
       initialRouteName="TaxiTouch"
@@ -68,6 +68,7 @@ const BottomTabNavigator = () => {
       <BTab.Screen
         name="내정보"
         component={MyInfoStackNavigator}
+        initialParams={{ userData: userData }}
         options={{
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons name="account" size={size} color={color} />

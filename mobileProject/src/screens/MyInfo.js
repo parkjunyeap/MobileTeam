@@ -1,8 +1,9 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet,Image } from "react-native";
 
-function MyInfo({ userData }) {
-  console.log("userData:", userData);
+function MyInfo({ route  }) {
+  const { userData } = route.params;
+  console.log(userData)
   return (
     <View style={styles.container}>
       {/* <Text style={styles.title}>내정보</Text> */}
@@ -16,6 +17,7 @@ function MyInfo({ userData }) {
       <Text style={styles.title}>
         {userData ? ` ${userData.displayName}` : '로그인 정보가 없습니다.'}
       </Text>
+
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("ReviewTaxiMyInfo")}
@@ -85,6 +87,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     alignSelf: "stretch",
     margin: 10,
+  },
+  profilePic: {
+    width: 100, // 예를 들어 폭은 100
+    height: 100, // 높이도 100으로 설정
+    borderRadius: 50, // 원형 이미지를 원한다면 폭과 높이의 절반값
+    // ... 기타 스타일 속성
   },
 });
 

@@ -40,13 +40,7 @@ const App = (Props) => {
       {!isLoggedIn ? (
         <LogIn onLoginSuccess={handleLoginSuccess} />
       ) : (
-        <BottomTabNavigator>
-          <BTab.Screen
-            name="MyInfo"
-            component={MyInfo}
-            initialParams={{ userData: userData }} // userData를 MyInfo 컴포넌트에 전달
-          />
-        </BottomTabNavigator>
+        <BottomTabNavigator userData={userData} />
       )}
     </NavigationContainer>
 
