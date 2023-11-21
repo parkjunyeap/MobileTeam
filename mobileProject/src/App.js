@@ -1,6 +1,8 @@
 import "react-native-gesture-handler";
 import React, { useState } from "react";
 
+import socket from "../server"
+
 //1) 네비게이션 기능이 필요한 컴포넌트를 감싸줄 큰형님 NavigationContainer '수입'
 import { NavigationContainer } from "@react-navigation/native";
 
@@ -13,7 +15,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import BottomTabNavigator from "./navigations/BottomTabNavigator";
 
 import LogIn from "./screens/LogIn";
-import MyInfo from "./screens/MyInfo";
 
 const App = (Props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
