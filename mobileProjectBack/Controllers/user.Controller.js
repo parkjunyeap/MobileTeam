@@ -16,6 +16,7 @@ userController.saveUser = async (userData) => {
 
 userController.findUserByUid = async (uid) => {
     const user = await User.findOne({ uid: uid });
+    if (!user) { new Error("user not found") }  
     return user;
 };
 
