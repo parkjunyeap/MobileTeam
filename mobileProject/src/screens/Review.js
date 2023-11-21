@@ -1,12 +1,33 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, StyleSheet, Text } from "react-native";
 import { Rating } from "react-native-ratings";
+import Axios from "axios";
+
+import useFetch from "../../hook/useFetch"; //  useFecth 갖고옴
 
 const Review = () => {
   const [rating, setRating] = useState(3); // 기본 별점
-  const [feedback, setFeedback] = useState(""); // 사용자 피드백 텍스트
+  const [feedback, setFeedback] = useState(""); // 사용자가 적은 메시지
 
-  // 여기 사람 이름 , ex) 택시기사, 사용자 이름
+  const handleSubmit = () => {
+    const reviewData = {
+      title: feedback,
+      score: rating,
+    };
+
+    Axios.post("http://localhost:3000/reviews", reviewData)
+      .then(function (response) {
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        // 오류발생시 실행
+        console.log(error.message);
+      })
+      .then(function () {
+        // 항상 실행
+      });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
@@ -20,19 +41,17 @@ const Review = () => {
         <TextInput
           style={styles.input}
           onChangeText={setFeedback}
+          // onChangeText={(props) => {
+          //   setFeedback(props);
+          // }}
+
           value={feedback}
           placeholder="시간약속을 잘지켜서 좋았어요"
           multiline
         />
 
         <Text>OOO님 에게 리뷰를 남겨주세요</Text>
-        <Button
-          title="전송"
-          onPress={() =>
-            console.log("Rating: ", rating, "Feedback: ", feedback)
-          }
-          // 여기 서버에 뭐 날려야될것같음.
-        />
+        <Button title="전송" onPress={() => handleSubmit()} />
       </View>
     </View>
   );
@@ -76,3 +95,27 @@ const styles = StyleSheet.create({
 });
 
 export default Review;
+
+// const handleSubmit = async () => {
+//   try {
+//     let response = await fetch("/", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         rating: rating,
+//         feedback: feedback,
+//       }),
+//     });
+//     let responseJson = await response.json();
+//     console.log(responseJson);
+//     // 여기서 응답 처리
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+
+// post 로
+
+// 여기 사람 이름 , ex) 택시기사, 사용자 이름
