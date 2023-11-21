@@ -1,4 +1,4 @@
-const User = require("../models/User"); // User 모델을 불러옵니다.
+const User = require("../Models/user"); // User 모델을 불러옵니다.
 
 const userController = {};
 

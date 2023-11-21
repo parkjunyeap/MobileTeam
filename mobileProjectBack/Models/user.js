@@ -33,11 +33,11 @@ const userSchema = new mongoose.Schema({
         type: {
           type: String, // GeoJSON 타입
           enum: ['Point'], // 'Point' 타입
-          required: true
+          required: true,
         },
         coordinates: {
           type: [Number], // [경도, 위도]
-          required: true
+          required: true, 
         }
       },
     // ... 기타 필드

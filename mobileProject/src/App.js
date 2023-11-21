@@ -1,7 +1,7 @@
 import "react-native-gesture-handler";
 import React, { useState } from "react";
 
-import socket from "../server"
+import socket from "./server"
 
 //1) 네비게이션 기능이 필요한 컴포넌트를 감싸줄 큰형님 NavigationContainer '수입'
 import { NavigationContainer } from "@react-navigation/native";
