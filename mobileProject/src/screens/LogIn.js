@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import { StyleSheet, Text, View, Button } from "react-native";
 // // import { auth } from "../firebase-config";
 // // import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
@@ -11,6 +12,19 @@
 // import AsyncStorage from "@react-native-async-storage/async-storage";
 // // import { GoogleSignin, GoogleSigninButton } from "react-native-google-signin";
 // // 오류나서 없앰.
+=======
+import { StyleSheet, Text, View, Button } from "react-native";
+// import { auth } from "../firebase-config";
+// import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+// import { useState } from "react";
+// web 525975453327-5jl51lsjlonujatql95jg1j1782vndk0.apps.googleusercontent.com
+// client 525975453327-0a4qs2h2mqkksp7gcojnfdfom1odhrp0.apps.googleusercontent.com
+import "react-native-gesture-handler";
+import * as React from "react";
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+>>>>>>> parent of aaf50027 (리뷰 등록 하는거 테스트 일단 잘됨)
 
 // const LogIn = ({ onLoginSuccess }) => {
 //   // const [userData, setUserData] = useState(null); // 이 부분을 LogIn 함수 내부로 옮겼습니다.
@@ -60,6 +74,7 @@
 //         headers: { Authorization: `Bearer ${token}` },
 //       });
 
+<<<<<<< HEAD
 //       const user = await response.json();
 //       await AsyncStorage.setItem("@user", JSON.stringify(user));
 //       setUserInfo(user);
@@ -99,6 +114,37 @@
 //     </View>
 //   );
 // };
+=======
+      const user = await response.json();
+      await AsyncStorage.setItem("@user", JSON.stringify(user));
+      setUserInfo(user);
+    } catch (error) {
+      // error
+    }
+  };
+  return (
+    <View style={styles.container}>
+      {/* <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+        구글 로그인 테스트
+      </Text>
+      <TouchableOpacity onPress={handleGoogleLogin} style={styles.button}>
+        <Text>로그인</Text>
+      </TouchableOpacity>
+      <Text style={{ fontSize: 16 }}>
+        {userData
+          ? `당신의 이름은 : ${userData.displayName}`
+          : "로그인 버튼을 눌러주세요 :)"}
+      </Text> */}
+      <Text>{JSON.stringify(userInfo, null, 2)}</Text>
+      <Button title="Sign in with Google" onPress={() => promptAsync()} />
+      <Button
+        title="delete local storage"
+        onPress={() => AsyncStorage.removeItem("@user")}
+      />
+    </View>
+  );
+};
+>>>>>>> parent of aaf50027 (리뷰 등록 하는거 테스트 일단 잘됨)
 
 // const styles = StyleSheet.create({
 //   container: {
