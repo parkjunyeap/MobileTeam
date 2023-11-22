@@ -14,7 +14,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import BottomTabNavigator from "./navigations/BottomTabNavigator";
 
-import LogIn from "./screens/LogIn";
+// import LogIn from "./screens/LogIn";
+// 로그인 안씀일단
 
 const App = (Props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
@@ -24,24 +25,25 @@ const App = (Props) => {
     setIsLoggedIn(true);
   };
 
-  const Stack = createStackNavigator();
-  // BottomNavigator에 둥지 틀러갈 컴포넌트
-  const StackNavigator = () => (
-    <Stack.Navigator>
-      <Stack.Screen name="LogIn" component={LogIn} />
-    </Stack.Navigator>
-  );
+  // const Stack = createStackNavigator();
+  // // BottomNavigator에 둥지 틀러갈 컴포넌트
+  // const StackNavigator = () => (
+  //   <Stack.Navigator>
+  //     <Stack.Screen name="LogIn" component={LogIn} />
+  //   </Stack.Navigator>
+  // );
 
   return (
     //네비게이션 기능이 필요한 컴포넌트를 감싸는 큰형님 NavigationContainer 로 감싸고
     //렌더링할 BottomNavigator 컴포넌트 호출
     <NavigationContainer>
-      {!isLoggedIn ? (
+      {/* {!isLoggedIn ? (
         <LogIn onLoginSuccess={handleLoginSuccess} />
       ) : (
         // 로그인 되었을 때 메인 네비게이션을 렌더링합니다.
-        <BottomTabNavigator />
-      )}
+       
+      )} */}
+      <BottomTabNavigator />
     </NavigationContainer>
   );
 };
