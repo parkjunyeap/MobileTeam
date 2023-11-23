@@ -5,7 +5,8 @@ import MyInfo from "../screens/MyInfo";
 import ReviewTaxiMateMyInfo from "../screens/ReviewTaxiMateMyInfo";
 import ReviewTaxiMyInfo from "../screens/ReviewTaxiMyInfo";
 import MyTaxiMateInfo from "../screens/MyTaxiMateInfo";
-import PaymentDetails from "../screens/PaymentDetails";
+import PaymentList from "../screens/PaymentList";
+import PaymentDetail from "../screens/PaymentDetail";
 
 import Review from "../screens/Review";
 // 이거는 리뷰 등록하는 스크린인데 테스트 때문에 일단 씀.
@@ -25,8 +26,8 @@ function MyInfoStackNavigator() {
         options={{ title: "나의 택시친구 정보" }}
       />
       <Stack.Screen
-        name="PaymentDetails"
-        component={PaymentDetails}
+        name="PaymentList"
+        component={PaymentList}
         options={{ title: "결제 내역" }}
       />
       <Stack.Screen
@@ -43,6 +44,12 @@ function MyInfoStackNavigator() {
         name="ReviewTaxiMateMyInfo"
         component={ReviewTaxiMateMyInfo}
         options={{ title: "내가 택시친구에게 보낸 리뷰" }}
+      />
+
+      <Stack.Screen
+        name="PaymentDetail"
+        component={PaymentDetail}
+        options={{ title: "결제상세내역" }}
       />
     </Stack.Navigator>
   );

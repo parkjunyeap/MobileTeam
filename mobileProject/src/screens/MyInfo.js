@@ -32,7 +32,7 @@ function MyInfo({ navigation }) {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("PaymentDetails")}
+        onPress={() => navigation.navigate("PaymentList")}
       >
         <Text style={styles.buttonText}>결제 내역</Text>
       </TouchableOpacity>

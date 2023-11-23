@@ -61,7 +61,6 @@ const FriendsList = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>친구목록</Text>
       <FlatList
         data={friendsData}
         keyExtractor={(item) => item.id}
