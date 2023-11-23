@@ -1,4 +1,4 @@
-import React from "react";
+/*import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text } from "react-native";
@@ -71,4 +71,4 @@ function BottomTabNavigationApp() {
   );
 }
 
-export default BottomTabNavigationApp;
+export default BottomTabNavigationApp;*/

@@ -4,51 +4,33 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 // 화면 컴포넌트 임포트
-import FriendsList from "../screens/FriendsList";
 import TaxiTouch from "../screens/TaxiTouch";
-import Chatting from "../screens/Chatting";
-
-import MyInfoStackNavigator from "./MyInfoStackNavigator"; // StackNavigator import
-import FriendsFindStackNavigator from "./FriendsFindStackNavigator";
+import Review from "../screens/Review"; // Review 화면 임포트
+import MyInfoStackNavigator from "./MyInfoStackNavigator"; // StackNavigator 임포트
 
 const BTab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
   return (
     <BTab.Navigator
-      initialRouteName="TaxiTouch"
+      initialRouteName="택시주행" // 첫 화면을 '택시잡기'로 설정합니다.
       tabBarOptions={{ activeTintColor: "black", inactiveTintColor: "gray" }}
       screenOptions={{ headerShown: false }}
     >
-      {/* MaterialCommunityIcons 중에서 두가지 고르고, 크기와 색깔은 부모 컴포넌트(BTab.Navigator)에 따라서 적용 */}
+      {/* 리뷰조회 화면 */}
       <BTab.Screen
-        name="친구목록"
-        component={FriendsList}
+        name="리뷰조회"
+        component={Review}
         options={{
+          tabBarLabel: '리뷰',
           tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons
-              name="account-group"
-              size={size}
-              color={color}
-            />
+            <MaterialCommunityIcons name="star" size={size} color={color} />
           ),
         }}
       />
+      {/* 택시잡기 화면 */}
       <BTab.Screen
-        name="친구찾기"
-        component={FriendsFindStackNavigator}
-        options={{
-          tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons
-              name="account-search"
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <BTab.Screen
-        name="택시잡기"
+        name="택시주행"
         component={TaxiTouch}
         options={{
           tabBarIcon: ({ size, color }) => (
@@ -56,16 +38,7 @@ const BottomTabNavigator = () => {
           ),
         }}
       />
-      <BTab.Screen
-        name="채팅"
-        component={Chatting}
-        options={{
-          tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons name="chat" size={size} color={color} />
-          ),
-        }}
-      />
-      {/* //스택네비게이터가 둥지틀 장소  */}
+      {/* 내정보 화면 */}
       <BTab.Screen
         name="내정보"
         component={MyInfoStackNavigator}

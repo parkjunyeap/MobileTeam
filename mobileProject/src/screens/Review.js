@@ -31,6 +31,7 @@ const Review = () => {
           onPress={() =>
             console.log("Rating: ", rating, "Feedback: ", feedback)
           }
+          // 여기 서버에 뭐 날려야될것같음.
         />
       </View>
     </View>
