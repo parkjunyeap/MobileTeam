@@ -9,10 +9,13 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import TimePicker from "../components/TImePicker";
 
-const MyTaxiMateInfo = ({ navigation }) => {
+import socket from "../server"
+
+const MyTaxiMateInfo = ({ route,navigation }) => {
+  const { userData } = route.params;
+  console.log(userData)
   // friendId, friendName 주고싶은데;;
   // 이렇게 하는건 props 만 줘
-
   const [selectedProvince, setSelectedProvince] = useState("충청남도");
   const [selectedCity, setSelectedCity] = useState("아산시");
   const [favoriteStartLocation, setFavoriteStartLocation] = useState("");
@@ -91,6 +94,9 @@ const MyTaxiMateInfo = ({ navigation }) => {
     );
 
     // 이 정보들을 서버로 전송하거나 다른 작업을 수행할 수 있습니다.
+    socket.emit("updateinfoSet", {
+      
+    });
   };
 
   return (

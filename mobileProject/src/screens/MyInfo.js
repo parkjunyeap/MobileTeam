@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet,Image } from "react-native";
 
 function MyInfo({ route,navigation  }) {
   const { userData } = route.params;
-  console.log(userData)
+  //console.log(userData)
   return (
     <View style={styles.container}>
       {/* <Text style={styles.title}>내정보</Text> */}

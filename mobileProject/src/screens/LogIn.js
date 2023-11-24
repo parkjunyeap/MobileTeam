@@ -18,7 +18,7 @@ const LogIn = ({ onLoginSuccess }) => {
           photoURL: data.user.photoURL,
         }, (res) => {
           if (res?.ok) {
-            console.log(res)
+            //console.log(res)
             setUserData(res.data);
             onLoginSuccess(data.user);
           } else {

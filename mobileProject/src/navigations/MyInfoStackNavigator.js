@@ -25,6 +25,7 @@ function MyInfoStackNavigator({ route }) {
       <Stack.Screen
         name="MyTaxiMateInfo"
         component={MyTaxiMateInfo}
+        initialParams={{ userData: userData }}
         options={{ title: "나의 택시친구 정보" }}
       />
       <Stack.Screen
