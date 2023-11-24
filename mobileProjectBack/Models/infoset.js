@@ -23,4 +23,4 @@ const infosetSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model("InfoSet", infosetSchema);
+module.exports = infosetSchema

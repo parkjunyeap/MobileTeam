@@ -21,4 +21,4 @@ const paymentSchema = new mongoose.Schema({
   // 필요한 경우 추가적인 필드를 포함할 수 있습니다.
 });
 
-module.exports = mongoose.model("PaymentSchema", paymentSchema)
+module.exports = paymentSchema

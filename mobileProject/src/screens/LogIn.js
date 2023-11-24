@@ -1,22 +1,8 @@
-<<<<<<< Updated upstream
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { auth } from "../firebase-config";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useState } from "react";
-=======
-import { StyleSheet, Text, View, Button } from "react-native";
-// import { auth } from "../firebase-config";
-// import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-// import { useState } from "react";
-// web 525975453327-5jl51lsjlonujatql95jg1j1782vndk0.apps.googleusercontent.com
-// client 525975453327-0a4qs2h2mqkksp7gcojnfdfom1odhrp0.apps.googleusercontent.com
-import "react-native-gesture-handler";
-import * as React from "react";
-import * as WebBrowser from "expo-web-browser";
-import * as Google from "expo-auth-session/providers/google";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-//import { GoogleSignin, GoogleSigninButton } from "react-native-google-signin";
->>>>>>> Stashed changes
+import socket from "../server"
 
 const LogIn = ({ onLoginSuccess }) => {
   const [userData, setUserData] = useState(null); // 이 부분을 LogIn 함수 내부로 옮겼습니다.
@@ -25,8 +11,21 @@ const LogIn = ({ onLoginSuccess }) => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then((data) => {
-        setUserData(data.user);
-        onLoginSuccess(data.user);
+
+        socket.emit("login", {
+          uid: data.user.uid,
+          displayName: data.user.displayName,
+          photoURL: data.user.photoURL,
+        }, (res) => {
+          if (res?.ok) {
+            console.log(res)
+            setUserData(res.data);
+            onLoginSuccess(data.user);
+          } else {
+            // 서버에서 오류 응답을 받은 경우 처리
+            console.error("서버가 응답 안함", res?.error);
+          }
+        })
       })
       .catch((err) => {
         console.log(err);
@@ -56,7 +55,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 20, // 버튼 스타일도 정의할 수 있습니다.
-    backgroundColor: '#blue', // 배경색
+    backgroundColor: 'blue', // 배경색
     padding: 10, // 패딩
     borderRadius: 5, // 모서리 둥글기
   }

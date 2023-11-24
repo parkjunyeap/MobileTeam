@@ -13,4 +13,4 @@ const friendSchema = new mongoose.Schema({
     // 추가적인 정보가 필요하다면 여기에 포함
 });
 
-module.exports = mongoose.model("Friend", friendSchema)
+module.exports = friendSchema;

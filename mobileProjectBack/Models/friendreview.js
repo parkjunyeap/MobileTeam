@@ -20,4 +20,4 @@ const friendreviewSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model("FriendReview", friendreviewSchema)
+module.exports = friendreviewSchema;
