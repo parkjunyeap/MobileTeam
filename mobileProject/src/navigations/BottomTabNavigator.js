@@ -5,7 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 // 화면 컴포넌트 임포트
 import TaxiTouch from "../screens/TaxiTouch";
-import Chatting from "../screens/Chatting";
+import ChattingList from "../screens/ChattingList";
 
 import MyInfoStackNavigator from "./MyInfoStackNavigator"; // StackNavigator import
 import FriendsFindStackNavigator from "./FriendsFindStackNavigator";
@@ -57,7 +57,7 @@ const BottomTabNavigator = () => {
       />
       <BTab.Screen
         name="채팅"
-        component={Chatting}
+        component={ChattingList}
         options={{
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons name="chat" size={size} color={color} />

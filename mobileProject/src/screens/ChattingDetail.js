@@ -1,98 +1,95 @@
-import React, { useState } from "react";
+import React from "react";
 import {
-  StyleSheet,
   View,
-  FlatList,
   Text,
   TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
+  StyleSheet,
+  ScrollView,
 } from "react-native";
 
-// 더미 데이터
-const dummyMessages = [
-  { id: "1", text: "안녕하세요!", sentByMe: true },
-  { id: "2", text: "안녕하세요, 어떻게 지내세요?", sentByMe: false },
-  // ...더 많은 메시지
+const messages = [
+  {
+    id: "1",
+    text: "안녕하세요. 텍스트 존이 타산됐어요?",
+    sender: "other",
+    time: "오전 11:12",
+  },
+  {
+    id: "2",
+    text: "네, 텍스트는 조금 늦게 나올게요",
+    sender: "me",
+    time: "오전 11:15",
+  },
+  // ... 더 많은 메시지들
 ];
 
 const ChattingDetail = () => {
-  const [messages, setMessages] = useState(dummyMessages);
-  const [inputText, setInputText] = useState("");
-
-  const sendMessage = () => {
-    if (inputText.trim()) {
-      // 메시지를 서버에 전송하는 로직을 여기에 추가
-      // 예시로 더미 데이터에 메시지를 추가
-      const newMessage = {
-        id: String(messages.length + 1),
-        text: inputText,
-        sentByMe: true,
-      };
-      setMessages([...messages, newMessage]);
-      setInputText("");
-    }
-  };
-
-  const renderMessageItem = ({ item }) => (
-    <View
-      style={[
-        styles.messageItem,
-        item.sentByMe ? styles.myMessage : styles.theirMessage,
-      ]}
-    >
-      <Text style={styles.messageText}>{item.text}</Text>
-    </View>
-  );
-
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-      keyboardVerticalOffset={80}
-    >
-      <FlatList
-        data={messages}
-        renderItem={renderMessageItem}
-        keyExtractor={(item) => item.id}
-        inverted // 새 메시지가 아래에 추가되도록 함
-      />
+    <View style={{ flex: 1 }}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>상대방</Text>
+      </View>
+      <ScrollView style={styles.messagesContainer}>
+        {messages.map((message) => (
+          <View
+            key={message.id}
+            style={[
+              styles.messageContainer,
+              message.sender === "me" ? styles.myMessage : styles.otherMessage,
+            ]}
+          >
+            <Text style={styles.messageText}>{message.text}</Text>
+            <Text style={styles.messageTime}>{message.time}</Text>
+          </View>
+        ))}
+      </ScrollView>
       <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          value={inputText}
-          onChangeText={setInputText}
-          placeholder="메시지 입력..."
-        />
-        <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
+        <TextInput style={styles.input} placeholder="Message here..." />
+        <TouchableOpacity style={styles.sendButton}>
           <Text style={styles.sendButtonText}>전송</Text>
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  messageItem: {
-    margin: 10,
+  header: {
     padding: 10,
-    borderRadius: 10,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  messagesContainer: {
+    flex: 1,
+    padding: 10,
+  },
+  messageContainer: {
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 20,
     maxWidth: "80%",
   },
   myMessage: {
+    backgroundColor: "#daf8da",
+    marginLeft: "20%",
     alignSelf: "flex-end",
-    backgroundColor: "#0078fe",
   },
-  theirMessage: {
+  otherMessage: {
+    backgroundColor: "#f1f1f1",
     alignSelf: "flex-start",
-    backgroundColor: "#e5e5ea",
   },
   messageText: {
-    color: "white",
+    fontSize: 16,
+  },
+  messageTime: {
+    fontSize: 12,
+    alignSelf: "flex-end",
   },
   inputContainer: {
     flexDirection: "row",
@@ -100,22 +97,20 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    borderColor: "gray",
     borderWidth: 1,
+    borderColor: "#ccc",
     borderRadius: 20,
     padding: 10,
-    marginRight: 10,
-    backgroundColor: "white",
   },
   sendButton: {
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
-    backgroundColor: "#0078fe",
+    marginLeft: 10,
+    backgroundColor: "#30d158",
     borderRadius: 20,
+    padding: 10,
   },
   sendButtonText: {
-    color: "white",
+    color: "#fff",
+    fontSize: 16,
   },
 });
 

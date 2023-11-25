@@ -1,19 +1,19 @@
+// 채팅화면을 네비게이션으로 관리
+
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
-// import FriendsFind from "../screens/FriendsFind";
-// import FriendsFindDetail from "../screens/FriendsFindDetail";
-import Chatting from "../screens/Chatting";
+import ChattingList from "../screens/ChattingList";
 import ChattingDetail from "../screens/ChattingDetail";
 
 const Stack = createStackNavigator();
 
 function ChattingStackNavigator() {
   return (
-    <Stack.Navigator initialRouteName="Chatting">
+    <Stack.Navigator initialRouteName="ChattingList">
       <Stack.Screen
-        name="Chatting"
-        component={Chatting}
+        name="ChattingList"
+        component={ChattingList}
         options={{ title: "채팅" }}
       />
       <Stack.Screen
