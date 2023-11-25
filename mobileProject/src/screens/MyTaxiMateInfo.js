@@ -95,7 +95,21 @@ const MyTaxiMateInfo = ({ route,navigation }) => {
 
     // 이 정보들을 서버로 전송하거나 다른 작업을 수행할 수 있습니다.
     socket.emit("updateinfoSet", {
-      
+      uid: userData.uid, // 사용자의 UID
+      data: {
+        selectedProvince: selectedProvince,
+        selectedCity: selectedCity,
+        favoriteStartLocation: favoriteStartLocation,
+        favoriteEndLocation: favoriteEndLocation,
+        favoriteTime1: {
+          hour: favoriteTime1.hour,
+          minute: favoriteTime1.minute,
+        },
+        favoriteTime2: {
+          hour: favoriteTime2.hour,
+          minute: favoriteTime2.minute,
+        },
+      },
     });
   };
 

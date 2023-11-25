@@ -2,7 +2,6 @@ const mongoose = require("mongoose")
 const friendSchema = require('./friend');
 const friendReviewSchema = require('./friendreview'); // 친구 리뷰 스키마
 const taxiReviewSchema = require('./taxireview'); // 택시 기사 리뷰 스키마
-const infosetSchema = require('./infoset');
 const paymentSchema = require('./payment');
 
 const userSchema = new mongoose.Schema({
@@ -27,7 +26,44 @@ const userSchema = new mongoose.Schema({
   ,
   taxiReviews: [taxiReviewSchema] // 택시 기사 리뷰
   ,
-  infoSetting: [infosetSchema] // 내 정보 
+  infoSetting: [{
+    province: {
+      type: String,
+      required: false
+    },
+    city: {
+      type: String,
+      required: false
+    },
+    favoriteStartPoint: {
+      type: String,
+      required: false
+    },
+    favoriteEndPoint: {
+      type: String,
+      required: false
+    },
+    favoriteTimeFrame1: {
+      hour: {
+        type: String,
+        required: false
+      },
+      minute: {
+        type: String,
+        required: false
+      }
+    },
+    favoriteTimeFrame2: {
+      hour: {
+        type: String,
+        required: false
+      },
+      minute: {
+        type: String,
+        required: false
+      }
+    }
+  }] // 내 정보 
   ,
   payments: [paymentSchema]   // 결제 내역 목록
   ,
