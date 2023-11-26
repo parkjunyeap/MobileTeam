@@ -8,6 +8,8 @@ import {
 } from "react-native";
 // ... 나머지 코드
 // Dummy data array
+import socket from "../server"
+
 const dummyData = [
   {
     id: "1",
@@ -32,9 +34,9 @@ const dummyData = [
   // ... more friends
 ];
 
-const FriendsFind = ({ navigation }) => {
+const FriendsFind = ({ route,navigation }) => {
+  const { userData } = route.params;
   const [friends, setFriends] = useState(dummyData); // // 서버에서 데이터를 가져와야 할 곳
-
   const renderFriendDetail = (
     { item } // 친구 상세정보 보여주기 위한 렌더링
   ) => (

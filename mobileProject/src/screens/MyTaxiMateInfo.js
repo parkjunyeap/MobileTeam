@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { View, StyleSheet, Text, Button } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
@@ -13,11 +13,11 @@ import socket from "../server"
 
 const MyTaxiMateInfo = ({ route,navigation }) => {
   const { userData } = route.params;
-  console.log(userData)
+  //console.log(userData)
   // friendId, friendName 주고싶은데;;
   // 이렇게 하는건 props 만 줘
-  const [selectedProvince, setSelectedProvince] = useState("충청남도");
-  const [selectedCity, setSelectedCity] = useState("아산시");
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
   const [favoriteStartLocation, setFavoriteStartLocation] = useState("");
   const [favoriteEndLocation, setFavoriteEndLocation] = useState("");
 
@@ -29,7 +29,6 @@ const MyTaxiMateInfo = ({ route,navigation }) => {
     hour: "01",
     minute: "00",
   });
-
   // useState 로 관리하는거 즐겨타는 출발지 , 목적지 , 시간 도 해야되는데,,
 
   const provinces = [
@@ -59,6 +58,27 @@ const MyTaxiMateInfo = ({ route,navigation }) => {
     // ... 다른 시 목록이 있다면 추가
   ];
 
+  useEffect(() => {
+    // 페이지가 로드될 때 서버로부터 infoset을 요청합니다.
+    socket.emit("getInfoset", { uid: userData.uid }, (response) => {
+      if (response.success) {
+        const data = response.data;
+        setSelectedProvince(data.province);
+        setSelectedCity(data.city);
+        setFavoriteStartLocation(data.favoriteStartPoint);
+        setFavoriteEndLocation(data.favoriteEndPoint);
+        setFavoriteTime1({
+          hour: data.favoriteTimeFrame1.hour,
+          minute: data.favoriteTimeFrame1.minute,
+        });
+        setFavoriteTime2({
+          hour: data.favoriteTimeFrame2.hour,
+          minute: data.favoriteTimeFrame2.minute,
+        });
+      }
+    });
+  }, [userData.uid]);
+
   const handleStartLocationChange = (value) => {
     setFavoriteStartLocation(value);
   };
@@ -78,7 +98,7 @@ const MyTaxiMateInfo = ({ route,navigation }) => {
   const handleReviewButtonClick = () => {
     // 리뷰 보기 버튼 클릭 시 실행할 코드 작성
   };
-
+  
   const handleSaveButtonClick = () => {
     console.log("선택한 도:", selectedProvince);
     console.log("선택한 시:", selectedCity);

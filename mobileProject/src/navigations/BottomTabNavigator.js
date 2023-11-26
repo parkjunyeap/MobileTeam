@@ -23,6 +23,7 @@ const BottomTabNavigator = ({userData }) => {
       <BTab.Screen
         name="친구목록"
         component={FriendsListStackNavigator}
+        initialParams={{ userData: userData }}
         options={{
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons
@@ -36,6 +37,7 @@ const BottomTabNavigator = ({userData }) => {
       <BTab.Screen
         name="친구찾기"
         component={FriendsFindStackNavigator}
+        initialParams={{ userData: userData }}
         options={{
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons
@@ -49,6 +51,7 @@ const BottomTabNavigator = ({userData }) => {
       <BTab.Screen
         name="택시잡기"
         component={TaxiTouch}
+        initialParams={{ userData: userData }}
         options={{
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons name="car" size={size} color={color} />
@@ -58,6 +61,7 @@ const BottomTabNavigator = ({userData }) => {
       <BTab.Screen
         name="채팅"
         component={Chatting}
+        initialParams={{ userData: userData }}
         options={{
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons name="chat" size={size} color={color} />

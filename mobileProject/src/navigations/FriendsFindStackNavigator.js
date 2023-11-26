@@ -6,17 +6,20 @@ import FriendsFindDetail from "../screens/FriendsFindDetail";
 
 const Stack = createStackNavigator();
 
-function FriendsFindStackNavigator() {
+function FriendsFindStackNavigator({ route }) {
+  const { userData } = route.params;
   return (
     <Stack.Navigator initialRouteName="FriendsFind">
       <Stack.Screen
         name="FriendsFind"
         component={FriendsFind}
+        initialParams={{ userData: userData }}
         options={{ title: "친구찾기" }}
       />
       <Stack.Screen
         name="FriendsFindDetail"
         component={FriendsFindDetail}
+        initialParams={{ userData: userData }}
         options={{ title: "친구찾기검색" }}
       />
     </Stack.Navigator>
