@@ -54,7 +54,8 @@ const LoginScreen = () => {
         console.log("token이 만들어지긴 하는거야?", token);
         AsyncStorage.setItem("authToken", token);
 
-        navigation.replace("Home");
+        navigation.replace("bottom"); //
+        // 바텀탭에 택시찾기 로 가려면?
       })
       .catch((error) => {
         Alert.alert("Login Error", "Invalid email or password");
@@ -80,18 +81,18 @@ const LoginScreen = () => {
           }}
         >
           <Text style={{ color: "#4A55A2", fontSize: 17, fontWeight: "600" }}>
-            Sign In
+            로그인
           </Text>
 
           <Text style={{ fontSize: 17, fontWeight: "600", marginTop: 15 }}>
-            Sign In to Your Account
+            이용하시려면 로그인을 해주세요
           </Text>
         </View>
 
         <View style={{ marginTop: 50 }}>
           <View>
             <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
-              Email
+              이메일
             </Text>
 
             <TextInput
@@ -105,13 +106,13 @@ const LoginScreen = () => {
                 width: 300,
               }}
               placeholderTextColor={"black"}
-              placeholder="enter Your Email"
+              placeholder="이메일을 입력하세요."
             />
           </View>
 
           <View style={{ marginTop: 10 }}>
             <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
-              Password
+              비밀번호
             </Text>
 
             <TextInput
@@ -126,7 +127,7 @@ const LoginScreen = () => {
                 width: 300,
               }}
               placeholderTextColor={"black"}
-              placeholder="Passowrd"
+              placeholder="비밀번호를 입력하세요"
             />
           </View>
 
@@ -151,7 +152,7 @@ const LoginScreen = () => {
                 textAlign: "center",
               }}
             >
-              Login
+              로그인
             </Text>
           </Pressable>
 

@@ -1,49 +1,55 @@
-// web 525975453327-5jl51lsjlonujatql95jg1j1782vndk0.apps.googleusercontent.com
-// client 525975453327-0a4qs2h2mqkksp7gcojnfdfom1odhrp0.apps.googleusercontent.com
-import "react-native-gesture-handler";
-import React, { useState } from "react";
+// import "react-native-gesture-handler";
+// import React, { useState } from "react";
 
-//1) 네비게이션 기능이 필요한 컴포넌트를 감싸줄 큰형님 NavigationContainer '수입'
-import { NavigationContainer } from "@react-navigation/native";
+// //1) 네비게이션 기능이 필요한 컴포넌트를 감싸줄 큰형님 NavigationContainer '수입'
+// import { NavigationContainer } from "@react-navigation/native";
 
-//2-1) 하부탭네비게이터 기능을 활용할 수 있도록 '수입'
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+// //2-2) 하부탭네비게이터에 '둥지'틀 스택네비게이터 기능을 활용할 수 있도록 '수입'
+// import { createStackNavigator } from "@react-navigation/stack";
 
-//2-2) 하부탭네비게이터에 '둥지'틀 스택네비게이터 기능을 활용할 수 있도록 '수입'
-import { createStackNavigator } from "@react-navigation/stack";
+// import BottomTabNavigator from "./navigations/BottomTabNavigator";
 
-import BottomTabNavigator from "./navigations/BottomTabNavigator";
+// const App = (Props) => {
+//   const Stack = createStackNavigator();
+//   // BottomNavigator에 둥지 틀러갈 컴포넌트
+//   // const StackNavigator = () => (
+//   //   <Stack.Navigator>
+//   //     <Stack.Screen name="LogIn" component={LogIn} />
+//   //   </Stack.Navigator>
+//   // );
 
-import LogIn from "./screens/LogIn";
+//   return (
+//     //네비게이션 기능이 필요한 컴포넌트를 감싸는 큰형님 NavigationContainer 로 감싸고
+//     //렌더링할 BottomNavigator 컴포넌트 호출
+//     <NavigationContainer>
+//       // 로그인 되었을 때 메인 네비게이션을 렌더링합니다.
+//       <BottomTabNavigator />
+//     </NavigationContainer>
+//   );
+// };
 
-const App = (Props) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const BTab = createBottomTabNavigator(); // 5) createBottomTabNavigator 메서드 인스턴스화
+// export default App;
 
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
-  };
+import { StyleSheet, Text, View } from "react-native";
+import StackNavigator from "./navigations/StackNavigator";
+import { UserContext } from "./UserContext";
 
-  const Stack = createStackNavigator();
-  // BottomNavigator에 둥지 틀러갈 컴포넌트
-  const StackNavigator = () => (
-    <Stack.Navigator>
-      <Stack.Screen name="LogIn" component={LogIn} />
-    </Stack.Navigator>
-  );
-
+export default function App() {
   return (
-    //네비게이션 기능이 필요한 컴포넌트를 감싸는 큰형님 NavigationContainer 로 감싸고
-    //렌더링할 BottomNavigator 컴포넌트 호출
-    <NavigationContainer>
-      {!isLoggedIn ? (
-        <LogIn onLoginSuccess={handleLoginSuccess} />
-      ) : (
-        // 로그인 되었을 때 메인 네비게이션을 렌더링합니다.
-        <BottomTabNavigator />
-      )}
-    </NavigationContainer>
+    <>
+      {/* 이런식으로 전역으로 감싸줌 */}
+      <UserContext>
+        <StackNavigator />
+      </UserContext>
+    </>
   );
-};
+}
 
-export default App;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

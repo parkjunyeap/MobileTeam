@@ -70,18 +70,18 @@ const RegisterScreen = () => {
           }}
         >
           <Text style={{ color: "#4A55A2", fontSize: 17, fontWeight: "600" }}>
-            Register
+            회원가입
           </Text>
 
           <Text style={{ fontSize: 17, fontWeight: "600", marginTop: 15 }}>
-            Register To your Account
+            로그인하려면 회원가입을 해주세요.
           </Text>
         </View>
 
         <View style={{ marginTop: 50 }}>
           <View style={{ marginTop: 10 }}>
             <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
-              Name
+              이름
             </Text>
 
             <TextInput
@@ -95,13 +95,13 @@ const RegisterScreen = () => {
                 width: 300,
               }}
               placeholderTextColor={"black"}
-              placeholder="Enter your name"
+              placeholder="이름을 입력하세요."
             />
           </View>
 
           <View>
             <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
-              Email
+              이메일
             </Text>
 
             <TextInput
@@ -115,13 +115,13 @@ const RegisterScreen = () => {
                 width: 300,
               }}
               placeholderTextColor={"black"}
-              placeholder="enter Your Email"
+              placeholder="이메일을 입력하세요"
             />
           </View>
 
           <View style={{ marginTop: 10 }}>
             <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
-              Password
+              비밀번호
             </Text>
 
             <TextInput
@@ -136,13 +136,13 @@ const RegisterScreen = () => {
                 width: 300,
               }}
               placeholderTextColor={"black"}
-              placeholder="Passowrd"
+              placeholder="비밀번호를 입력하세요"
             />
           </View>
 
           <View style={{ marginTop: 10 }}>
             <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
-              Image
+              프로필 사진 url
             </Text>
 
             <TextInput
@@ -156,7 +156,7 @@ const RegisterScreen = () => {
                 width: 300,
               }}
               placeholderTextColor={"black"}
-              placeholder="Image"
+              placeholder="url로 입력하세요"
             />
           </View>
 
@@ -180,7 +180,7 @@ const RegisterScreen = () => {
                 textAlign: "center",
               }}
             >
-              Register
+              회원가입
             </Text>
           </Pressable>
 
@@ -189,7 +189,7 @@ const RegisterScreen = () => {
             style={{ marginTop: 15 }}
           >
             <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
-              Already Have an account? Sign in
+              이미 계정이 있으신가요? 로그인
             </Text>
           </Pressable>
         </View>

@@ -10,6 +10,7 @@ import Chatting from "../screens/Chatting";
 import MyInfoStackNavigator from "./MyInfoStackNavigator"; // StackNavigator import
 import FriendsFindStackNavigator from "./FriendsFindStackNavigator";
 import FriendsListStackNavigator from "./FriendsListStackNavigator";
+import ChattingStackNavigator from "./ChattingStackNavigator";
 const BTab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
@@ -57,7 +58,7 @@ const BottomTabNavigator = () => {
       />
       <BTab.Screen
         name="채팅"
-        component={Chatting}
+        component={ChattingStackNavigator}
         options={{
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons name="chat" size={size} color={color} />
