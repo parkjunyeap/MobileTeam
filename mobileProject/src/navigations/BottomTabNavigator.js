@@ -17,8 +17,13 @@ const BottomTabNavigator = () => {
   return (
     <BTab.Navigator
       initialRouteName="TaxiTouch"
-      tabBarOptions={{ activeTintColor: "black", inactiveTintColor: "gray" }}
-      screenOptions={{ headerShown: false }}
+      // tabBarOptions={{ activeTintColor: "black", inactiveTintColor: "gray" }}
+
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: "black",
+        tabBarInactiveTintColor: "gray",
+      }}
     >
       {/* MaterialCommunityIcons 중에서 두가지 고르고, 크기와 색깔은 부모 컴포넌트(BTab.Navigator)에 따라서 적용 */}
       <BTab.Screen

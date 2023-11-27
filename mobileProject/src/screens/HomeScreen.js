@@ -1,4 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
+// 사실상 지금 현재 채팅화면 부분
+
+import { StyleSheet, Text, View, ScrollView } from "react-native";
 import React, { useLayoutEffect, useContext, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -77,15 +79,17 @@ const HomeScreen = () => {
   console.log("users", users);
   return (
     <View>
-      <View style={{ padding: 10 }}>
-        {users.map((item, index) => (
-          <User key={index} item={item} />
-        ))}
-      </View>
+      <ScrollView>
+        <View style={{ padding: 10 }}>
+          {users.map((item, index) => (
+            <User key={index} item={item} />
+          ))}
+        </View>
+      </ScrollView>
     </View>
   );
 };
-
+1;
 export default HomeScreen;
 
 const styles = StyleSheet.create({});
