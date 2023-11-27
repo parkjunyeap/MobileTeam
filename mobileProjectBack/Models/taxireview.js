@@ -1,9 +1,13 @@
 const mongoose = require('mongoose');
 
 const taxireviewSchema = new mongoose.Schema({
-    driverId: {
+    writerId:{
         type: mongoose.Schema.Types.ObjectId, // 택시 기사를 참조하는 ID
-        required: true
+        ref:'User'
+    },
+    driverId:{
+        type: mongoose.Schema.Types.ObjectId, // 택시 기사를 참조하는 ID
+        ref:'User'
     },
     rating: {
         type: Number, // 평점 (예: 1에서 5까지)
