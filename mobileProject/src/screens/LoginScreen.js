@@ -28,7 +28,7 @@ const LoginScreen = () => {
         const token = await AsyncStorage.getItem("authToken");
         // storage 에 토큰이생길때까지 기다린다? 토큰이생기면 화면을바꿔준다.
         if (token) {
-          navigation.replace("Home");
+          navigation.replace("bottom");
         } else {
           // token not found , show the login screen itself
         }
@@ -47,7 +47,7 @@ const LoginScreen = () => {
     };
 
     axios
-      .post("http://192.168.0.14:8000/login", user)
+      .post("http://10.20.64.220:8000/login", user)
       .then((response) => {
         console.log(response);
         const token = response.data.token;

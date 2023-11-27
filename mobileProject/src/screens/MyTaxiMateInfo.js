@@ -8,6 +8,7 @@ import { MAP_KEY } from "../../env";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import TimePicker from "../components/TImePicker";
+import Axios from "axios";
 
 const MyTaxiMateInfo = ({ navigation }) => {
   // friendId, friendName 주고싶은데;;
@@ -91,6 +92,18 @@ const MyTaxiMateInfo = ({ navigation }) => {
     );
 
     // 이 정보들을 서버로 전송하거나 다른 작업을 수행할 수 있습니다.
+
+    Axios.post("http://10.20.64.220:3000/reviews", reviewData)
+      .then(function (response) {
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        // 오류발생시 실행
+        console.log(error.message);
+      })
+      .then(function () {
+        // 항상 실행
+      });
   };
 
   return (

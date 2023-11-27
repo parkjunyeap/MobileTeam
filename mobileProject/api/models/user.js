@@ -37,7 +37,125 @@ const userSchema = new mongoose.Schema({
       ref: "User", // 보낸 친구 요청 목록, 다른 'User' 문서들을 참조
     },
   ],
+
+  infoSetting:
+    // user의 택시친구정보
+    {
+      province: {
+        type: String,
+        required: false,
+      },
+      city: {
+        type: String,
+        required: false,
+      },
+      favoriteStartPoint: {
+        type: String,
+        required: false,
+      },
+      favoriteEndPoint: {
+        type: String,
+        required: false,
+      },
+      favoriteTimeFrame1: {
+        hour: {
+          type: String,
+          required: false,
+        },
+        minute: {
+          type: String,
+          required: false,
+        },
+      },
+      favoriteTimeFrame2: {
+        hour: {
+          type: String,
+          required: false,
+        },
+        minute: {
+          type: String,
+          required: false,
+        },
+      },
+    },
+  // 내 정보의
+
+  // 결제내역
+  payment: [
+    {
+      boardingDate: {
+        //탑승일
+        type: String,
+        required: false,
+      },
+      startPoint: {
+        // 출발지
+        type: String,
+        required: false,
+      },
+      endPoint: {
+        //목적지
+        type: String,
+        required: false,
+      },
+      carNumber: {
+        //차량번호
+        type: String,
+        required: false,
+      },
+      carName: {
+        type: String,
+        require: false,
+      },
+      pay: {
+        type: String,
+        require: false,
+      },
+    },
+  ],
+
+  userReview: [
+    // 보내는사람, 받는사람 만 있으면된다.
+    {
+      senderId: {
+        type: mongoose.Schema.Types.ObjectId, // 택시 기사를 참조하는 ID
+        ref: "User",
+      }, // 리뷰를 보여줄때는 .name 만 불러오면됨.
+      receiverId: {
+        type: mongoose.Schema.Types.ObjectId, // 택시 기사를 참조하는 ID
+        ref: "User",
+      }, //
+      rating: {
+        type: Number, // 평점 (예: 1에서 5까지)
+        required: true,
+      },
+      comment: {
+        type: String, // 리뷰 내용
+        required: false,
+      },
+      reviewDate: {
+        type: Date, // 리뷰 작성 날짜
+        default: Date.now,
+      },
+      // 필요한 경우 추가적인 필드를 포함할 수 있습니다.
+    },
+  ],
+
+  /*currentLocation: {
+    type: {
+      type: String, // GeoJSON 타입
+      enum: ['Point'], // 'Point' 타입
+      required: true,
+    },
+    coordinates: {
+      type: [Number], // [경도, 위도]
+      required: true,
+    }
+  },*/
 });
+
+// 위치 정보를 위한 인덱스 생성 (MongoDB의 위치 기반 쿼리를 위해)
+//userSchema.index({ currentLocation: '2dsphere' });
 
 const User = mongoose.model("User", userSchema); // 'User' 모델로 스키마 컴파일
 

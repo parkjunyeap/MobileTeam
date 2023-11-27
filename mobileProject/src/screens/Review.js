@@ -9,13 +9,14 @@ const Review = () => {
   const [rating, setRating] = useState(3); // 기본 별점
   const [feedback, setFeedback] = useState(""); // 사용자가 적은 메시지
 
+  // handle submit 하면되는데 지금 은 모델바껴서 안돌아감
   const handleSubmit = () => {
     const reviewData = {
       title: feedback,
       score: rating,
     };
 
-    Axios.post("http://192.168.0.14:3000/reviews", reviewData)
+    Axios.post("http://10.20.64.220:3000/reviews", reviewData)
       .then(function (response) {
         console.log(response.data);
       })

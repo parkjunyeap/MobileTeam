@@ -10,7 +10,7 @@ const User = ({ item }) => {
   // 현재 로그인 한 사람 누군지 알수있으려고
   const sendFriendRequest = async (currentUserId, selectedUserId) => {
     try {
-      const response = await fetch("http://192.168.0.14:8000/friend-request", {
+      const response = await fetch("http://10.20.64.220:8000/friend-request", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

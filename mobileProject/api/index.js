@@ -34,6 +34,29 @@ app.listen(port, () => {
 const User = require("./models/user");
 const Message = require("./models/message");
 
+// 임시 // 나중에바꿔야함
+app.post("/reviews", (req, res) => {
+  // 요청받아
+  const { title, score } = req.body; // 클라이언트에서 전달한 데이터에서 title과 score를 추출
+  // console.log(req.params);
+
+  const newReview = new Review({ title, score });
+
+  newReview
+    .save()
+    .then((user) => {
+      console.log(user);
+      res.json({
+        message: "리뷰가 등록되었습니다",
+      });
+    })
+    .catch((err) => {
+      res.json({
+        message: "리뷰 등록 실패",
+      });
+    });
+});
+
 // 사용자 등록을 위한 라우트 핸들러
 app.post("/register", (req, res) => {
   // 클라이언트로부터 받은 데이터에서 이름, 이메일, 비밀번호, 이미지를 추출
