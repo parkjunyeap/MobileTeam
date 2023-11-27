@@ -16,7 +16,7 @@ const Review = () => {
       score: rating,
     };
 
-    Axios.post("http://10.20.64.220:3000/reviews", reviewData)
+    Axios.post("http://192.168.0.14:3000/reviews", reviewData)
       .then(function (response) {
         console.log(response.data);
       })

@@ -368,3 +368,43 @@ app.get("/friends/:userId", (req, res) => {
     res.status(500).json({ message: "internal server error" });
   }
 });
+
+// 유저택시정보저장
+
+// app.post("/setTaxiMateInfo", async (req, res) => {
+//   try {
+//     // Here you should also include authentication and user identification
+//     // For example, let's say you identify your user by a userId provided in the request
+//     const userId = req.body.userId; // Or get it from a session or a token
+
+//     // userId 받고
+
+//     // Create or update the user's taxi info
+//     const updatedUser = await User.findByIdAndUpdate(
+//       userId,
+//       {
+//         infoSetting: {
+//           province: req.body.province,
+//           city: req.body.city,
+//           favoriteStartPoint: req.body.favoriteStartPoint,
+//           favoriteEndPoint: req.body.favoriteEndPoint,
+//           favoriteTimeFrame1: {
+//             hour: req.body.favoriteTimeFrame1[0],
+//             minute: req.body.favoriteTimeFrame1[1],
+//           },
+//           favoriteTimeFrame2: {
+//             hour: req.body.favoriteTimeFrame2[0],
+//             minute: req.body.favoriteTimeFrame2[1],
+//           },
+//         },
+//       },
+//       { new: true }
+//     ); // 'new: true' returns the updated document
+
+//     // Send back the updated user information
+//     res.status(200).json(updatedUser);
+//   } catch (error) {
+//     console.error("Error updating user taxi info:", error);
+//     res.status(500).send(error.message);
+//   }
+// });

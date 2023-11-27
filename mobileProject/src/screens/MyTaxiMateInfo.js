@@ -8,9 +8,10 @@ import { MAP_KEY } from "../../env";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import TimePicker from "../components/TImePicker";
-import Axios from "axios";
+import axios from "axios";
 
 const MyTaxiMateInfo = ({ navigation }) => {
+  const { userId, setUserId } = useContext(UserType);
   // friendId, friendName 주고싶은데;;
   // 이렇게 하는건 props 만 줘
 
@@ -78,6 +79,7 @@ const MyTaxiMateInfo = ({ navigation }) => {
   };
 
   const handleSaveButtonClick = () => {
+    // 콘솔로그 잘들어갔는지.
     console.log("선택한 도:", selectedProvince);
     console.log("선택한 시:", selectedCity);
     console.log("즐겨타는 출발지:", favoriteStartLocation);
@@ -91,18 +93,26 @@ const MyTaxiMateInfo = ({ navigation }) => {
       favoriteTime2.hour + ":" + favoriteTime2.minute
     );
 
+    //
+    const userTaxiInfo = {
+      userId: userId, // 로그인 한 사람 id
+      province: selectedProvince, // 도
+      city: selectedCity, // 시
+      favoriteStartPoint: favoriteStartLocation, // 출발지,
+      favoriteEndPoint: favoriteEndLocation, // 도착지
+      favoriteTimeFrame1: [favoriteTime1.hour, favoriteTime1.minute], // 시간1
+      favoriteTimeFrame2: [favoriteTime2.hour, favoriteTime2.minute], // 시간2
+    };
     // 이 정보들을 서버로 전송하거나 다른 작업을 수행할 수 있습니다.
 
-    Axios.post("http://10.20.64.220:3000/reviews", reviewData)
+    axios
+      .post("http://192.168.0.14:8000/setTaxiMateInfo", userTaxiInfo)
       .then(function (response) {
-        console.log(response.data);
+        console.log(response);
       })
       .catch(function (error) {
         // 오류발생시 실행
         console.log(error.message);
-      })
-      .then(function () {
-        // 항상 실행
       });
   };
 
