@@ -369,7 +369,7 @@ app.get("/friends/:userId", (req, res) => {
   }
 });
 
-// 유저택시정보저장
+//유저택시정보저장;
 
 // app.post("/setTaxiMateInfo", async (req, res) => {
 //   try {

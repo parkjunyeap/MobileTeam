@@ -9,12 +9,16 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import TimePicker from "../components/TImePicker";
 import axios from "axios";
+import { useContext } from "react";
 
-const MyTaxiMateInfo = ({ navigation }) => {
+import { UserType } from "../UserContext";
+import { useNavigation } from "@react-navigation/native";
+const MyTaxiMateInfo = () => {
+  // 이렇게하면 로그인한유저 갖고올 수 있음.
   const { userId, setUserId } = useContext(UserType);
   // friendId, friendName 주고싶은데;;
   // 이렇게 하는건 props 만 줘
-
+  const navigation = useNavigation();
   const [selectedProvince, setSelectedProvince] = useState("충청남도");
   const [selectedCity, setSelectedCity] = useState("아산시");
   const [favoriteStartLocation, setFavoriteStartLocation] = useState("");
@@ -105,15 +109,15 @@ const MyTaxiMateInfo = ({ navigation }) => {
     };
     // 이 정보들을 서버로 전송하거나 다른 작업을 수행할 수 있습니다.
 
-    axios
-      .post("http://192.168.0.14:8000/setTaxiMateInfo", userTaxiInfo)
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        // 오류발생시 실행
-        console.log(error.message);
-      });
+    // axios
+    //   .post("http://192.168.0.14:8000/setTaxiMateInfo", userTaxiInfo)
+    //   .then(function (response) {
+    //     console.log(response);
+    //   })
+    //   .catch(function (error) {
+    //     // 오류발생시 실행
+    //     console.log(error.message);
+    //   });
   };
 
   return (
@@ -152,7 +156,7 @@ const MyTaxiMateInfo = ({ navigation }) => {
           placeholder="자주타는 출발지를 적어주세요!"
           styles={{
             container: { flex: 0 },
-            textInput: { paddingLeft: 20, height: "some value" },
+            textInput: { paddingLeft: 20, height: 50 },
           }}
           onPress={(data) => handleStartLocationChange(data.description)}
           onFail={(e) => {

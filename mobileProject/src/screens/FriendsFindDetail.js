@@ -127,7 +127,7 @@ const FriendsFindDetail = () => {
           placeholder="자주타는 출발지를 적어주세요!"
           styles={{
             container: { flex: 0 },
-            textInput: { paddingLeft: 20, height: "some value" },
+            textInput: { paddingLeft: 20, height: 50 },
           }}
           onPress={(data) => handleStartLocationChange(data.description)}
           onFail={(e) => {
