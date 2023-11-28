@@ -33,6 +33,7 @@ app.listen(port, () => {
 
 const User = require("./models/user");
 const Message = require("./models/message");
+const Driver = require("./models/driver");
 
 // 임시 // 나중에바꿔야함
 app.post("/reviews", (req, res) => {
@@ -408,3 +409,86 @@ app.get("/friends/:userId", (req, res) => {
 //     res.status(500).send(error.message);
 //   }
 // });
+
+// setTaxiMateInfo 택시정보 저장하기
+app.post("/setTaxiMateInfo", async (req, res) => {
+  try {
+    // 사용자 인증 및 권한 확인 (여기서는 예시로 userId를 요청에서 가져옴)
+    const userId = req.body.userId;
+    if (!userId) {
+      return res.status(400).json({ error: "userId가 제공되지 않았습니다." });
+      console.log("userId가 제공되지 않았습니다.");
+    }
+
+    // 사용자 정보 업데이트
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        infoSetting: {
+          province: req.body.province,
+          city: req.body.city,
+          favoriteStartPoint: req.body.favoriteStartPoint,
+          favoriteEndPoint: req.body.favoriteEndPoint,
+          favoriteTimeFrame1: {
+            hour: req.body.favoriteTimeFrame1[0],
+            minute: req.body.favoriteTimeFrame1[1],
+          },
+          favoriteTimeFrame2: {
+            hour: req.body.favoriteTimeFrame2[0],
+            minute: req.body.favoriteTimeFrame2[1],
+          },
+        },
+      },
+      { new: true, upsert: true } // upsert 옵션을 사용하여 새 사용자를 생성하거나 기존 사용자를 업데이트
+    );
+    console.log(updatedUser);
+    // 업데이트된 사용자 정보 반환
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("사용자 택시 정보 업데이트 오류:", error);
+    res.status(500).json({ error: "서버 오류 발생" });
+  }
+});
+
+// setTaxiMateInfo 택시정보 불러오기
+
+// // Route to handle the GET request.
+// app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
+//   const { userId } = req.params;
+
+//   try {
+//     const userInfo = await getUserInfo(userId);
+//     res.json(userInfo);
+//   } catch (error) {
+//     console.error("Error retrieving user details:", error);
+//     res.status(500).send("An error occurred while retrieving user details");
+//   }
+// });
+
+// app.listen(port, () => {
+//   console.log(`Server running on port ${port}`);
+// });
+
+app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
+  try {
+    // URL 파라미터에서 userId 추출
+    const { userId } = req.params; // 프론트엔드에서 userId 만 보냄
+
+    // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보만 조회
+    const userInfo = await User.findById(userId).select("infoSetting -_id"); //_id 로 조회
+    console.log("데이터베이스에서 잘받아오나요?", userInfo);
+    // 잘받아오네요
+    // userInfo가 존재하면 infoSetting 필드만 클라이언트에게 JSON 형태로 전송
+
+    if (userInfo) {
+      res.json(userInfo);
+    } else {
+      // 사용자를 찾을 수 없는 경우 404 에러 전송
+      res.status(404).send("User not found");
+    }
+  } catch (error) {
+    // 에러 처리
+    console.error("Server error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});

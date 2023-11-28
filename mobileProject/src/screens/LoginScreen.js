@@ -22,23 +22,22 @@ const LoginScreen = () => {
 
   // 여기
 
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const token = await AsyncStorage.getItem("authToken");
-        // storage 에 토큰이생길때까지 기다린다? 토큰이생기면 화면을바꿔준다.
-        if (token) {
-          navigation.replace("bottom");
-        } else {
-          // token not found , show the login screen itself
-        }
-      } catch (error) {
-        console.log("error", error);
-      }
-    };
-
-    checkLoginStatus();
-  }, []); //useEffect에 있는 []는 이 코드를 앱이 시작될 때 딱 한 번만 실행
+  // useEffect(() => {
+  //   const checkLoginStatus = async () => {
+  //     try {
+  //       const token = await AsyncStorage.getItem("authToken");
+  //       // storage 에 토큰이생길때까지 기다린다? 토큰이생기면 화면을바꿔준다.
+  //       if (token) {
+  //         navigation.replace("bottom");
+  //       } else {
+  //         // token not found , show the login screen itself
+  //       }
+  //     } catch (error) {
+  //       console.log("error", error);
+  //     }
+  //   };
+  //   checkLoginStatus();
+  // }, []); //useEffect에 있는 []는 이 코드를 앱이 시작될 때 딱 한 번만 실행
 
   const handleLogin = () => {
     const user = {
@@ -47,7 +46,7 @@ const LoginScreen = () => {
     };
 
     axios
-      .post("http://192.168.0.14:8000/login", user)
+      .post("http://10.20.64.77:8000/login", user)
       .then((response) => {
         console.log(response);
         const token = response.data.token;

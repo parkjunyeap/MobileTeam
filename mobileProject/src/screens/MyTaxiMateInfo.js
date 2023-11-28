@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text, Button } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
@@ -16,13 +16,16 @@ import { useNavigation } from "@react-navigation/native";
 const MyTaxiMateInfo = () => {
   // 이렇게하면 로그인한유저 갖고올 수 있음.
   const { userId, setUserId } = useContext(UserType);
-  // friendId, friendName 주고싶은데;;
-  // 이렇게 하는건 props 만 줘
+
+  console.log("여기에 로그인한사람 떠야함. 마이택시인포 ", userId);
+  // 이렇게 하면 !!!!!!!!!!
+  // 지금 로그인한 사용자의 userId 를 받아올 수 있네.
   const navigation = useNavigation();
+
   const [selectedProvince, setSelectedProvince] = useState("충청남도");
   const [selectedCity, setSelectedCity] = useState("아산시");
-  const [favoriteStartLocation, setFavoriteStartLocation] = useState("");
-  const [favoriteEndLocation, setFavoriteEndLocation] = useState("");
+  const [favoriteStartLocation, setFavoriteStartLocation] = useState("아산"); // 아산
+  const [favoriteEndLocation, setFavoriteEndLocation] = useState("천안"); //천안
 
   const [favoriteTime1, setFavoriteTime1] = useState({
     hour: "01",
@@ -32,8 +35,6 @@ const MyTaxiMateInfo = () => {
     hour: "01",
     minute: "00",
   });
-
-  // useState 로 관리하는거 즐겨타는 출발지 , 목적지 , 시간 도 해야되는데,,
 
   const provinces = [
     "강원도",
@@ -62,21 +63,61 @@ const MyTaxiMateInfo = () => {
     // ... 다른 시 목록이 있다면 추가
   ];
 
+  const viewTaxiMateInfo = async () => {
+    try {
+      const response = await fetch(
+        `http://10.20.64.77:8000/ViewTaxiMateInfo/${userId}`
+      );
+
+      const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
+      // setRecepientData(data);
+      //이런식으로 set 어쩌구 (data) 해주면될것같은데.
+
+      console.log("불러온 data:", data);
+      setSelectedProvince(data.infoSetting.province || "충청남도");
+      setSelectedCity(data.infoSetting.city || "아산시");
+      console.log("data 즐겨타는출발지:", data.infoSetting.favoriteStartPoint);
+      // 위 로그로 data.infoSetting.favoriteStartPoint 이거는 잘 불러와진것같아 .
+      setFavoriteStartLocation(data.infoSetting.favoriteStartPoint || ""); // 원래이럼
+      // setFavoriteStartLocation(data.infoSetting.favoriteStartPoint); // 이렇게바꿔도 똑같고.
+
+      console.log("data 즐겨타는 목적지:", data.infoSetting.favoriteEndPoint);
+      setFavoriteEndLocation(data.infoSetting.favoriteEndPoint || "");
+      setFavoriteTime1({
+        hour: data.infoSetting.favoriteTimeFrame1.hour || "01",
+        minute: data.infoSetting.favoriteTimeFrame1.minute || "00",
+      });
+      setFavoriteTime2({
+        hour: data.infoSetting.favoriteTimeFrame2.hour || "01",
+        minute: data.infoSetting.favoriteTimeFrame2.minute || "00",
+      });
+      // 데이터베이스에 아무 정보도 없으면 "" 빈 문자열 주기.
+    } catch (error) {
+      console.log("error retrieving details", error);
+    }
+  };
+
+  useEffect(() => {
+    viewTaxiMateInfo();
+  }, []); //useEffect에 있는 []는 이 코드를 앱이 시작될 때 딱 한 번만 실행
+
   const handleStartLocationChange = (value) => {
+    console.log("설정될 출발지:", value);
     setFavoriteStartLocation(value);
   };
 
   const handleEndLocationChange = (value) => {
+    console.log("설정될 목적지:", value);
     setFavoriteEndLocation(value);
   };
 
-  const handleTime1Change = (value) => {
-    setFavoriteTime1(value);
-  };
+  // const handleTime1Change = (value) => {
+  //   setFavoriteTime1(value);
+  // };
 
-  const handleTime2Change = (value) => {
-    setFavoriteTime2(value);
-  };
+  // const handleTime2Change = (value) => {
+  //   setFavoriteTime2(value);
+  // };
 
   const handleReviewButtonClick = () => {
     // 리뷰 보기 버튼 클릭 시 실행할 코드 작성
@@ -84,6 +125,7 @@ const MyTaxiMateInfo = () => {
 
   const handleSaveButtonClick = () => {
     // 콘솔로그 잘들어갔는지.
+    console.log("프론트엔드에 잘들어갔는지요.");
     console.log("선택한 도:", selectedProvince);
     console.log("선택한 시:", selectedCity);
     console.log("즐겨타는 출발지:", favoriteStartLocation);
@@ -109,15 +151,16 @@ const MyTaxiMateInfo = () => {
     };
     // 이 정보들을 서버로 전송하거나 다른 작업을 수행할 수 있습니다.
 
-    // axios
-    //   .post("http://192.168.0.14:8000/setTaxiMateInfo", userTaxiInfo)
-    //   .then(function (response) {
-    //     console.log(response);
-    //   })
-    //   .catch(function (error) {
-    //     // 오류발생시 실행
-    //     console.log(error.message);
-    //   });
+    // 유저택시정보저장
+    axios
+      .post("http://10.20.64.77:8000/setTaxiMateInfo", userTaxiInfo)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        // 오류발생시 실행
+        console.log("이 오류 : ", error.message);
+      });
   };
 
   return (
@@ -150,13 +193,13 @@ const MyTaxiMateInfo = () => {
         ))}
       </Picker>
 
-      <Text> 즐겨타는 출발지 : </Text>
+      <Text> 즐겨타는 출발지 : {favoriteStartLocation} </Text>
       <View style={styles.location}>
         <GooglePlacesAutocomplete
           placeholder="자주타는 출발지를 적어주세요!"
           styles={{
             container: { flex: 0 },
-            textInput: { paddingLeft: 20, height: 50 },
+            textInput: { paddingLeft: 20, height: 40 },
           }}
           onPress={(data) => handleStartLocationChange(data.description)}
           onFail={(e) => {
@@ -165,12 +208,13 @@ const MyTaxiMateInfo = () => {
           query={{ key: MAP_KEY, language: "ko", components: "country:kr" }}
           debounce={400}
         />
+        <Text> </Text>
         <View style={styles.locationIcon}>
           <MaterialCommunityIcons name="map-marker" size={20} />
         </View>
       </View>
 
-      <Text> 즐겨타는 목적지 : </Text>
+      <Text> 즐겨타는 목적지 : {favoriteEndLocation}</Text>
       <View style={styles.location}>
         <GooglePlacesAutocomplete
           placeholder="자주타는 목적지를 적어주세요!"
