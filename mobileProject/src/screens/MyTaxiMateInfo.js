@@ -13,6 +13,10 @@ import { useContext } from "react";
 
 import { UserType } from "../UserContext";
 import { useNavigation } from "@react-navigation/native";
+
+import locationData from "../locationData";
+// 지역 2차원배열 로된거 갖고옴
+
 const MyTaxiMateInfo = () => {
   // 이렇게하면 로그인한유저 갖고올 수 있음.
   const { userId, setUserId } = useContext(UserType);
@@ -22,8 +26,12 @@ const MyTaxiMateInfo = () => {
   // 지금 로그인한 사용자의 userId 를 받아올 수 있네.
   const navigation = useNavigation();
   const [name, setName] = useState("박준엽");
-  const [selectedProvince, setSelectedProvince] = useState("충청남도");
-  const [selectedCity, setSelectedCity] = useState("아산시");
+  const [selectedProvince, setSelectedProvince] = useState(
+    Object.keys(locationData)[0]
+  );
+  const [selectedCity, setSelectedCity] = useState(
+    locationData[Object.keys(locationData)[0]][0]
+  );
   const [favoriteStartLocation, setFavoriteStartLocation] = useState(""); // 아산
   const [favoriteEndLocation, setFavoriteEndLocation] = useState(""); //천안
 
@@ -36,33 +44,40 @@ const MyTaxiMateInfo = () => {
     minute: "00",
   });
 
-  const provinces = [
-    "강원도",
-    "경기도",
-    "경상남도",
-    "경상북도",
-    "광주광역시",
-    "대구광역시",
-    "대전광역시",
-    "부산광역시",
-    "서울특별시",
-    "세종특별자치시",
-    "울산광역시",
-    "인천광역시",
-    "전라남도",
-    "전라북도",
-    "제주특별자치도",
-    "충청남도",
-    "충청북도",
-  ]; // 한국의 도 목록
+  const onProvinceChange = (province) => {
+    setSelectedProvince(province);
+    const citiesForProvince = locationData[province];
+    setSelectedCity(citiesForProvince[0]);
+  };
 
-  const cities = [
-    "아산시",
-    "천안시",
-    "공주시",
-    // ... 다른 시 목록이 있다면 추가
-  ];
+  // const provinces = [
+  //   "강원도",
+  //   "경기도",
+  //   "경상남도",
+  //   "경상북도",
+  //   "광주광역시",
+  //   "대구광역시",
+  //   "대전광역시",
+  //   "부산광역시",
+  //   "서울특별시",
+  //   "세종특별자치시",
+  //   "울산광역시",
+  //   "인천광역시",
+  //   "전라남도",
+  //   "전라북도",
+  //   "제주특별자치도",
+  //   "충청남도",
+  //   "충청북도",
+  // ]; // 한국의 도 목록
 
+  // const cities = [
+  //   "아산시",
+  //   "천안시",
+  //   "공주시",
+  //   // ... 다른 시 목록이 있다면 추가
+  // ];
+
+  // 서버에서 택시친구 정보 갖고오기
   const viewTaxiMateInfo = async () => {
     try {
       const response = await fetch(
@@ -176,10 +191,10 @@ const MyTaxiMateInfo = () => {
 
       <Picker
         selectedValue={selectedProvince}
-        onValueChange={(itemValue) => setSelectedProvince(itemValue)}
+        onValueChange={(itemValue) => onProvinceChange(itemValue)}
         style={{ height: 50, width: 250, marginBottom: 10 }}
       >
-        {provinces.map((province) => (
+        {Object.keys(locationData).map((province) => (
           <Picker.Item key={province} label={province} value={province} />
         ))}
       </Picker>
@@ -190,7 +205,7 @@ const MyTaxiMateInfo = () => {
         onValueChange={(itemValue) => setSelectedCity(itemValue)}
         style={styles.picker}
       >
-        {cities.map((city) => (
+        {locationData[selectedProvince].map((city) => (
           <Picker.Item key={city} label={city} value={city} />
         ))}
       </Picker>
