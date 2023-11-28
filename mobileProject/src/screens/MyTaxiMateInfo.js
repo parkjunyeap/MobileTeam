@@ -7,7 +7,7 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import { MAP_KEY } from "../../env";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import TimePicker from "../components/TImePicker";
+import TimePicker from "../components/TimePicker";
 import axios from "axios";
 import { useContext } from "react";
 
