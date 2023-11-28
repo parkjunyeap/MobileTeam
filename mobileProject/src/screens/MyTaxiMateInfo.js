@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { View, StyleSheet, Text, Button } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
@@ -82,6 +82,36 @@ const MyTaxiMateInfo = () => {
     // 리뷰 보기 버튼 클릭 시 실행할 코드 작성
   };
 
+  const fetchUserInfo = async (userId) => {
+    try {
+      const response = await axios.get(`http://10.20.60.64:8000/getUserInfo/${userId}`);
+      if (response.status === 200) {
+        const userInfo = response.data; // 서버에서 받은 사용자 정보
+        const infoSetting = userInfo.infoSetting; // 사용자 정보 중에서 infoSetting 부분 가져오기
+        return infoSetting;
+      } else {
+        console.error("Failed to fetch user info");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error.message);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    // 화면이 로드될 때 사용자 정보를 가져와서 상태로 설정
+    fetchUserInfo(userId)
+      .then((fetchedInfoSetting) => {
+        if (fetchedInfoSetting) {
+          setInfoSetting(fetchedInfoSetting);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching user info:", error.message);
+      });
+  }, [userId]); 
+
   const handleSaveButtonClick = () => {
     // 콘솔로그 잘들어갔는지.
     console.log("선택한 도:", selectedProvince);
@@ -99,7 +129,7 @@ const MyTaxiMateInfo = () => {
 
     //
     const userTaxiInfo = {
-      userId: userId, // 로그인 한 사람 id
+      _id: userId, // 로그인 한 사람 id
       province: selectedProvince, // 도
       city: selectedCity, // 시
       favoriteStartPoint: favoriteStartLocation, // 출발지,
@@ -109,15 +139,15 @@ const MyTaxiMateInfo = () => {
     };
     // 이 정보들을 서버로 전송하거나 다른 작업을 수행할 수 있습니다.
 
-    // axios
-    //   .post("http://192.168.0.14:8000/setTaxiMateInfo", userTaxiInfo)
-    //   .then(function (response) {
-    //     console.log(response);
-    //   })
-    //   .catch(function (error) {
-    //     // 오류발생시 실행
-    //     console.log(error.message);
-    //   });
+    axios
+      .post(`http://10.20.60.64:8000/setTaxiMateInfo/${userId}`, userTaxiInfo) 
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        // 오류 발생 시 실행
+        console.log(error.message);
+      });
   };
 
   return (

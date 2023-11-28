@@ -371,40 +371,41 @@ app.get("/friends/:userId", (req, res) => {
 
 //유저택시정보저장;
 
-// app.post("/setTaxiMateInfo", async (req, res) => {
-//   try {
-//     // Here you should also include authentication and user identification
-//     // For example, let's say you identify your user by a userId provided in the request
-//     const userId = req.body.userId; // Or get it from a session or a token
+app.post('/setTaxiMateInfo', async (req, res) => {
+  try {
+    // 클라이언트에서 전달한 사용자 ID
+    const userId = req.body.userId;
 
-//     // userId 받고
+    // 사용자 모델에서 해당 사용자를 찾아옵니다.
+    const user = await User.findById(userId);
 
-//     // Create or update the user's taxi info
-//     const updatedUser = await User.findByIdAndUpdate(
-//       userId,
-//       {
-//         infoSetting: {
-//           province: req.body.province,
-//           city: req.body.city,
-//           favoriteStartPoint: req.body.favoriteStartPoint,
-//           favoriteEndPoint: req.body.favoriteEndPoint,
-//           favoriteTimeFrame1: {
-//             hour: req.body.favoriteTimeFrame1[0],
-//             minute: req.body.favoriteTimeFrame1[1],
-//           },
-//           favoriteTimeFrame2: {
-//             hour: req.body.favoriteTimeFrame2[0],
-//             minute: req.body.favoriteTimeFrame2[1],
-//           },
-//         },
-//       },
-//       { new: true }
-//     ); // 'new: true' returns the updated document
+    if (!user) {
+      return res.status(404).json({ success: false, error: '사용자를 찾을 수 없습니다.' });
+    }
 
-//     // Send back the updated user information
-//     res.status(200).json(updatedUser);
-//   } catch (error) {
-//     console.error("Error updating user taxi info:", error);
-//     res.status(500).send(error.message);
-//   }
-// });
+    // 택시 정보 업데이트
+    user.infoSetting = {
+      province: req.body.province,
+      city: req.body.city,
+      favoriteStartPoint: req.body.favoriteStartPoint,
+      favoriteEndPoint: req.body.favoriteEndPoint,
+      favoriteTimeFrame1: {
+        hour: req.body.favoriteTimeFrame1[0],
+        minute: req.body.favoriteTimeFrame1[1],
+      },
+      favoriteTimeFrame2: {
+        hour: req.body.favoriteTimeFrame2[0],
+        minute: req.body.favoriteTimeFrame2[1],
+      },
+    };
+
+    // 사용자 정보 저장
+    await user.save();
+
+    // 업데이트된 사용자 정보를 클라이언트에 응답
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    console.error('Error updating user taxi info:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
