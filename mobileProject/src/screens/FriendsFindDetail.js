@@ -43,14 +43,6 @@ const FriendsFindDetail = () => {
     setFavoriteEndLocation(value);
   };
 
-  const handleTime1Change = (value) => {
-    setFavoriteTime1(value);
-  };
-
-  const handleTime2Change = (value) => {
-    setFavoriteTime2(value);
-  };
-
   const handleReviewButtonClick = () => {
     // 리뷰 보기 버튼 클릭 시 실행할 코드 작성
   };
@@ -100,15 +92,15 @@ const FriendsFindDetail = () => {
         ))}
       </Picker>
 
-      <Text> 즐겨타는 목적지 : </Text>
+      <Text> 즐겨타는 출발지 : </Text>
       <View style={styles.location}>
         <GooglePlacesAutocomplete
-          placeholder="자주타는 목적지를 적어주세요!"
+          placeholder="자주타는 출발지를 적어주세요!"
           styles={{
             container: { flex: 0 },
             textInput: { paddingLeft: 20, height: 40 },
           }}
-          onPress={(data) => handleEndLocationChange(data.description)}
+          onPress={(data) => handleStartLocationChange(data.description)}
           onFail={(e) => {
             console.log("GooglePlacesAutocomplete onFail : ", e);
           }}

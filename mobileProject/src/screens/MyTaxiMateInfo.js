@@ -21,11 +21,11 @@ const MyTaxiMateInfo = () => {
   // 이렇게 하면 !!!!!!!!!!
   // 지금 로그인한 사용자의 userId 를 받아올 수 있네.
   const navigation = useNavigation();
-
+  const [name, setName] = useState("박준엽");
   const [selectedProvince, setSelectedProvince] = useState("충청남도");
   const [selectedCity, setSelectedCity] = useState("아산시");
-  const [favoriteStartLocation, setFavoriteStartLocation] = useState("아산"); // 아산
-  const [favoriteEndLocation, setFavoriteEndLocation] = useState("천안"); //천안
+  const [favoriteStartLocation, setFavoriteStartLocation] = useState(""); // 아산
+  const [favoriteEndLocation, setFavoriteEndLocation] = useState(""); //천안
 
   const [favoriteTime1, setFavoriteTime1] = useState({
     hour: "01",
@@ -66,7 +66,7 @@ const MyTaxiMateInfo = () => {
   const viewTaxiMateInfo = async () => {
     try {
       const response = await fetch(
-        `http://10.20.64.77:8000/ViewTaxiMateInfo/${userId}`
+        `http://192.168.0.14:8000/ViewTaxiMateInfo/${userId}`
       );
 
       const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
@@ -74,6 +74,7 @@ const MyTaxiMateInfo = () => {
       //이런식으로 set 어쩌구 (data) 해주면될것같은데.
 
       console.log("불러온 data:", data);
+      setName(data.name);
       setSelectedProvince(data.infoSetting.province || "충청남도");
       setSelectedCity(data.infoSetting.city || "아산시");
       console.log("data 즐겨타는출발지:", data.infoSetting.favoriteStartPoint);
@@ -153,7 +154,7 @@ const MyTaxiMateInfo = () => {
 
     // 유저택시정보저장
     axios
-      .post("http://10.20.64.77:8000/setTaxiMateInfo", userTaxiInfo)
+      .post("http://192.168.0.14:8000/setTaxiMateInfo", userTaxiInfo)
       .then(function (response) {
         console.log(response);
       })
@@ -165,24 +166,25 @@ const MyTaxiMateInfo = () => {
 
   return (
     <View>
-      <Text>택시 동승자 정보</Text>
-      {/* <Text>친구 ID: {friendId}</Text>        
-      <Text>친구 이름: {friendName}</Text>  */}
+      <Text style={{ fontWeight: "bold", fontSize: 23, marginBottom: 10 }}>
+        {" "}
+        이름: {name}{" "}
+      </Text>
 
-      <Text> 택시를 이용하는 지역</Text>
+      <Text style={{ fontSize: 20, marginBottom: 5 }}> 택시타는 동네 </Text>
       {/* Province Picker */}
-      <Text>도 : {selectedProvince}</Text>
+
       <Picker
         selectedValue={selectedProvince}
         onValueChange={(itemValue) => setSelectedProvince(itemValue)}
-        style={{ height: 50, width: 250 }}
+        style={{ height: 50, width: 250, marginBottom: 10 }}
       >
         {provinces.map((province) => (
           <Picker.Item key={province} label={province} value={province} />
         ))}
       </Picker>
       {/* City Picker */}
-      <Text>시 : {selectedCity}</Text>
+
       <Picker
         selectedValue={selectedCity}
         onValueChange={(itemValue) => setSelectedCity(itemValue)}
@@ -193,7 +195,8 @@ const MyTaxiMateInfo = () => {
         ))}
       </Picker>
 
-      <Text> 즐겨타는 출발지 : {favoriteStartLocation} </Text>
+      <Text style={{ fontSize: 20, marginBottom: 5 }}> 즐겨타는 출발지 </Text>
+      <Text> {favoriteStartLocation} </Text>
       <View style={styles.location}>
         <GooglePlacesAutocomplete
           placeholder="자주타는 출발지를 적어주세요!"
@@ -214,7 +217,8 @@ const MyTaxiMateInfo = () => {
         </View>
       </View>
 
-      <Text> 즐겨타는 목적지 : {favoriteEndLocation}</Text>
+      <Text style={{ fontSize: 20, marginBottom: 5 }}> 즐겨타는 출발지 </Text>
+      <Text> {favoriteEndLocation}</Text>
       <View style={styles.location}>
         <GooglePlacesAutocomplete
           placeholder="자주타는 목적지를 적어주세요!"

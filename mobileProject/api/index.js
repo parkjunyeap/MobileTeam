@@ -139,6 +139,7 @@ app.get("/users/:userId", (req, res) => {
   const loggedInUserId = req.params.userId;
   // 로그인한 유저를 받아오는건가보다 현재?
   User.find({ _id: { $ne: loggedInUserId } })
+    // 현재 로그인한 유저 빼고 전부다 가져오기.
     .then((users) => {
       res.status(200).json(users);
     })
@@ -370,46 +371,6 @@ app.get("/friends/:userId", (req, res) => {
   }
 });
 
-//유저택시정보저장;
-
-// app.post("/setTaxiMateInfo", async (req, res) => {
-//   try {
-//     // Here you should also include authentication and user identification
-//     // For example, let's say you identify your user by a userId provided in the request
-//     const userId = req.body.userId; // Or get it from a session or a token
-
-//     // userId 받고
-
-//     // Create or update the user's taxi info
-//     const updatedUser = await User.findByIdAndUpdate(
-//       userId,
-//       {
-//         infoSetting: {
-//           province: req.body.province,
-//           city: req.body.city,
-//           favoriteStartPoint: req.body.favoriteStartPoint,
-//           favoriteEndPoint: req.body.favoriteEndPoint,
-//           favoriteTimeFrame1: {
-//             hour: req.body.favoriteTimeFrame1[0],
-//             minute: req.body.favoriteTimeFrame1[1],
-//           },
-//           favoriteTimeFrame2: {
-//             hour: req.body.favoriteTimeFrame2[0],
-//             minute: req.body.favoriteTimeFrame2[1],
-//           },
-//         },
-//       },
-//       { new: true }
-//     ); // 'new: true' returns the updated document
-
-//     // Send back the updated user information
-//     res.status(200).json(updatedUser);
-//   } catch (error) {
-//     console.error("Error updating user taxi info:", error);
-//     res.status(500).send(error.message);
-//   }
-// });
-
 // setTaxiMateInfo 택시정보 저장하기
 app.post("/setTaxiMateInfo", async (req, res) => {
   try {
@@ -450,44 +411,47 @@ app.post("/setTaxiMateInfo", async (req, res) => {
   }
 });
 
-// setTaxiMateInfo 택시정보 불러오기
-
-// // Route to handle the GET request.
 // app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
-//   const { userId } = req.params;
-
 //   try {
-//     const userInfo = await getUserInfo(userId);
-//     res.json(userInfo);
-//   } catch (error) {
-//     console.error("Error retrieving user details:", error);
-//     res.status(500).send("An error occurred while retrieving user details");
-//   }
-// });
+//     // URL 파라미터에서 userId 추출
+//     const { userId } = req.params; // 프론트엔드에서 userId 만 보냄
 
-// app.listen(port, () => {
-//   console.log(`Server running on port ${port}`);
+//     // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보만 조회
+//     const userInfo = await User.findById(userId).select("infoSetting -_id"); //_id 로 조회
+//     console.log("데이터베이스에서 잘받아오나요?", userInfo);
+//     // 잘받아오네요
+//     // userInfo가 존재하면 infoSetting 필드만 클라이언트에게 JSON 형태로 전송
+
+//     if (userInfo) {
+//       res.json(userInfo);
+//     } else {
+//       // 사용자를 찾을 수 없는 경우 404 에러 전송
+//       res.status(404).send("User not found");
+//     }
+//   } catch (error) {
+//     // 에러 처리
+//     console.error("Server error:", error);
+//     res.status(500).send("Internal Server Error");
+//   }
 // });
 
 app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
   try {
-    // URL 파라미터에서 userId 추출
     const { userId } = req.params; // 프론트엔드에서 userId 만 보냄
 
-    // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보만 조회
-    const userInfo = await User.findById(userId).select("infoSetting -_id"); //_id 로 조회
+    // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보와 name도 조회
+    const userInfo = await User.findById(userId).select(
+      "infoSetting name -_id" // 이름까지 같이 받아옴
+    );
+
     console.log("데이터베이스에서 잘받아오나요?", userInfo);
     // 잘받아오네요
-    // userInfo가 존재하면 infoSetting 필드만 클라이언트에게 JSON 형태로 전송
-
     if (userInfo) {
       res.json(userInfo);
     } else {
-      // 사용자를 찾을 수 없는 경우 404 에러 전송
       res.status(404).send("User not found");
     }
   } catch (error) {
-    // 에러 처리
     console.error("Server error:", error);
     res.status(500).send("Internal Server Error");
   }

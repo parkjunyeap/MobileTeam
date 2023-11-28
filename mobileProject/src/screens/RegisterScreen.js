@@ -30,14 +30,11 @@ const RegisterScreen = () => {
 
     // send a POST  request to the backend API to register the user
     axios
-      .post("http://10.20.64.77:8000/register", user) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
+      .post("http://192.168.0.14:8000/register", user) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
       .then((response) => {
         // 그러면. res 로 잘됏나 안됏나 받음. 그리고 메시지띄움. 그리고 set으로 다른거 다 빈칸으로만듬
         console.log(response);
-        Alert.alert(
-          "Registration successful",
-          "You have been registered Successfully"
-        );
+        Alert.alert("등록 성공!!", "성공적으로 등록되었습니다");
         setName("");
         setEmail("");
         setPassword("");
@@ -45,10 +42,7 @@ const RegisterScreen = () => {
       })
       .catch((error) => {
         // 에러 받고 출력
-        Alert.alert(
-          "Registration Error",
-          "An error occurred while registering"
-        );
+        Alert.alert("등록 오류!!", "등록하는 동안 오류가 발생했습니다");
         console.log("registration failed", error);
       });
   };
