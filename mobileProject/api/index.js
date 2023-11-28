@@ -13,7 +13,6 @@ app.use(bodyParser.urlencoded({ extended: false })); // URL 인코딩된 데이�
 app.use(bodyParser.json()); // JSON 데이터를 파싱하는 bodyParser 미들웨어를 사용하도록 설정합니다.
 app.use(passport.initialize()); // 앱에 passport 미들웨어를 초기화하여 사용하도록 설정합니다.
 const jwt = require("jsonwebtoken"); // jsonwebtoken 모듈을 가져옵니다. JWT(JSON Web Tokens)를 생성하고 검증하는 데 사용됩니다.
-
 mongoose
   .connect("mongodb+srv://bab0234:bab0234@cluster0.gp66aaf.mongodb.net/", {
     useNewUrlParser: true,
@@ -88,7 +87,7 @@ const createToken = (userId) => {
   };
 
   // jsonwebtoken 라이브러리를 사용하여 페이로드와 비밀 키로 JWT 생성
-  const token = jwt.sign(payload, "Q$r2K6W8n!jCW%Zk", { expiresIn: "1h" });
+  const token = jwt.sign(payload, "Q$r2K6W8n!jCW%Zk", { expiresIn: "10000h" });
   console.log("여기서 토큰을 발행못하나보다", token);
   // 생성된 토큰 반환하지만 현재 함수는 반환 값을 사용하지 않음. 반환 구문 추가 필요
   // 여기까지 토큰 발행잘하는데?
@@ -100,7 +99,6 @@ app.post("/login", (req, res) => {
   // 클라이언트로부터 받은 데이터에서 이메일과 비밀번호를 추출
   const { email, password } = req.body;
   console.log("잘받았는지 확인", req.body);
-
   // 이메일과 비밀번호가 제공되지 않았을 경우 404 상태 코드로 오류 메시지 응답
   if (!email || !password) {
     return res.status(404).json({ message: "이메일 이랑 비밀번호는 필수야" });
@@ -369,43 +367,68 @@ app.get("/friends/:userId", (req, res) => {
   }
 });
 
-//유저택시정보저장;
-
-app.post('/setTaxiMateInfo', async (req, res) => {
+// setTaxiMateInfo 택시정보 저장하기
+app.post("/setTaxiMateInfo", async (req, res) => {
   try {
-    // 클라이언트에서 전달한 사용자 ID
+    // 사용자 인증 및 권한 확인 (여기서는 예시로 userId를 요청에서 가져옴)
+    //console.log(req.body)
     const userId = req.body.userId;
-
-    // 사용자 모델에서 해당 사용자를 찾아옵니다.
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ success: false, error: '사용자를 찾을 수 없습니다.' });
+    if (!userId) {
+      console.log("userId가 제공되지 않았습니다.");
+      return res.status(400).json({ error: "userId가 제공되지 않았습니다." });
     }
 
-    // 택시 정보 업데이트
-    user.infoSetting = {
-      province: req.body.province,
-      city: req.body.city,
-      favoriteStartPoint: req.body.favoriteStartPoint,
-      favoriteEndPoint: req.body.favoriteEndPoint,
-      favoriteTimeFrame1: {
-        hour: req.body.favoriteTimeFrame1[0],
-        minute: req.body.favoriteTimeFrame1[1],
+    // 사용자 정보 업데이트
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        infoSetting: {
+          province: req.body.province,
+          city: req.body.city,
+          favoriteStartPoint: req.body.favoriteStartPoint,
+          favoriteEndPoint: req.body.favoriteEndPoint,
+          favoriteTimeFrame1: {
+            hour: req.body.favoriteTimeFrame1[0],
+            minute: req.body.favoriteTimeFrame1[1],
+          },
+          favoriteTimeFrame2: {
+            hour: req.body.favoriteTimeFrame2[0],
+            minute: req.body.favoriteTimeFrame2[1],
+          },
+        },
       },
-      favoriteTimeFrame2: {
-        hour: req.body.favoriteTimeFrame2[0],
-        minute: req.body.favoriteTimeFrame2[1],
-      },
-    };
-
-    // 사용자 정보 저장
-    await user.save();
-
-    // 업데이트된 사용자 정보를 클라이언트에 응답
-    res.status(200).json({ success: true, data: user });
+      { new: true, upsert: true } // upsert 옵션을 사용하여 새 사용자를 생성하거나 기존 사용자를 업데이트
+    );
+    console.log(updatedUser);
+    // 업데이트된 사용자 정보 반환
+    res.status(200).json(updatedUser);
   } catch (error) {
-    console.error('Error updating user taxi info:', error);
-    res.status(500).json({ success: false, error: error.message });
+    console.error("사용자 택시 정보 업데이트 오류:", error);
+    res.status(500).json({ error: "서버 오류 발생" });
+  }
+});
+
+
+app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
+  try {
+    // URL 파라미터에서 userId 추출
+    const { userId } = req.params;
+
+    // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보만 조회
+    const userInfo = await User.findById(userId).select("infoSetting -_id");
+    console.log("데이터베이스에서 잘받아오나요?", userInfo);
+    // 잘받아오네요
+    // userInfo가 존재하면 infoSetting 필드만 클라이언트에게 JSON 형태로 전송
+
+    if (userInfo) {
+      res.json(userInfo);
+    } else {
+      // 사용자를 찾을 수 없는 경우 404 에러 전송
+      res.status(404).send("User not found");
+    }
+  } catch (error) {
+    // 에러 처리
+    console.error("Server error:", error);
+    res.status(500).send("Internal Server Error");
   }
 });

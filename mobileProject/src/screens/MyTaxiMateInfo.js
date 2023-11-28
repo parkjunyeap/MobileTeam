@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text, Button } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
@@ -9,13 +9,14 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import TimePicker from "../components/TImePicker";
 import axios from "axios";
-import { useContext } from "react";
 
 import { UserType } from "../UserContext";
+import { useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 const MyTaxiMateInfo = () => {
   // 이렇게하면 로그인한유저 갖고올 수 있음.
   const { userId, setUserId } = useContext(UserType);
+  console.log({userId})
   // friendId, friendName 주고싶은데;;
   // 이렇게 하는건 props 만 줘
   const navigation = useNavigation();
@@ -81,37 +82,43 @@ const MyTaxiMateInfo = () => {
   const handleReviewButtonClick = () => {
     // 리뷰 보기 버튼 클릭 시 실행할 코드 작성
   };
-
-  const fetchUserInfo = async (userId) => {
-    try {
-      const response = await axios.get(`http://10.20.60.64:8000/getUserInfo/${userId}`);
-      if (response.status === 200) {
-        const userInfo = response.data; // 서버에서 받은 사용자 정보
-        const infoSetting = userInfo.infoSetting; // 사용자 정보 중에서 infoSetting 부분 가져오기
-        return infoSetting;
-      } else {
-        console.error("Failed to fetch user info");
-        return null;
-      }
-    } catch (error) {
-      console.error("Error fetching user info:", error.message);
-      return null;
-    }
-  };
-
   useEffect(() => {
-    // 화면이 로드될 때 사용자 정보를 가져와서 상태로 설정
-    fetchUserInfo(userId)
-      .then((fetchedInfoSetting) => {
-        if (fetchedInfoSetting) {
-          setInfoSetting(fetchedInfoSetting);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching user info:", error.message);
-      });
-  }, [userId]); 
+    const viewTaxiMateInfo = async () => {
+      try {
+        const response = await fetch(
+          `http://10.20.60.64:8000/ViewTaxiMateInfo/${userId}`
+        );
 
+        const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
+        // setRecepientData(data);
+        //이런식으로 set 어쩌구 (data) 해주면될것같은데.
+
+        console.log("불러온 data:", data);
+        setSelectedProvince(data.infoSetting.province || "충청남도");
+        setSelectedCity(data.infoSetting.city || "아산시");
+        console.log(
+          "data 즐겨타는출발지:",
+          data.infoSetting.favoriteStartPoint
+        );
+        setFavoriteStartLocation(data.infoSetting.favoriteStartPoint || ""); // 원래이럼
+        // setFavoriteStartLocation(data.infoSetting.favoriteStartPoint); // 이렇게바꿔도 똑같고.
+        setFavoriteEndLocation(data.infoSetting.favoriteEndPoint || "");
+        setFavoriteTime1({
+          hour: data.infoSetting.favoriteTimeFrame1.hour || "01",
+          minute: data.infoSetting.favoriteTimeFrame1.minute || "00",
+        });
+        setFavoriteTime2({
+          hour: data.infoSetting.favoriteTimeFrame2.hour || "01",
+          minute: data.infoSetting.favoriteTimeFrame2.minute || "00",
+        });
+        // 데이터베이스에 아무 정보도 없으면 "" 빈 문자열 주기.
+      } catch (error) {
+        console.log("error retrieving details", error);
+      }
+    };
+
+    viewTaxiMateInfo();
+  }, []); //useEffect에 있는 []는 이 코드를 앱이 시작될 때 딱 한 번만 실행
   const handleSaveButtonClick = () => {
     // 콘솔로그 잘들어갔는지.
     console.log("선택한 도:", selectedProvince);
@@ -126,10 +133,9 @@ const MyTaxiMateInfo = () => {
       "즐겨타는 시간대 2:",
       favoriteTime2.hour + ":" + favoriteTime2.minute
     );
-
     //
     const userTaxiInfo = {
-      _id: userId, // 로그인 한 사람 id
+      userId: userId, // 로그인 한 사람 id
       province: selectedProvince, // 도
       city: selectedCity, // 시
       favoriteStartPoint: favoriteStartLocation, // 출발지,
@@ -138,18 +144,17 @@ const MyTaxiMateInfo = () => {
       favoriteTimeFrame2: [favoriteTime2.hour, favoriteTime2.minute], // 시간2
     };
     // 이 정보들을 서버로 전송하거나 다른 작업을 수행할 수 있습니다.
-
+    // 유저택시정보저장
     axios
-      .post(`http://10.20.60.64:8000/setTaxiMateInfo/${userId}`, userTaxiInfo) 
+      .post("http://10.20.60.64:8000/setTaxiMateInfo", userTaxiInfo)
       .then(function (response) {
         console.log(response);
       })
       .catch(function (error) {
-        // 오류 발생 시 실행
-        console.log(error.message);
+        // 오류발생시 실행
+        console.log("이 오류 : ", error.message);
       });
   };
-
   return (
     <View>
       <Text>택시 동승자 정보</Text>
