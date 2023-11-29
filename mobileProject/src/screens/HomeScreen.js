@@ -18,11 +18,14 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const { userId, setUserId } = useContext(UserType);
   const [users, setUsers] = useState([]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "",
       headerLeft: () => (
-        <Text style={{ fontSize: 16, fontWeight: "bold" }}>Swift Chat</Text>
+        <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+          {"   "} 택시 친구
+        </Text>
       ),
       headerRight: () => (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
@@ -37,6 +40,7 @@ const HomeScreen = () => {
             name="people-outline"
             size={24}
             color="black"
+            padding={14}
           />
         </View>
       ),
@@ -63,7 +67,7 @@ const HomeScreen = () => {
       setUserId(userId);
 
       axios
-        .get(`http://10.20.60.64:8000/users/${userId}`)
+        .get(`http://192.168.0.14:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
         .then((response) => {
           console.log("Response data:", response.data);
           setUsers(response.data);
@@ -74,13 +78,15 @@ const HomeScreen = () => {
     };
 
     fetchUsers();
-  }, []);
+  }, []); // 처음 렌더링 될때 한번만 실행된다..
 
   console.log("users", users);
+
   return (
     <View>
       <ScrollView>
-        <View style={{ padding: 10 }}>
+        <View style={{ padding: 15 }}>
+          {/* // index = key , item == item.... */}
           {users.map((item, index) => (
             <User key={index} item={item} />
           ))}

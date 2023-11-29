@@ -49,7 +49,7 @@ const FriendRequest = ({ item, friendRequests, setFriendRequests }) => {
       <Text
         style={{ fontSize: 15, fontWeight: "bold", marginLeft: 10, flex: 1 }}
       >
-        {item?.name} sent you a friend request!!
+        {item?.name} 님이 친구 요청을 보냈습니다!!
       </Text>
 
       <Pressable

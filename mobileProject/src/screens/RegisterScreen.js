@@ -34,10 +34,7 @@ const RegisterScreen = () => {
       .then((response) => {
         // 그러면. res 로 잘됏나 안됏나 받음. 그리고 메시지띄움. 그리고 set으로 다른거 다 빈칸으로만듬
         console.log(response);
-        Alert.alert(
-          "Registration successful",
-          "You have been registered Successfully"
-        );
+        Alert.alert("등록 성공!!", "성공적으로 등록되었습니다");
         setName("");
         setEmail("");
         setPassword("");
@@ -45,10 +42,7 @@ const RegisterScreen = () => {
       })
       .catch((error) => {
         // 에러 받고 출력
-        Alert.alert(
-          "Registration Error",
-          "An error occurred while registering"
-        );
+        Alert.alert("등록 오류!!", "등록하는 동안 오류가 발생했습니다");
         console.log("registration failed", error);
       });
   };

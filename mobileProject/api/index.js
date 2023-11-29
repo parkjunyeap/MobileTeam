@@ -32,6 +32,7 @@ app.listen(port, () => {
 
 const User = require("./models/user");
 const Message = require("./models/message");
+const Driver = require("./models/driver");
 
 // 임시 // 나중에바꿔야함
 app.post("/reviews", (req, res) => {
@@ -136,6 +137,7 @@ app.get("/users/:userId", (req, res) => {
   const loggedInUserId = req.params.userId;
   // 로그인한 유저를 받아오는건가보다 현재?
   User.find({ _id: { $ne: loggedInUserId } })
+    // 현재 로그인한 유저 빼고 전부다 가져오기.
     .then((users) => {
       res.status(200).json(users);
     })
@@ -371,11 +373,10 @@ app.get("/friends/:userId", (req, res) => {
 app.post("/setTaxiMateInfo", async (req, res) => {
   try {
     // 사용자 인증 및 권한 확인 (여기서는 예시로 userId를 요청에서 가져옴)
-    //console.log(req.body)
     const userId = req.body.userId;
     if (!userId) {
-      console.log("userId가 제공되지 않았습니다.");
       return res.status(400).json({ error: "userId가 제공되지 않았습니다." });
+      console.log("userId가 제공되지 않았습니다.");
     }
 
     // 사용자 정보 업데이트
@@ -408,26 +409,47 @@ app.post("/setTaxiMateInfo", async (req, res) => {
   }
 });
 
+// app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
+//   try {
+//     // URL 파라미터에서 userId 추출
+//     const { userId } = req.params; // 프론트엔드에서 userId 만 보냄
+
+//     // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보만 조회
+//     const userInfo = await User.findById(userId).select("infoSetting -_id"); //_id 로 조회
+//     console.log("데이터베이스에서 잘받아오나요?", userInfo);
+//     // 잘받아오네요
+//     // userInfo가 존재하면 infoSetting 필드만 클라이언트에게 JSON 형태로 전송
+
+//     if (userInfo) {
+//       res.json(userInfo);
+//     } else {
+//       // 사용자를 찾을 수 없는 경우 404 에러 전송
+//       res.status(404).send("User not found");
+//     }
+//   } catch (error) {
+//     // 에러 처리
+//     console.error("Server error:", error);
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
 
 app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
   try {
-    // URL 파라미터에서 userId 추출
-    const { userId } = req.params;
+    const { userId } = req.params; // 프론트엔드에서 userId 만 보냄
 
-    // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보만 조회
-    const userInfo = await User.findById(userId).select("infoSetting -_id");
+    // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보와 name도 조회
+    const userInfo = await User.findById(userId).select(
+      "infoSetting name -_id" // 이름까지 같이 받아옴
+    );
+
     console.log("데이터베이스에서 잘받아오나요?", userInfo);
     // 잘받아오네요
-    // userInfo가 존재하면 infoSetting 필드만 클라이언트에게 JSON 형태로 전송
-
     if (userInfo) {
       res.json(userInfo);
     } else {
-      // 사용자를 찾을 수 없는 경우 404 에러 전송
       res.status(404).send("User not found");
     }
   } catch (error) {
-    // 에러 처리
     console.error("Server error:", error);
     res.status(500).send("Internal Server Error");
   }
