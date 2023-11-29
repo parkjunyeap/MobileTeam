@@ -1,10 +1,15 @@
 import { StyleSheet, Text, View } from "react-native";
-// import { MapView } from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+
 const TaxiTouch = () => {
   return (
-    <View style={styles.container}>
-      {/* <MapView style={styles.maps} /> */}
-      <Text> 택시맵 </Text>
+    <View style={{ alignItems: "center", justifyContent: "center" }}>
+      <MapView
+        provider={PROVIDER_GOOGLE}
+        style={styles.map}
+      >
+        {/* 여기서 지도 관련 컨텐츠를 추가할 수 있습니다. */}
+      </MapView>
     </View>
   );
 };
@@ -15,9 +20,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  maps: {
-    width: 100,
-    height: 100,
+  map: {
+    width: 300, // 원하는 너비 설정
+    height: 300, // 원하는 높이 설정
   },
 });
 

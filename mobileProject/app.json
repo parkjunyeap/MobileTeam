@@ -11,21 +11,36 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier":"com.mobileProject",
+      "config":{
+        "googleMapsApiKey":"AIzaSyAA6emfz97tVX6r7lsccbwHIpaby8pLMfc"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.loltuber.mobileProject"
+      "packageNames": [
+        "com.loltuber.mobileProject",
+        "com.mobileProject"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAA6emfz97tVX6r7lsccbwHIpaby8pLMfc"
+        },
+
+        "permissions":["ACCESS_COARSE_LOCATION","ACCESS_FINE_LOCATION","FOREGROUND_SERVICE"]
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-
     "extra": {
       "eas": {
         "projectId": "6b2363e4-d503-4b01-b96e-3f2116f67e15"
