@@ -1,6 +1,6 @@
 // 사실상 지금 현재 채팅화면 부분
 
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import { StyleSheet, Text, View, ScrollView,TouchableOpacity } from "react-native";
 import React, { useLayoutEffect, useContext, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -14,6 +14,7 @@ import jwt_decode from "jwt-decode"; // 유튜브에선 이렇게 import 하네
 // import * as jwtDecode from "jwt-decode"; // 다안되면 이렇게
 import axios from "axios";
 import User from "../components/User";
+
 const HomeScreen = () => {
   const navigation = useNavigation();
   const { userId, setUserId } = useContext(UserType);
@@ -84,6 +85,12 @@ const HomeScreen = () => {
 
   return (
     <View>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("FriendsFindDetail")}
+      >
+        <Text style={styles.buttonText}>친구 찾기</Text>
+      </TouchableOpacity>
       <ScrollView>
         <View style={{ padding: 15 }}>
           {/* // index = key , item == item.... */}
@@ -98,4 +105,14 @@ const HomeScreen = () => {
 1;
 export default HomeScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  button: {
+    // Match the style with your design
+    backgroundColor: "#4CAF50", // This is the green background
+    padding: 15,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+})
+

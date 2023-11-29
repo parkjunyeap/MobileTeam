@@ -88,7 +88,7 @@ const createToken = (userId) => {
   };
 
   // jsonwebtoken 라이브러리를 사용하여 페이로드와 비밀 키로 JWT 생성
-  const token = jwt.sign(payload, "Q$r2K6W8n!jCW%Zk", { expiresIn: "2m" });
+  const token = jwt.sign(payload, "Q$r2K6W8n!jCW%Zk", { expiresIn: "10000h" });
   console.log("여기서 토큰을 발행못하나보다", token);
   // 생성된 토큰 반환하지만 현재 함수는 반환 값을 사용하지 않음. 반환 구문 추가 필요
   // 여기까지 토큰 발행잘하는데?
@@ -452,5 +452,38 @@ app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
   } catch (error) {
     console.error("Server error:", error);
     res.status(500).send("Internal Server Error");
+  }
+});
+
+app.post("/FindTaxiMateDetail", async (req, res) => {
+  const {
+    selectedProvince,
+    selectedCity,
+    favoriteStartLocation,
+    favoriteEndLocation,
+  } = req.body;
+
+  try {
+    // MongoDB 또는 다른 데이터베이스에서 모든 유저 정보 가져오기
+    // 예를 들어, Mongoose를 사용한다면:
+    const allUsers = await User.find({});
+
+    // 여기에 데이터베이스에서 모든 유저 정보를 가져오는 코드를 추가해야 합니다.
+
+    // 가져온 유저 정보를 필터링
+    const matchingUsers = allUsers.filter(user => {
+      return (
+        user.infoSetting.includes(selectedProvince) && // 선택한 도와 부합하고
+        user.infoSetting.includes(selectedCity) && // 선택한 시와 부합하고
+        user.infoSetting.includes(favoriteStartLocation) && // 출발지와 부합하고
+        user.infoSetting.includes(favoriteEndLocation) // 목적지와 부합하는 유저들
+      );
+    });
+
+    // 필터링된 정보를 클라이언트로 응답
+    res.json(matchingUsers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 });
