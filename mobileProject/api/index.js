@@ -34,14 +34,17 @@ app.listen(port, () => {
 const User = require("./models/user");
 const Message = require("./models/message");
 const Driver = require("./models/driver");
+const Review = require("./models/review")
 
+
+// review 리뷰등록
 // 임시 // 나중에바꿔야함
 app.post("/reviews", (req, res) => {
   // 요청받아
-  const { title, score } = req.body; // 클라이언트에서 전달한 데이터에서 title과 score를 추출
+  const { senderId, receiverId, rating, comment, reviewDate } = req.body; // 클라이언트에서 전달한 데이터에서 title과 score를 추출
   // console.log(req.params);
 
-  const newReview = new Review({ title, score });
+  const newReview = new Review({ senderId, receiverId, rating, comment, reviewDate });
 
   newReview
     .save()
@@ -52,11 +55,17 @@ app.post("/reviews", (req, res) => {
       });
     })
     .catch((err) => {
+      console.log(err)
       res.json({
         message: "리뷰 등록 실패",
       });
     });
 });
+
+// review 내가 쓴 리뷰 조회
+
+
+// review 나에게 남긴 리뷰 조회
 
 // 사용자 등록을 위한 라우트 핸들러
 app.post("/register", (req, res) => {
