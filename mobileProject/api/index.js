@@ -88,7 +88,7 @@ const createToken = (userId) => {
   };
 
   // jsonwebtoken 라이브러리를 사용하여 페이로드와 비밀 키로 JWT 생성
-  const token = jwt.sign(payload, "Q$r2K6W8n!jCW%Zk", { expiresIn: "10000h" });
+  const token = jwt.sign(payload, "Q$r2K6W8n!jCW%Zk", { expiresIn: "2m" });
   console.log("여기서 토큰을 발행못하나보다", token);
   // 생성된 토큰 반환하지만 현재 함수는 반환 값을 사용하지 않음. 반환 구문 추가 필요
   // 여기까지 토큰 발행잘하는데?
