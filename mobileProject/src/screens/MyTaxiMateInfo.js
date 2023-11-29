@@ -100,14 +100,6 @@ const MyTaxiMateInfo = () => {
     setFavoriteEndLocation(value);
   };
 
-  // const handleTime1Change = (value) => {
-  //   setFavoriteTime1(value);
-  // };
-
-  // const handleTime2Change = (value) => {
-  //   setFavoriteTime2(value);
-  // };
-
   const handleReviewButtonClick = () => {
     // 리뷰 보기 버튼 클릭 시 실행할 코드 작성
   };

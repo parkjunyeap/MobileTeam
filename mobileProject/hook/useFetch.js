@@ -1,3 +1,6 @@
+// 코드 재사용 하려면 이런식으로 작성해야함.
+// 일단은 안씀
+
 import { useState, useEffect } from "react";
 import axios from "axios"; // 데이터 웹브라우저에서 페이지 받아오는역할
 

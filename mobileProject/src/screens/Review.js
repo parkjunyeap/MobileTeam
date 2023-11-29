@@ -3,13 +3,14 @@ import { View, TextInput, Button, StyleSheet, Text } from "react-native";
 import { Rating } from "react-native-ratings";
 import Axios from "axios";
 
-import useFetch from "../../hook/useFetch"; //  useFecth 갖고옴
+// import useFetch from "../../hook/useFetch"; //  useFecth 갖고옴 안씀 저번에 모프 교수님이 참고하라고 알려준거
 
 const Review = () => {
   const [rating, setRating] = useState(3); // 기본 별점
   const [feedback, setFeedback] = useState(""); // 사용자가 적은 메시지
 
-  // handle submit 하면되는데 지금 은 모델바껴서 안돌아감
+  // handle submit 하면되는데
+  //지금 은 모델바껴서 안돌아감
   const handleSubmit = () => {
     const reviewData = {
       title: feedback,

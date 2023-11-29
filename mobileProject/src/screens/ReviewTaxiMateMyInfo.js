@@ -88,7 +88,8 @@ const ReviewItem = ({ item }) => {
   );
 };
 
-const ReviewTaxiMateMyInfo = ({ navigation }) => {
+const ReviewTaxiMateMyInfo = () => {
+  //{ navigation }
   return (
     <FlatList
       // data : data는 만들고자 하는 리스트의 soucre를 담는 props.
