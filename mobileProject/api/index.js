@@ -93,6 +93,56 @@ app.get("/reviews/receiver/:receiverId", (req, res) => {
     });
 });
 
+// 리뷰 수정
+app.put("/reviews/:reviewId", (req, res) => {
+  const reviewId = req.params.reviewId;
+  const { rating, comment, reviewDate } = req.body;
+
+  Review.findByIdAndUpdate(reviewId, { rating, comment, reviewDate }, { new: true })
+    .then((updatedReview) => {
+      if (updatedReview) {
+        res.json({
+          message: "리뷰가 수정되었습니다",
+          review: updatedReview,
+        });
+      } else {
+        res.json({
+          message: "리뷰를 찾을 수 없습니다",
+        });
+      }
+    })
+    .catch((err) => {
+      res.json({
+        message: "리뷰 수정 실패",
+      });
+    });
+});
+
+// 리뷰 삭제
+app.delete("/reviews/:reviewId", (req, res) => {
+  const reviewId = req.params.reviewId;
+
+  Review.findByIdAndDelete(reviewId)
+    .then((deletedReview) => {
+      if (deletedReview) {
+        res.json({
+          message: "리뷰가 삭제되었습니다",
+        });
+      } else {
+        res.json({
+          message: "리뷰를 찾을 수 없습니다",
+        });
+      }
+    })
+    .catch((err) => {
+      res.json({
+        message: "리뷰 삭제 실패",
+      });
+    });
+});
+
+
+
 
 // 사용자 등록을 위한 라우트 핸들러
 app.post("/register", (req, res) => {
