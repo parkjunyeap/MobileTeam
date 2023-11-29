@@ -2,7 +2,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import MyInfo from "../screens/MyInfo";
-import ReviewTaxiMateMyInfo from "../screens/ReviewTaxiMateMyInfo";
+import ViewReview from "../screens/ViewReview";
 import ReviewTaxiMyInfo from "../screens/ReviewTaxiMyInfo";
 import MyTaxiMateInfo from "../screens/MyTaxiMateInfo";
 import PaymentList from "../screens/PaymentList";
@@ -41,8 +41,8 @@ function MyInfoStackNavigator() {
         options={{ title: "내가 택시기사에게 보낸 리뷰" }}
       />
       <Stack.Screen
-        name="ReviewTaxiMateMyInfo"
-        component={ReviewTaxiMateMyInfo}
+        name="ViewReview"
+        component={ViewReview}
         options={{ title: "내가 택시친구에게 보낸 리뷰" }}
       />
 

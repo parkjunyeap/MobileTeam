@@ -88,7 +88,7 @@ const ReviewItem = ({ item }) => {
   );
 };
 
-const ReviewTaxiMateMyInfo = () => {
+const ViewReview = () => {
   //{ navigation }
   return (
     <FlatList
@@ -136,4 +136,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ReviewTaxiMateMyInfo;
+export default ViewReview;
