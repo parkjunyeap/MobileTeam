@@ -101,6 +101,7 @@ const MyTaxiMateInfo = () => {
   };
 
   const handleReviewButtonClick = () => {
+    // 나한테 온 리뷰 보기임.
     // 리뷰 보기 버튼 클릭 시 실행할 코드 작성
   };
 
