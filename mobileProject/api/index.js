@@ -63,9 +63,35 @@ app.post("/reviews", (req, res) => {
 });
 
 // review 내가 쓴 리뷰 조회
+app.get("/reviews/sender/:senderId", (req, res) => {
+  const senderId = req.params.senderId;
 
+  Review.find({ senderId })
+    .then((reviews) => {
+      res.json(reviews);
+    })
+    .catch((err) => {
+      res.json({
+        message: "내가 쓴 리뷰 조회 실패",
+      });
+    });
+});
 
 // review 나에게 남긴 리뷰 조회
+app.get("/reviews/receiver/:receiverId", (req, res) => {
+  const receiverId = req.params.receiverId;
+
+  Review.find({ receiverId })
+    .then((reviews) => {
+      res.json(reviews);
+    })
+    .catch((err) => {
+      res.json({
+        message: "나에게 남긴 리뷰 조회 실패",
+      });
+    });
+});
+
 
 // 사용자 등록을 위한 라우트 핸들러
 app.post("/register", (req, res) => {
