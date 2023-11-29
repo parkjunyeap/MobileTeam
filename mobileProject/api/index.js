@@ -78,6 +78,7 @@ app.get("/reviews/sender/:senderId", (req, res) => {
 });
 
 // review 나에게 남긴 리뷰 조회
+//postman에서 :receiverId 자리에 넣기
 app.get("/reviews/receiver/:receiverId", (req, res) => {
   const receiverId = req.params.receiverId;
 
