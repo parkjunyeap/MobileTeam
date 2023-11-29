@@ -151,7 +151,7 @@ const User = ({ item }) => {
                   item.infoSetting.favoriteTimeFrame2.minute}
             </Text>
 
-            {/* // 이거되면 개소름 */}
+            {/* // 그냥 닫기 */}
             <Pressable
               style={[styles.button, styles.buttonClose]}
               onPress={() => setModalVisible(!modalVisible)}

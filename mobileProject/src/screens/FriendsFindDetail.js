@@ -4,7 +4,7 @@ import { Picker } from "@react-native-picker/picker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { MAP_KEY } from "../../env";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import TimePicker from "../components/TimePicker";
+// import TimePicker from "../components/TimePicker";
 import { useNavigation } from "@react-navigation/native";
 
 import locationData from "../locationData";
@@ -18,14 +18,15 @@ const FriendsFindDetail = () => {
   );
   const [favoriteStartLocation, setFavoriteStartLocation] = useState("");
   const [favoriteEndLocation, setFavoriteEndLocation] = useState("");
-  const [favoriteTime1, setFavoriteTime1] = useState({
-    hour: "01",
-    minute: "00",
-  });
-  const [favoriteTime2, setFavoriteTime2] = useState({
-    hour: "01",
-    minute: "00",
-  });
+  // const [favoriteTime1, setFavoriteTime1] = useState({
+  //   hour: "01",
+  //   minute: "00",
+  // });
+  // const [favoriteTime2, setFavoriteTime2] = useState({
+  //   hour: "01",
+  //   minute: "00",
+  // });
+  // 시간
 
   const onProvinceChange = (province) => {
     setSelectedProvince(province);
@@ -43,8 +44,11 @@ const FriendsFindDetail = () => {
     setFavoriteEndLocation(value);
   };
 
-  const handleReviewButtonClick = () => {
-    // 리뷰 보기 버튼 클릭 시 실행할 코드 작성
+  const handleReset = () => {
+    setSelectedProvince(Object.keys(locationData)[0]);
+    setSelectedCity(locationData[Object.keys(locationData)[0]][0]);
+    setFavoriteStartLocation("");
+    setFavoriteEndLocation("");
   };
 
   const navigation = useNavigation(); // 네비게이션 객체 가져오기
@@ -54,14 +58,14 @@ const FriendsFindDetail = () => {
     console.log("선택한 시:", selectedCity);
     console.log("즐겨타는 출발지:", favoriteStartLocation);
     console.log("즐겨타는 목적지:", favoriteEndLocation);
-    console.log(
-      "즐겨타는 시간대 1:",
-      favoriteTime1.hour + ":" + favoriteTime1.minute
-    );
-    console.log(
-      "즐겨타는 시간대 2:",
-      favoriteTime2.hour + ":" + favoriteTime2.minute
-    );
+    // console.log(
+    //   "즐겨타는 시간대 1:",
+    //   favoriteTime1.hour + ":" + favoriteTime1.minute
+    // );
+    // console.log(
+    //   "즐겨타는 시간대 2:",
+    //   favoriteTime2.hour + ":" + favoriteTime2.minute
+    // );
 
     // 이 정보들을 서버로 전송하거나 다른 작업을 수행할 수 있습니다.
     navigation.goBack();
@@ -131,34 +135,11 @@ const FriendsFindDetail = () => {
           <MaterialCommunityIcons name="map-marker" size={20} />
         </View>
       </View>
-      <Text> 즐겨타는 시간대 1</Text>
-      <TimePicker
-        selectedHour={favoriteTime1.hour}
-        selectedMinute={favoriteTime1.minute}
-        onHourChange={(hour) => setFavoriteTime1((prev) => ({ ...prev, hour }))}
-        onMinuteChange={(minute) =>
-          setFavoriteTime1((prev) => ({ ...prev, minute }))
-        }
-      />
-
-      <Text> 즐겨타는 시간대 2</Text>
-      <TimePicker
-        selectedHour={favoriteTime2.hour}
-        selectedMinute={favoriteTime2.minute}
-        onHourChange={(hour) => setFavoriteTime2((prev) => ({ ...prev, hour }))}
-        onMinuteChange={(minute) =>
-          setFavoriteTime2((prev) => ({ ...prev, minute }))
-        }
-      />
 
       {/* 버튼 style 먹이느라 */}
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
-          <Button
-            title="초기화"
-            onPress={handleReviewButtonClick}
-            color="#28a745"
-          />
+          <Button title="초기화" onPress={handleReset} color="#28a745" />
         </View>
         <View style={{ width: 20 }} />
         <View style={styles.buttonWrapper}>
