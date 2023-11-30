@@ -62,7 +62,15 @@ const FriendsFindDetail = () => {
       "즐겨타는 시간대 2:",
       favoriteTime2.hour + ":" + favoriteTime2.minute
     );
-
+    axios
+      .post("http://10.20.32.84:8000/FindTaxiMateDetail", userTaxiInfo)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        // 오류발생시 실행
+        console.log("이 오류 : ", error.message);
+      });
     // 이 정보들을 서버로 전송하거나 다른 작업을 수행할 수 있습니다.
     navigation.goBack();
   };
@@ -131,25 +139,6 @@ const FriendsFindDetail = () => {
           <MaterialCommunityIcons name="map-marker" size={20} />
         </View>
       </View>
-      <Text> 즐겨타는 시간대 1</Text>
-      <TimePicker
-        selectedHour={favoriteTime1.hour}
-        selectedMinute={favoriteTime1.minute}
-        onHourChange={(hour) => setFavoriteTime1((prev) => ({ ...prev, hour }))}
-        onMinuteChange={(minute) =>
-          setFavoriteTime1((prev) => ({ ...prev, minute }))
-        }
-      />
-
-      <Text> 즐겨타는 시간대 2</Text>
-      <TimePicker
-        selectedHour={favoriteTime2.hour}
-        selectedMinute={favoriteTime2.minute}
-        onHourChange={(hour) => setFavoriteTime2((prev) => ({ ...prev, hour }))}
-        onMinuteChange={(minute) =>
-          setFavoriteTime2((prev) => ({ ...prev, minute }))
-        }
-      />
 
       {/* 버튼 style 먹이느라 */}
       <View style={styles.buttonContainer}>
