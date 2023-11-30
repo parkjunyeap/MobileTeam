@@ -1,78 +1,55 @@
-import React, { useState } from "react";
-import { View, TextInput, Button, StyleSheet, Text } from "react-native";
-import { Rating } from "react-native-ratings";
+import React from 'react';
+import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import { Rating } from 'react-native-ratings';
 
-const Review = () => {
-  const [rating, setRating] = useState(3); // 기본 별점
-  const [feedback, setFeedback] = useState(""); // 사용자 피드백 텍스트
+const reviews = [
+  { id: 1, name: "홍길동", rating: 5, comment: "시간 약속을 잘 지켜서 좋았어요" },
+  { id: 2, name: "김철수", rating: 4, comment: "친절하고 안전운전 해주셔서 감사합니다" },
+  // 더 많은 리뷰 데이터...
+];
 
-  // 여기 사람 이름 , ex) 택시기사, 사용자 이름
+const ReviewList = () => {
   return (
-    <View style={styles.container}>
-      <View style={styles.card}>
-        <Rating
-          type="star"
-          ratingCount={5}
-          imageSize={40}
-          onFinishRating={(value) => setRating(value)}
-          style={styles.rating}
-        />
-        <TextInput
-          style={styles.input}
-          onChangeText={setFeedback}
-          value={feedback}
-          placeholder="시간약속을 잘지켜서 좋았어요"
-          multiline
-        />
-
-        <Text>OOO님 에게 리뷰를 남겨주세요</Text>
-        <Button
-          title="전송"
-          onPress={() =>
-            console.log("Rating: ", rating, "Feedback: ", feedback)
-          }
-          // 여기 서버에 뭐 날려야될것같음.
-        />
-      </View>
-    </View>
+    <ScrollView style={styles.container}>
+      {reviews.map((review) => (
+        <View key={review.id} style={styles.card}>
+          <Text style={styles.name}>{review.name}님의 리뷰</Text>
+          <Rating
+            type="star"
+            ratingCount={5}
+            imageSize={20}
+            readonly
+            startingValue={review.rating}
+          />
+          <Text style={styles.comment}>{review.comment}</Text>
+        </View>
+      ))}
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#d4edda", // 배경색
+    backgroundColor: '#d4edda',
   },
   card: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
-    width: "80%", // 너비
-    alignItems: "center", // 내부 요소 정렬
-    shadowColor: "#000", // 그림자 색
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    margin: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
   },
-  rating: {
-    paddingVertical: 10,
+  name: {
+    fontWeight: 'bold',
   },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ced4da",
-    borderRadius: 5,
-    width: "100%",
-    minHeight: 100, // 최소 높이
-    padding: 10,
-    marginTop: 10, // 상단 여백
-    textAlignVertical: "top", // 텍스트 상단 정렬
+  comment: {
+    marginTop: 10,
   },
 });
 
-export default Review;
+export default ReviewList;

@@ -1,33 +1,52 @@
-// App.js
-import React, { useState } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import BottomTabNavigator from "./navigations/BottomTabNavigator";
-import LogIn from "./screens/LogIn";
-import CertificationScreen from './screens/CertificationScreen'; // 적절한 경로로 수정하세요
+import React, { useState, useEffect } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import LogIn from './screens/LogIn';
+import CertificationScreen from './screens/CertificationScreen';
+import BottomTabNavigator from './navigations/BottomTabNavigator';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const Stack = createStackNavigator();
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const Stack = createStackNavigator();
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isLicenseRegistered, setIsLicenseRegistered] = useState(false);
+
+  // 사용자 로그인 및 자격증 등록 상태 확인
+  useEffect(() => {
+    const initializeApp = async () => {
+      const userInfo = await AsyncStorage.getItem('@user');
+      const licenseInfo = await AsyncStorage.getItem('@license');
+      setIsSignedIn(!!userInfo);
+      setIsLicenseRegistered(!!licenseInfo);
+    };
+
+    initializeApp();
+  }, []);
 
   const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
+    setIsSignedIn(true);
   };
 
-  const StackNavigator = () => (
-    <Stack.Navigator>
-      <Stack.Screen name="LogIn" component={LogIn} />
-      <Stack.Screen name="Certification" component={CertificationScreen} />
-    </Stack.Navigator>
-  );
+  const handleCertificationScreenSuccess = () => {
+    setIsLicenseRegistered(true);
+  };
 
   return (
     <NavigationContainer>
-      {!isLoggedIn ? (
-        <LogIn onLoginSuccess={handleLoginSuccess} />
-      ) : (
-        <BottomTabNavigator />
-      )}
+      <Stack.Navigator>
+        {!isSignedIn ? (
+          <Stack.Screen name="LogIn">
+            {props => <LogIn {...props} onLoginSuccess={handleLoginSuccess} />}
+          </Stack.Screen>
+        ) : !isLicenseRegistered ? (
+          <Stack.Screen name="CertificationScreen">
+            {props => <CertificationScreen {...props} onCertificationScreenSuccess={handleCertificationScreenSuccess} />}
+          </Stack.Screen>
+        ) : (
+          <Stack.Screen name="BottomTabNavigator" component={BottomTabNavigator} />
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };

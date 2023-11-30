@@ -2,10 +2,10 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import MyInfo from "../screens/MyInfo";
-import ReviewTaxiMyInfo from "../screens/ReviewTaxiMyInfo";
 
 
-import Review from "../screens/Review";
+import DriverInfo from "../screens/DriverInfo";
+import PayMentScreen from "../screens/PayMentScreen";
 // 이거는 리뷰 등록하는 스크린인데 테스트 때문에 일단 씀.
 const Stack = createStackNavigator();
 
@@ -19,15 +19,15 @@ function MyInfoStackNavigator() {
       />
 
       <Stack.Screen
-        name="Review"
-        component={Review}
-        options={{ title: "리뷰작성 (임시)" }}
+        name="PayMentScreen"
+        component={PayMentScreen}
+        options={{ title: "결제내역 (임시)" }}
       />
 
       <Stack.Screen
-        name="ReviewTaxiMyInfo"
-        component={ReviewTaxiMyInfo}
-        options={{ title: "내가 택시기사에게 보낸 리뷰" }}
+        name="DriverInfo"
+        component={DriverInfo}
+        options={{ title: "기사 정보" }}
       />
     </Stack.Navigator>
   );

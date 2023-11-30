@@ -8,17 +8,17 @@ function MyInfo({ navigation }) {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("ReviewTaxiMyInfo")}
+        onPress={() => navigation.navigate("DriverInfo")}
       >
-        <Text style={styles.buttonText}>내가 남긴 택시 기사 리뷰</Text>
+        <Text style={styles.buttonText}>기사 정보</Text>
       </TouchableOpacity>
       <View style={styles.separator} />
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("Review")}
+        onPress={() => navigation.navigate("PayMentScreen")}
       >
-        <Text style={styles.buttonText}>리뷰(임시)</Text>
+        <Text style={styles.buttonText}>결제 내역(임시)</Text>
       </TouchableOpacity>
     </View>
   );

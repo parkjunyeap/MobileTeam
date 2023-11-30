@@ -1,8 +1,37 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Switch, TouchableOpacity } from 'react-native';
 
 const TaxiTouch = () => {
   const [isDriving, setIsDriving] = useState(false);
+  const [taxiRequest, setTaxiRequest] = useState(null);
+
+  // 운행 스위치 상태가 바뀔 때마다 실행되는 useEffect
+  useEffect(() => {
+    if (isDriving) {
+      // 백엔드에서 데이터를 가져오는 것으로 가정
+      setTaxiRequest({
+        distance: '6.5KM',
+        duration: '11분',
+        pickup: '백화점',
+        dropoff: '시민공원',
+      });
+    } else {
+      setTaxiRequest(null);
+    }
+  }, [isDriving]); // 의존성 배열에 isDriving을 넣어 상태 변경을 감지합니다.
+
+  // 운행 스위치를 토글할 때 호출될 함수
+  const toggleSwitch = () => {
+    setIsDriving(previousState => !previousState);
+  };
+
+  const acceptRequest = () => {
+    console.log('택시 요청 수락');
+  };
+
+  const rejectRequest = () => {
+    console.log('택시 요청 거절');
+  };
 
   return (
     <View style={styles.container}>
@@ -15,21 +44,22 @@ const TaxiTouch = () => {
         <Switch
           trackColor={{ false: '#767577', true: '#81b0ff' }}
           thumbColor={isDriving ? '#f5dd4b' : '#f4f3f4'}
-          onValueChange={() => setIsDriving(previousState => !previousState)}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleSwitch}
           value={isDriving}
         />
       </View>
 
-      {/* 출발지와 목적지 정보 카드 */}
-      {isDriving && (
+      {/* 택시 요청 정보 카드 */}
+      {isDriving && taxiRequest && (
         <View style={styles.infoCard}>
-          <Text style={styles.distance}>6.5KM 11분</Text>
-          <Text style={styles.route}>백화점 > 시민공원</Text>
+          <Text style={styles.distance}>{`${taxiRequest.distance} ${taxiRequest.duration}`}</Text>
+          <Text style={styles.route}>{`${taxiRequest.pickup}  ${taxiRequest.dropoff}`}</Text>
           <View style={styles.buttonsContainer}>
-            <TouchableOpacity style={[styles.button, styles.acceptButton]}>
+            <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={acceptRequest}>
               <Text style={styles.buttonText}>수락</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.rejectButton]}>
+            <TouchableOpacity style={[styles.button, styles.rejectButton]} onPress={rejectRequest}>
               <Text style={styles.buttonText}>거절</Text>
             </TouchableOpacity>
           </View>
@@ -38,6 +68,9 @@ const TaxiTouch = () => {
     </View>
   );
 };
+
+// ... 스타일 정의 ...
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

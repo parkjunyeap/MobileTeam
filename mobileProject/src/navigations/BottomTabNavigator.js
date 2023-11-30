@@ -40,7 +40,7 @@ const BottomTabNavigator = () => {
       />
       {/* 내정보 화면 */}
       <BTab.Screen
-        name="내정보"
+        name="정보"
         component={MyInfoStackNavigator}
         options={{
           tabBarIcon: ({ size, color }) => (
