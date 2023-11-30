@@ -82,7 +82,11 @@ const User = ({ item }) => {
 
   const sendFriendRequest = async (currentUserId, selectedUserId) => {
     try {
+<<<<<<< Updated upstream
       const response = await fetch("http://10.20.64.236:8000/friend-request", {
+=======
+      const response = await fetch("http://10.20.64.216:8000/friend-request", {
+>>>>>>> Stashed changes
         // 친구추가 요청 보내기
         method: "POST",
         headers: {

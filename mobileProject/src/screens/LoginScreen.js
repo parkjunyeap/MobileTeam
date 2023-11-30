@@ -46,7 +46,11 @@ const LoginScreen = () => {
     };
 
     axios
+<<<<<<< Updated upstream
       .post("http://10.20.64.236:8000/login", user)
+=======
+      .post("http://10.20.64.216:8000/login", user)
+>>>>>>> Stashed changes
       .then((response) => {
         console.log(response);
         const token = response.data.token;

@@ -12,7 +12,11 @@ const ChatScreen = () => {
     const acceptedFriendsList = async () => {
       try {
         const response = await fetch(
+<<<<<<< Updated upstream
           `http://10.20.64.236:8000/accepted-friends/${userId}`
+=======
+          `http://10.20.64.216:8000/accepted-friends/${userId}`
+>>>>>>> Stashed changes
         );
         const data = await response.json();
 

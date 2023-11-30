@@ -9,7 +9,11 @@ const useFetch = (endpoint, query) => {
 
   const options = {
     method: "POST",
+<<<<<<< Updated upstream
     url: `10.20.64.236:3000${endpoint}`,
+=======
+    url: `10.20.64.216:3000${endpoint}`,
+>>>>>>> Stashed changes
 
     params: { ...query },
   };

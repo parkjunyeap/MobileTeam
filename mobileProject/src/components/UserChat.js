@@ -10,7 +10,11 @@ const UserChat = ({ item }) => {
   const fetchMessages = async () => {
     try {
       const response = await fetch(
+<<<<<<< Updated upstream
         `http://10.20.64.236:8000/messages/${userId}/${item._id}`
+=======
+        `http://10.20.64.216:8000/messages/${userId}/${item._id}`
+>>>>>>> Stashed changes
       );
       const data = await response.json();
 

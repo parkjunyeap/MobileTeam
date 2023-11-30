@@ -67,7 +67,11 @@ const HomeScreen = () => {
       setUserId(userId);
 
       axios
+<<<<<<< Updated upstream
         .get(`http://10.20.64.236:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
+=======
+        .get(`http://10.20.64.216:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
+>>>>>>> Stashed changes
         .then((response) => {
           console.log("Response data:", response.data);
           setUsers(response.data);

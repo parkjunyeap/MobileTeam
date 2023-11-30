@@ -17,7 +17,11 @@ const Review = () => {
     };
 
     // 현재 바꾼디비랑 안맞아서 못씀.
+<<<<<<< Updated upstream
     Axios.post("http://10.20.64.236:8000/reviews", reviewData)
+=======
+    Axios.post("http://10.20.64.216:8000/reviews", reviewData)
+>>>>>>> Stashed changes
       .then(function (response) {
         console.log(response.data);
       })

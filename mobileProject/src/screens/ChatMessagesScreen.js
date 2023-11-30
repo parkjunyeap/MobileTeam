@@ -60,7 +60,11 @@ const ChatMessagesScreen = () => {
   const fetchMessages = async () => {
     try {
       const response = await fetch(
+<<<<<<< Updated upstream
         `http://10.20.64.236:8000/messages/${userId}/${recepientId}`
+=======
+        `http://10.20.64.216:8000/messages/${userId}/${recepientId}`
+>>>>>>> Stashed changes
       );
       const data = await response.json();
 
@@ -82,7 +86,11 @@ const ChatMessagesScreen = () => {
     const fetchRecepientData = async () => {
       try {
         const response = await fetch(
+<<<<<<< Updated upstream
           `http://10.20.64.236:8000/user/${recepientId}`
+=======
+          `http://10.20.64.216:8000/user/${recepientId}`
+>>>>>>> Stashed changes
         );
 
         const data = await response.json();
@@ -113,7 +121,11 @@ const ChatMessagesScreen = () => {
         formData.append("messageText", message);
       }
 
+<<<<<<< Updated upstream
       const response = await fetch("http://10.20.64.236:8000/messages", {
+=======
+      const response = await fetch("http://10.20.64.216:8000/messages", {
+>>>>>>> Stashed changes
         method: "POST",
         body: formData,
       });
@@ -186,7 +198,11 @@ const ChatMessagesScreen = () => {
 
   const deleteMessages = async (messageIds) => {
     try {
+<<<<<<< Updated upstream
       const response = await fetch("http://10.20.64.236:8000/deleteMessages", {
+=======
+      const response = await fetch("http://10.20.64.216:8000/deleteMessages", {
+>>>>>>> Stashed changes
         method: "POST",
         headers: {
           "Content-Type": "application/json",

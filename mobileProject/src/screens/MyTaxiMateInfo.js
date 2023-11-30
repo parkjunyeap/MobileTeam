@@ -81,7 +81,11 @@ const MyTaxiMateInfo = () => {
   const viewTaxiMateInfo = async () => {
     try {
       const response = await fetch(
+<<<<<<< Updated upstream
         `http://10.20.64.236:8000/ViewTaxiMateInfo/${userId}`
+=======
+        `http://10.20.64.216:8000/ViewTaxiMateInfo/${userId}`
+>>>>>>> Stashed changes
       );
 
       const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
@@ -169,7 +173,11 @@ const MyTaxiMateInfo = () => {
 
     // 유저택시정보저장
     axios
+<<<<<<< Updated upstream
       .post("http://10.20.64.236:8000/setTaxiMateInfo", userTaxiInfo)
+=======
+      .post("http://10.20.64.216:8000/setTaxiMateInfo", userTaxiInfo)
+>>>>>>> Stashed changes
       .then(function (response) {
         console.log(response);
       })
