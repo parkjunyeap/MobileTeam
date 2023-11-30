@@ -502,3 +502,30 @@ app.get("/reviews/receiver/:userId", async (req, res) => {
     res.status(500).json({ message: "서버 에러 발생" });
   }
 });
+
+// 친구 찾기 조건 : 도, 시 , 출발지 ,목적지.
+
+app.post("/FindTaxiMateDetail", async (req, res) => {
+  try {
+    const { province, city, favoriteStartPoint, favoriteEndPoint } = req.body;
+    // MongoDB에서 사용자 정보를 조회
+    console.log(req.body);
+    const user = await User.find({
+      "infoSetting.province": province,
+      "infoSetting.city": city,
+      "infoSetting.favoriteStartPoint": favoriteStartPoint,
+      "infoSetting.favoriteEndPoint": favoriteEndPoint,
+    });
+    console.log(user);
+    if (!user) {
+      // 해당하는 사용자를 찾지 못한 경우 에러 응답
+      return res.status(404).json({ message: "해당되는 사용자가 없습니다." });
+    }
+
+    // 사용자 정보를 클라이언트에 응답
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error("오류:", error.message);
+    res.status(500).json({ message: "서버 오류가 발생했습니다." });
+  }
+});

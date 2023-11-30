@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, Button } from "react-native";
+import { View, StyleSheet, Text, Button, Alert } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
@@ -55,7 +55,7 @@ const MyTaxiMateInfo = () => {
   const viewTaxiMateInfo = async () => {
     try {
       const response = await fetch(
-        `http://10.20.65.66:8000/ViewTaxiMateInfo/${userId}`
+        `http://192.168.0.14:8000/ViewTaxiMateInfo/${userId}`
       );
 
       const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
@@ -137,13 +137,18 @@ const MyTaxiMateInfo = () => {
 
     // 유저택시정보저장
     axios
-      .post("http://10.20.65.66:8000/setTaxiMateInfo", userTaxiInfo)
+      .post("http://192.168.0.14:8000/setTaxiMateInfo", userTaxiInfo)
       .then(function (response) {
         console.log(response);
+        Alert.alert(
+          "사용자 택시 정보 저장 성공!!",
+          "성공적으로 저장되었습니다"
+        );
       })
       .catch(function (error) {
         // 오류발생시 실행
         console.log("이 오류 : ", error.message);
+        Alert.alert("알수없는 오류");
       });
   };
 

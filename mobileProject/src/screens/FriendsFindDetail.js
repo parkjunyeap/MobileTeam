@@ -9,7 +9,14 @@ import { useNavigation } from "@react-navigation/native";
 
 import locationData from "../locationData";
 
+import axios from "axios";
+import { UserType } from "../UserContext";
+import { useContext } from "react";
+
 const FriendsFindDetail = () => {
+  const { userId, setUserId } = useContext(UserType);
+  console.log({ userId });
+
   const [selectedProvince, setSelectedProvince] = useState(
     Object.keys(locationData)[0]
   );
@@ -18,15 +25,6 @@ const FriendsFindDetail = () => {
   );
   const [favoriteStartLocation, setFavoriteStartLocation] = useState("");
   const [favoriteEndLocation, setFavoriteEndLocation] = useState("");
-  // const [favoriteTime1, setFavoriteTime1] = useState({
-  //   hour: "01",
-  //   minute: "00",
-  // });
-  // const [favoriteTime2, setFavoriteTime2] = useState({
-  //   hour: "01",
-  //   minute: "00",
-  // });
-  // 시간
 
   const onProvinceChange = (province) => {
     setSelectedProvince(province);
@@ -35,6 +33,15 @@ const FriendsFindDetail = () => {
   };
 
   // useState 로 관리하는거 즐겨타는 출발지 , 목적지 , 시간 도 해야되는데,,
+
+  const findTaxiInfo = {
+    userId: userId, // 로그인 한 사람 id
+    province: selectedProvince, // 도
+    city: selectedCity, // 시
+    favoriteStartPoint: favoriteStartLocation, // 출발지,
+    favoriteEndPoint: favoriteEndLocation,
+  };
+  console.log("서버로 보낼 상세 설정부분 :", findTaxiInfo);
 
   const handleStartLocationChange = (value) => {
     setFavoriteStartLocation(value);
@@ -58,15 +65,40 @@ const FriendsFindDetail = () => {
     console.log("선택한 시:", selectedCity);
     console.log("즐겨타는 출발지:", favoriteStartLocation);
     console.log("즐겨타는 목적지:", favoriteEndLocation);
-    // console.log(
-    //   "즐겨타는 시간대 1:",
-    //   favoriteTime1.hour + ":" + favoriteTime1.minute
-    // );
-    // console.log(
-    //   "즐겨타는 시간대 2:",
-    //   favoriteTime2.hour + ":" + favoriteTime2.minute
-    // );
 
+    const findTaxiInfo = {
+      userId: userId, // 로그인 한 사람 id
+      province: selectedProvince, // 도
+      city: selectedCity, // 시
+      favoriteStartPoint: favoriteStartLocation, // 출발지,
+      favoriteEndPoint: favoriteEndLocation,
+    };
+    console.log("서버로 보낼 상세 설정부분 :", findTaxiInfo);
+    axios
+      .post("http://192.168.0.14:8000/FindTaxiMateDetail", findTaxiInfo)
+      .then(function (response) {
+        console.log("확인 :", response);
+        const users = response.data.user;
+        if (users.length === 0) {
+          console.log("해당하는 사용자를 찾을 수 없습니다.");
+        } else {
+          // 사용자 정보 배열을 순회하며 작업 수행
+          users.forEach((user) => {
+            const userGId = user._id;
+            const userName = user.name;
+            if (userId !== userGId) {
+              console.log("사용자 _id:", userGId);
+              console.log("사용자 이름:", userName);
+            }
+
+            // 추가 정보 출력 또는 다른 작업 수행
+          });
+        }
+      })
+      .catch(function (error) {
+        // 오류발생시 실행
+        console.log("이 오류 : ", error.message);
+      });
     // 이 정보들을 서버로 전송하거나 다른 작업을 수행할 수 있습니다.
     navigation.goBack();
   };

@@ -17,8 +17,12 @@ const userSchema = new mongoose.Schema({
   },
   image: {
     type: String,
+    default:
+      "https://e7.pngegg.com/pngimages/981/645/png-clipart-default-profile-united-states-computer-icons-desktop-free-high-quality-person-icon-miscellaneous-silhouette.png",
     required: true, // 사용자 프로필 이미지, 필수 입력 필드
   },
+
+  // 이거그냥 기본이미지로 해볼려함.
   freindRequests: [
     {
       type: mongoose.Schema.Types.ObjectId,
