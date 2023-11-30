@@ -9,6 +9,9 @@ const User = ({ item }) => {
   // 현재 로그인 한 사람 누군지 알수있으려고
   const [modalVisible, setModalVisible] = useState(false);
 
+  // console.log("이렇게하면 이름이나와?: ", userId);
+  // 이럼설마 이름이나온다고???
+
   // navigation 쓰려면
   const navigation = useNavigation();
 
@@ -22,6 +25,7 @@ const User = ({ item }) => {
         },
         body: JSON.stringify({ currentUserId, selectedUserId }),
       });
+      console.log(currentUserId, selectedUserId); // 여기에서 친구요청보낼때 선택된 아이디가 뜨겠구나.
 
       if (response.ok) {
         setRequestSent(true);
@@ -103,14 +107,20 @@ const User = ({ item }) => {
                 alignItems: "center",
               }}
             >
+              {/* // 리뷰 남기기 창 */}
+
               <Pressable
                 style={[
                   styles.button,
                   styles.buttonClose,
                   { marginRight: 10, marginTop: 10 },
                 ]}
-                onPress={() => navigation.navigate("writeReview")}
-                // 리뷰 남기기 창
+                onPress={() =>
+                  navigation.navigate("writeReview", {
+                    selectedUserId: item._id, // 이렇게하면 지금 selectedUserId 도 보내줄
+                    selectedUserName: item.name, // 선택한 아이템의 이름도 보내줌
+                  })
+                }
               >
                 <Text style={styles.textStyle}>리뷰 남기기</Text>
               </Pressable>

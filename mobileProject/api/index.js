@@ -36,28 +36,30 @@ const Message = require("./models/message");
 const Driver = require("./models/driver");
 const Review = require("./models/review");
 
-// 임시 // 나중에바꿔야함
-// app.post("/reviews", (req, res) => {
-//   // 요청받아
-//   const { title, score } = req.body; // 클라이언트에서 전달한 데이터에서 title과 score를 추출
-//   // console.log(req.params);
+// 임시; // 나중에바꿔야함
+app.post("/write/reviews", (req, res) => {
+  // 요청받아
 
-//   const newReview = new Review({ title, score });
+  console.log(req);
+  const { senderId, receiverId, rating, comment } = req.body; // 클라이언트에서 전달한 데이터에서 title과 score를 추출
 
-//   newReview
-//     .save()
-//     .then((user) => {
-//       console.log(user);
-//       res.json({
-//         message: "리뷰가 등록되었습니다",
-//       });
-//     })
-//     .catch((err) => {
-//       res.json({
-//         message: "리뷰 등록 실패",
-//       });
-//     });
-// });
+  const newReview = new Review({
+    senderId,
+    receiverId,
+    rating,
+    comment,
+  });
+
+  newReview
+    .save()
+    .then(() => {
+      res.status(200).json({ message: "유저가 성공적으로 등록됐다." });
+    })
+    .catch((err) => {
+      console.log("에러발생 등록못함", err);
+      res.status(500).json({ message: "에러발생 등록못함" });
+    });
+});
 
 // 사용자 등록을 위한 라우트 핸들러
 app.post("/register", (req, res) => {
@@ -152,7 +154,7 @@ app.get("/users/:userId", (req, res) => {
 
 //친구추가
 app.post("/friend-request", async (req, res) => {
-  const { currentUserId, selectedUserId } = req.body;
+  const { currentUserId } = req.body;
 
   try {
     console.log("받기목록에 안뜨는거지? 왜?", currentUserId, selectedUserId); // 잘받았는데

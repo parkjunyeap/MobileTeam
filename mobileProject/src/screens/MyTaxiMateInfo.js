@@ -15,6 +15,7 @@ import { UserType } from "../UserContext";
 import { useNavigation } from "@react-navigation/native";
 
 import locationData from "../locationData";
+import { ScrollView } from "react-native-gesture-handler";
 // 지역 2차원배열 로된거 갖고옴
 
 const MyTaxiMateInfo = () => {
@@ -147,7 +148,7 @@ const MyTaxiMateInfo = () => {
   };
 
   return (
-    <View>
+    <ScrollView>
       <Text style={{ fontWeight: "bold", fontSize: 23, marginBottom: 10 }}>
         {" "}
         이름: {name}{" "}
@@ -258,7 +259,7 @@ const MyTaxiMateInfo = () => {
           />
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

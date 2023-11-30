@@ -75,7 +75,7 @@ const HomeScreen = () => {
       axios
         .get(`http://10.20.65.66:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
         .then((response) => {
-          console.log("Response data:", response.data);
+          console.log("Response data:", response.data); // 전부 찍힘.
           setUsers(response.data);
         })
         .catch((error) => {

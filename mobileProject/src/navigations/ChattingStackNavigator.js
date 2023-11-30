@@ -40,6 +40,7 @@ function ChattingStackNavigator() {
 
       <Stack.Screen name="viewReview" component={ViewReview} />
 
+      {/* 이거그냥 리뷰 작성하기 화면 */}
       <Stack.Screen name="writeReview" component={Review} />
       {/* 이름 바꾸기 귀찮으니까. */}
 

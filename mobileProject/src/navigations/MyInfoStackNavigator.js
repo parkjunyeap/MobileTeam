@@ -35,6 +35,7 @@ function MyInfoStackNavigator() {
         component={Review}
         options={{ title: "리뷰작성 (임시)" }}
       />
+
       {/* ViewReview 로 대체할 예정 나에게 온 리뷰도 , 내가 친구에게 or 택시기사에게  보낸리뷰도, "성연호"라는 친구가 받은 리뷰도 , */}
       <Stack.Screen
         name="ReviewTaxiMyInfo"
