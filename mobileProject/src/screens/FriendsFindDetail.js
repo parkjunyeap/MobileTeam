@@ -84,11 +84,12 @@ const FriendsFindDetail = () => {
         } else {
           // 사용자 정보 배열을 순회하며 작업 수행
           users.forEach((user) => {
-            const userId = user._id;
+            const userGId = user._id;
             const userName = user.name;
-            
-            console.log("사용자 _id:", userId);
-            console.log("사용자 이름:", userName);
+            if(userId !== userGId){
+              console.log("사용자 _id:", userGId);
+              console.log("사용자 이름:", userName);
+            }
             
             // 추가 정보 출력 또는 다른 작업 수행
           });

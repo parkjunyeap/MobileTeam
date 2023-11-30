@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, Button } from "react-native";
+import { View, StyleSheet, Text, Button, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
@@ -20,7 +20,7 @@ import locationData from "../locationData";
 const MyTaxiMateInfo = () => {
   // 이렇게하면 로그인한유저 갖고올 수 있음.
   const { userId, setUserId } = useContext(UserType);
-  console.log({userId})
+  console.log({ userId })
   // friendId, friendName 주고싶은데;;
   // 이렇게 하는건 props 만 줘
 
@@ -218,116 +218,118 @@ const MyTaxiMateInfo = () => {
   };
   return (
     <View>
-      <Text style={{ fontWeight: "bold", fontSize: 23, marginBottom: 10 }}>
-        {" "}
-        이름: {name}{" "}
-      </Text>
+      <ScrollView>
+        <Text style={{ fontWeight: "bold", fontSize: 23, marginBottom: 10 }}>
+          {" "}
+          이름: {name}{" "}
+        </Text>
 
-      <Text style={{ fontSize: 20, marginBottom: 5 }}> 택시타는 동네 </Text>
-      {/* Province Picker */}
+        <Text style={{ fontSize: 20, marginBottom: 5 }}> 택시타는 동네 </Text>
+        {/* Province Picker */}
 
-      <Picker
-        selectedValue={selectedProvince}
-        onValueChange={(itemValue) => onProvinceChange(itemValue)}
-        style={{ height: 50, width: 250, marginBottom: 10 }}
-      >
-        {Object.keys(locationData).map((province) => (
-          <Picker.Item key={province} label={province} value={province} />
-        ))}
-      </Picker>
-      {/* City Picker */}
+        <Picker
+          selectedValue={selectedProvince}
+          onValueChange={(itemValue) => onProvinceChange(itemValue)}
+          style={{ height: 50, width: 250, marginBottom: 10 }}
+        >
+          {Object.keys(locationData).map((province) => (
+            <Picker.Item key={province} label={province} value={province} />
+          ))}
+        </Picker>
+        {/* City Picker */}
 
-      <Picker
-        selectedValue={selectedCity}
-        onValueChange={(itemValue) => setSelectedCity(itemValue)}
-        style={styles.picker}
-      >
-        {locationData[selectedProvince].map((city) => (
-          <Picker.Item key={city} label={city} value={city} />
-        ))}
-      </Picker>
+        <Picker
+          selectedValue={selectedCity}
+          onValueChange={(itemValue) => setSelectedCity(itemValue)}
+          style={styles.picker}
+        >
+          {locationData[selectedProvince].map((city) => (
+            <Picker.Item key={city} label={city} value={city} />
+          ))}
+        </Picker>
 
-      <Text style={{ fontSize: 20, marginBottom: 5 }}> 즐겨타는 출발지 </Text>
-      <Text> {favoriteStartLocation} </Text>
-      <View style={styles.location}>
-        <GooglePlacesAutocomplete
-          placeholder="자주타는 출발지를 적어주세요!"
-          styles={{
-            container: { flex: 0 },
-            textInput: { paddingLeft: 20, height: 40 },
-          }}
-          onPress={(data) => handleStartLocationChange(data.description)}
-          onFail={(e) => {
-            console.log("GooglePlacesAutocomplete onFail : ", e);
-          }}
-          query={{ key: MAP_KEY, language: "ko", components: "country:kr" }}
-          debounce={400}
-        />
-        <Text> </Text>
-        <View style={styles.locationIcon}>
-          <MaterialCommunityIcons name="map-marker" size={20} />
-        </View>
-      </View>
-
-      <Text style={{ fontSize: 20, marginBottom: 5 }}> 즐겨타는 출발지 </Text>
-      <Text> {favoriteEndLocation}</Text>
-      <View style={styles.location}>
-        <GooglePlacesAutocomplete
-          placeholder="자주타는 목적지를 적어주세요!"
-          styles={{
-            container: { flex: 0 },
-            textInput: { paddingLeft: 20, height: 40 },
-          }}
-          onPress={(data) => handleEndLocationChange(data.description)}
-          onFail={(e) => {
-            console.log("GooglePlacesAutocomplete onFail : ", e);
-          }}
-          query={{ key: MAP_KEY, language: "ko", components: "country:kr" }}
-          debounce={400}
-        />
-        <View style={styles.locationIcon}>
-          <MaterialCommunityIcons name="map-marker" size={20} />
-        </View>
-      </View>
-
-      <Text> 즐겨타는 시간대 1</Text>
-      <TimePicker
-        selectedHour={favoriteTime1.hour}
-        selectedMinute={favoriteTime1.minute}
-        onHourChange={(hour) => setFavoriteTime1((prev) => ({ ...prev, hour }))}
-        onMinuteChange={(minute) =>
-          setFavoriteTime1((prev) => ({ ...prev, minute }))
-        }
-      />
-
-      <Text> 즐겨타는 시간대 2</Text>
-      <TimePicker
-        selectedHour={favoriteTime2.hour}
-        selectedMinute={favoriteTime2.minute}
-        onHourChange={(hour) => setFavoriteTime2((prev) => ({ ...prev, hour }))}
-        onMinuteChange={(minute) =>
-          setFavoriteTime2((prev) => ({ ...prev, minute }))
-        }
-      />
-
-      {/* 버튼 style 먹이느라 */}
-      <View style={styles.buttonContainer}>
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="리뷰보기"
-            onPress={handleReviewButtonClick}
-            color="#28a745"
+        <Text style={{ fontSize: 20, marginBottom: 5 }}> 즐겨타는 출발지 </Text>
+        <Text> {favoriteStartLocation} </Text>
+        <View style={styles.location}>
+          <GooglePlacesAutocomplete
+            placeholder="자주타는 출발지를 적어주세요!"
+            styles={{
+              container: { flex: 0 },
+              textInput: { paddingLeft: 20, height: 40 },
+            }}
+            onPress={(data) => handleStartLocationChange(data.description)}
+            onFail={(e) => {
+              console.log("GooglePlacesAutocomplete onFail : ", e);
+            }}
+            query={{ key: MAP_KEY, language: "ko", components: "country:kr" }}
+            debounce={400}
           />
+          <Text> </Text>
+          <View style={styles.locationIcon}>
+            <MaterialCommunityIcons name="map-marker" size={20} />
+          </View>
         </View>
-        <View style={{ width: 20 }} />
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="저장"
-            onPress={handleSaveButtonClick}
-            color="#28a745"
+
+        <Text style={{ fontSize: 20, marginBottom: 5 }}> 즐겨타는 출발지 </Text>
+        <Text> {favoriteEndLocation}</Text>
+        <View style={styles.location}>
+          <GooglePlacesAutocomplete
+            placeholder="자주타는 목적지를 적어주세요!"
+            styles={{
+              container: { flex: 0 },
+              textInput: { paddingLeft: 20, height: 40 },
+            }}
+            onPress={(data) => handleEndLocationChange(data.description)}
+            onFail={(e) => {
+              console.log("GooglePlacesAutocomplete onFail : ", e);
+            }}
+            query={{ key: MAP_KEY, language: "ko", components: "country:kr" }}
+            debounce={400}
           />
+          <View style={styles.locationIcon}>
+            <MaterialCommunityIcons name="map-marker" size={20} />
+          </View>
         </View>
-      </View>
+
+        <Text> 즐겨타는 시간대 1</Text>
+        <TimePicker
+          selectedHour={favoriteTime1.hour}
+          selectedMinute={favoriteTime1.minute}
+          onHourChange={(hour) => setFavoriteTime1((prev) => ({ ...prev, hour }))}
+          onMinuteChange={(minute) =>
+            setFavoriteTime1((prev) => ({ ...prev, minute }))
+          }
+        />
+
+        <Text> 즐겨타는 시간대 2</Text>
+        <TimePicker
+          selectedHour={favoriteTime2.hour}
+          selectedMinute={favoriteTime2.minute}
+          onHourChange={(hour) => setFavoriteTime2((prev) => ({ ...prev, hour }))}
+          onMinuteChange={(minute) =>
+            setFavoriteTime2((prev) => ({ ...prev, minute }))
+          }
+        />
+
+        {/* 버튼 style 먹이느라 */}
+        <View style={styles.buttonContainer}>
+          <View style={styles.buttonWrapper}>
+            <Button
+              title="리뷰보기"
+              onPress={handleReviewButtonClick}
+              color="#28a745"
+            />
+          </View>
+          <View style={{ width: 20 }} />
+          <View style={styles.buttonWrapper}>
+            <Button
+              title="저장"
+              onPress={handleSaveButtonClick}
+              color="#28a745"
+            />
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 };
