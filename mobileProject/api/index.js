@@ -34,29 +34,30 @@ app.listen(port, () => {
 const User = require("./models/user");
 const Message = require("./models/message");
 const Driver = require("./models/driver");
+const Review = require("./models/review");
 
 // 임시 // 나중에바꿔야함
-app.post("/reviews", (req, res) => {
-  // 요청받아
-  const { title, score } = req.body; // 클라이언트에서 전달한 데이터에서 title과 score를 추출
-  // console.log(req.params);
+// app.post("/reviews", (req, res) => {
+//   // 요청받아
+//   const { title, score } = req.body; // 클라이언트에서 전달한 데이터에서 title과 score를 추출
+//   // console.log(req.params);
 
-  const newReview = new Review({ title, score });
+//   const newReview = new Review({ title, score });
 
-  newReview
-    .save()
-    .then((user) => {
-      console.log(user);
-      res.json({
-        message: "리뷰가 등록되었습니다",
-      });
-    })
-    .catch((err) => {
-      res.json({
-        message: "리뷰 등록 실패",
-      });
-    });
-});
+//   newReview
+//     .save()
+//     .then((user) => {
+//       console.log(user);
+//       res.json({
+//         message: "리뷰가 등록되었습니다",
+//       });
+//     })
+//     .catch((err) => {
+//       res.json({
+//         message: "리뷰 등록 실패",
+//       });
+//     });
+// });
 
 // 사용자 등록을 위한 라우트 핸들러
 app.post("/register", (req, res) => {
@@ -411,30 +412,6 @@ app.post("/setTaxiMateInfo", async (req, res) => {
   }
 });
 
-// app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
-//   try {
-//     // URL 파라미터에서 userId 추출
-//     const { userId } = req.params; // 프론트엔드에서 userId 만 보냄
-
-//     // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보만 조회
-//     const userInfo = await User.findById(userId).select("infoSetting -_id"); //_id 로 조회
-//     console.log("데이터베이스에서 잘받아오나요?", userInfo);
-//     // 잘받아오네요
-//     // userInfo가 존재하면 infoSetting 필드만 클라이언트에게 JSON 형태로 전송
-
-//     if (userInfo) {
-//       res.json(userInfo);
-//     } else {
-//       // 사용자를 찾을 수 없는 경우 404 에러 전송
-//       res.status(404).send("User not found");
-//     }
-//   } catch (error) {
-//     // 에러 처리
-//     console.error("Server error:", error);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
-
 app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
   try {
     const { userId } = req.params; // 프론트엔드에서 userId 만 보냄
@@ -454,5 +431,72 @@ app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
   } catch (error) {
     console.error("Server error:", error);
     res.status(500).send("Internal Server Error");
+  }
+});
+
+// 리뷰 받은사람 기준 리뷰
+// 서버로부터 보내주기
+
+// app.get("/reviews/receiver/:userId", (req, res) => {
+//   const receiverId = req.body;
+//   console.log(receiverId); // 아이디
+
+//   // 받은 id 로
+//   Review.find({ receiverId })
+//     .then((reviews) => {
+//       res.json(reviews);
+//       console.log(reviews);
+//     })
+//     .catch((err) => {
+//       res.json({
+//         message: "나에게 남긴 리뷰 조회 실패",
+//       });
+//     });
+// });
+
+// app.get("/reviews/receiver/:userId", (req, res) => {
+//   const receiverId = req.params.userId; // URL 경로에서 userId 추출
+//   console.log(receiverId); // 아이디 로깅
+
+//   // receiverId를 사용하여 리뷰 검색
+//   Review.find({ receiverId: mongoose.Types.ObjectId(receiverId) })
+//     .then((reviews) => {
+//       console.log(reviews);
+//       res.json(reviews);
+//     })
+//     .catch((err) => {
+//       res.json({
+//         message: "나에게 남긴 리뷰 조회 실패",
+//       });
+//     });
+// });
+
+// 위에 있는게
+
+// Express.js 라우트 핸들러
+
+// 해당 사람에 리뷰
+// 자신이 받은 리뷰  구현
+app.get("/reviews/receiver/:userId", async (req, res) => {
+  const receiverId = req.params.userId; // URL 경로에서 userId 추출
+  try {
+    const reviews = await Review.find({ receiverId: receiverId }) // Review.find(리시브아이디가 : 요청받은리시브아이디)랑 일치하는지 ?
+      .populate("senderId", "name") // senderId를 참조하여 name 필드만 가져옴 senderId 에 name을 가져옴
+      .populate("receiverId", "name"); // receiverId를 참조하여 name 필드만 가져옴
+
+    // JSON 형태로 변환하여 클라이언트에게 보내기 이름으로된거
+    const reviewsWithNames = reviews.map((review) => ({
+      _id: review._id,
+      senderName: review.senderId.name, // sender의 이름
+      receiverName: review.receiverId.name, // receiver의 이름
+      rating: review.rating,
+      comment: review.comment,
+      reviewDate: review.reviewDate,
+    }));
+
+    res.json(reviewsWithNames);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "서버 에러 발생" });
   }
 });

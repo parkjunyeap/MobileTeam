@@ -54,7 +54,7 @@ const MyTaxiMateInfo = () => {
   const viewTaxiMateInfo = async () => {
     try {
       const response = await fetch(
-        `http://192.168.0.14:8000/ViewTaxiMateInfo/${userId}`
+        `http://10.20.65.66:8000/ViewTaxiMateInfo/${userId}`
       );
 
       const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
@@ -101,6 +101,7 @@ const MyTaxiMateInfo = () => {
   };
 
   const handleReviewButtonClick = () => {
+    navigation.navigate("ViewReview");
     // 나한테 온 리뷰 보기임.
     // 리뷰 보기 버튼 클릭 시 실행할 코드 작성
   };
@@ -135,7 +136,7 @@ const MyTaxiMateInfo = () => {
 
     // 유저택시정보저장
     axios
-      .post("http://192.168.0.14:8000/setTaxiMateInfo", userTaxiInfo)
+      .post("http://10.20.65.66:8000/setTaxiMateInfo", userTaxiInfo)
       .then(function (response) {
         console.log(response);
       })

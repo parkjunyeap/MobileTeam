@@ -4,11 +4,13 @@ import { UserType } from "../UserContext";
 import axios from "axios";
 import FriendRequest from "../components/FriendRequest";
 
+// 나에게온 친구요청 확인하는 화면
 const FriendsScreen = () => {
   const { userId, setUserId } = useContext(UserType);
   // userId 지금 로그인한 갖고옴
-  const [friendRequests, setFriendRequests] = useState([]);
 
+  const [friendRequests, setFriendRequests] = useState([]);
+  // 배열로 친구요청온거 [id, name, email, image] 이렇게하나씩 저장.
   useEffect(() => {
     fetchFriendRequests();
   }, []);
@@ -16,7 +18,7 @@ const FriendsScreen = () => {
   const fetchFriendRequests = async () => {
     try {
       const response = await axios.get(
-        `http://192.168.0.14:8000/friend-request/${userId}`
+        `http://10.20.65.66:8000/friend-request/${userId}`
       );
       if (response.status === 200) {
         const friendRequestsData = response.data.map((freindRequest) => ({
