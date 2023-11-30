@@ -68,7 +68,7 @@ const HomeScreen = () => {
       setUserId(userId);
 
       axios
-        .get(`http://10.20.32.84:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
+        .get(`http://10.20.60.1:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
         .then((response) => {
           console.log("Response data:", response.data);
           setUsers(response.data);

@@ -6,10 +6,14 @@ import { MAP_KEY } from "../../env";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import TimePicker from "../components/TimePicker";
 import { useNavigation } from "@react-navigation/native";
-
+import axios from "axios";
+import { UserType } from "../UserContext";
+import { useContext } from "react";
 import locationData from "../locationData";
 
 const FriendsFindDetail = () => {
+  const { userId, setUserId } = useContext(UserType);
+  console.log({userId})
   const [selectedProvince, setSelectedProvince] = useState(
     Object.keys(locationData)[0]
   );
@@ -62,10 +66,33 @@ const FriendsFindDetail = () => {
       "즐겨타는 시간대 2:",
       favoriteTime2.hour + ":" + favoriteTime2.minute
     );
+    const findTaxiInfo={
+      userId: userId, // 로그인 한 사람 id
+      province: selectedProvince, // 도
+      city: selectedCity, // 시
+      favoriteStartPoint: favoriteStartLocation, // 출발지,
+      favoriteEndPoint: favoriteEndLocation
+    }
+    console.log("서버로 보낼 상세 설정부분 :", findTaxiInfo)
     axios
-      .post("http://10.20.32.84:8000/FindTaxiMateDetail", userTaxiInfo)
+      .post("http://10.20.60.1:8000/FindTaxiMateDetail", findTaxiInfo)
       .then(function (response) {
-        console.log(response);
+        console.log("확인 :",response)
+        const users = response.data.user
+        if (users.length === 0) {
+          console.log("해당하는 사용자를 찾을 수 없습니다.");
+        } else {
+          // 사용자 정보 배열을 순회하며 작업 수행
+          users.forEach((user) => {
+            const userId = user._id;
+            const userName = user.name;
+            
+            console.log("사용자 _id:", userId);
+            console.log("사용자 이름:", userName);
+            
+            // 추가 정보 출력 또는 다른 작업 수행
+          });
+        }
       })
       .catch(function (error) {
         // 오류발생시 실행
