@@ -39,6 +39,9 @@ const FriendsScreen = () => {
 
   return (
     <View style={{ padding: 10, marginHorizontal: 12 }}>
+      {friendRequests.length === 0 && (
+        <Text style={{ fontSize: 25 }}> 친구 요청이 하나도 없습니다..</Text>
+      )}
       {friendRequests.length > 0 && <Text> 친구 요청</Text>}
 
       {friendRequests.map((item, index) => (
