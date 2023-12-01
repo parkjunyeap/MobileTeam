@@ -1,6 +1,12 @@
 // 사실상 지금 현재 채팅화면 부분
 
-import { StyleSheet, Text, View, ScrollView,TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import React, { useLayoutEffect, useContext, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -68,9 +74,9 @@ const HomeScreen = () => {
       setUserId(userId);
 
       axios
-        .get(`http://10.20.60.1:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
+        .get(`http://10.20.64.226:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
         .then((response) => {
-          console.log("Response data:", response.data);
+          console.log("Response data:", response.data); // 전부 찍힘.
           setUsers(response.data);
         })
         .catch((error) => {
@@ -92,6 +98,13 @@ const HomeScreen = () => {
         <Text style={styles.buttonText}>친구 찾기</Text>
       </TouchableOpacity>
       <ScrollView>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("FriendsFindDetail")}
+        >
+          <Text style={styles.buttonText}>친구 찾기</Text>
+        </TouchableOpacity>
+
         <View style={{ padding: 15 }}>
           {/* // index = key , item == item.... */}
           {users.map((item, index) => (
@@ -114,5 +127,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-})
-
+  buttonText: {
+    color: "#fff",
+    // Add other styles for your text if needed
+  },
+});

@@ -77,6 +77,8 @@ const FriendsFind = ({ navigation }) => {
   return (
     // 친구 찾기 누르면 친구 찾기 페이지로 이동
     <View>
+      {/* 친구찾기버튼 */}
+
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("FriendsFindDetail")}

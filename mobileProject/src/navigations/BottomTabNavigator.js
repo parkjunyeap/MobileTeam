@@ -5,12 +5,13 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 // 화면 컴포넌트 임포트
 import TaxiTouch from "../screens/TaxiTouch";
-import Chatting from "../screens/Chatting";
+// import Chatting from "../screens/Chatting";
 
 import MyInfoStackNavigator from "./MyInfoStackNavigator"; // StackNavigator import
 import FriendsFindStackNavigator from "./FriendsFindStackNavigator";
 import FriendsListStackNavigator from "./FriendsListStackNavigator";
 import ChattingStackNavigator from "./ChattingStackNavigator";
+
 const BTab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {

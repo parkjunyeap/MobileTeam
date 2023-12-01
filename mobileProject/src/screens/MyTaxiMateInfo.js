@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, Button, ScrollView } from "react-native";
+import { View, StyleSheet, Text, Button, Alert } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
@@ -15,6 +15,7 @@ import { useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import locationData from "../locationData";
+import { ScrollView } from "react-native-gesture-handler";
 // 지역 2차원배열 로된거 갖고옴
 
 const MyTaxiMateInfo = () => {
@@ -53,38 +54,11 @@ const MyTaxiMateInfo = () => {
     setSelectedCity(citiesForProvince[0]);
   };
 
-  // const provinces = [
-  //   "강원도",
-  //   "경기도",
-  //   "경상남도",
-  //   "경상북도",
-  //   "광주광역시",
-  //   "대구광역시",
-  //   "대전광역시",
-  //   "부산광역시",
-  //   "서울특별시",
-  //   "세종특별자치시",
-  //   "울산광역시",
-  //   "인천광역시",
-  //   "전라남도",
-  //   "전라북도",
-  //   "제주특별자치도",
-  //   "충청남도",
-  //   "충청북도",
-  // ]; // 한국의 도 목록
-
-  // const cities = [
-  //   "아산시",
-  //   "천안시",
-  //   "공주시",
-  //   // ... 다른 시 목록이 있다면 추가
-  // ];
-
   // 서버에서 택시친구 정보 갖고오기
   const viewTaxiMateInfo = async () => {
     try {
       const response = await fetch(
-        `http://10.20.60.1:8000/ViewTaxiMateInfo/${userId}`
+        `http://10.20.64.226:8000/ViewTaxiMateInfo/${userId}`
       );
 
       const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
@@ -130,15 +104,9 @@ const MyTaxiMateInfo = () => {
     setFavoriteEndLocation(value);
   };
 
-  // const handleTime1Change = (value) => {
-  //   setFavoriteTime1(value);
-  // };
-
-  // const handleTime2Change = (value) => {
-  //   setFavoriteTime2(value);
-  // };
-
   const handleReviewButtonClick = () => {
+    navigation.navigate("ViewMyReview");
+    // 나한테 온 리뷰 보기임.
     // 리뷰 보기 버튼 클릭 시 실행할 코드 작성
   };
   useEffect(() => {
@@ -207,22 +175,26 @@ const MyTaxiMateInfo = () => {
 
     // 유저택시정보저장
     axios
-      .post("http://10.20.60.1:8000/setTaxiMateInfo", userTaxiInfo)
+      .post("http://10.20.64.226:8000/setTaxiMateInfo", userTaxiInfo)
       .then(function (response) {
         console.log(response);
+        Alert.alert(
+          "사용자 택시 정보 저장 성공!!",
+          "성공적으로 저장되었습니다"
+        );
       })
       .catch(function (error) {
         // 오류발생시 실행
         console.log("이 오류 : ", error.message);
+        Alert.alert("알수없는 오류");
       });
   };
   return (
-    <View>
-      <ScrollView>
-        <Text style={{ fontWeight: "bold", fontSize: 23, marginBottom: 10 }}>
-          {" "}
-          이름: {name}{" "}
-        </Text>
+    <ScrollView>
+      <Text style={{ fontWeight: "bold", fontSize: 23, marginBottom: 10 }}>
+        {" "}
+        이름: {name}{" "}
+      </Text>
 
         <Text style={{ fontSize: 20, marginBottom: 5 }}> 택시타는 동네 </Text>
         {/* Province Picker */}
@@ -290,47 +262,7 @@ const MyTaxiMateInfo = () => {
             <MaterialCommunityIcons name="map-marker" size={20} />
           </View>
         </View>
-
-        <Text> 즐겨타는 시간대 1</Text>
-        <TimePicker
-          selectedHour={favoriteTime1.hour}
-          selectedMinute={favoriteTime1.minute}
-          onHourChange={(hour) => setFavoriteTime1((prev) => ({ ...prev, hour }))}
-          onMinuteChange={(minute) =>
-            setFavoriteTime1((prev) => ({ ...prev, minute }))
-          }
-        />
-
-        <Text> 즐겨타는 시간대 2</Text>
-        <TimePicker
-          selectedHour={favoriteTime2.hour}
-          selectedMinute={favoriteTime2.minute}
-          onHourChange={(hour) => setFavoriteTime2((prev) => ({ ...prev, hour }))}
-          onMinuteChange={(minute) =>
-            setFavoriteTime2((prev) => ({ ...prev, minute }))
-          }
-        />
-
-        {/* 버튼 style 먹이느라 */}
-        <View style={styles.buttonContainer}>
-          <View style={styles.buttonWrapper}>
-            <Button
-              title="리뷰보기"
-              onPress={handleReviewButtonClick}
-              color="#28a745"
-            />
-          </View>
-          <View style={{ width: 20 }} />
-          <View style={styles.buttonWrapper}>
-            <Button
-              title="저장"
-              onPress={handleSaveButtonClick}
-              color="#28a745"
-            />
-          </View>
-        </View>
-      </ScrollView>
-    </View>
+    </ScrollView>
   );
 };
 

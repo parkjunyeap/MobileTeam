@@ -8,17 +8,17 @@ function MyInfo({ navigation }) {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("ReviewTaxiMyInfo")}
+        onPress={() => navigation.navigate("ViewWrittenMyReviewT")}
       >
-        <Text style={styles.buttonText}>내가 남긴 택시 기사 리뷰</Text>
+        <Text style={styles.buttonText}>내가 택시 기사님에게 쓴 리뷰</Text>
       </TouchableOpacity>
       <View style={styles.separator} />
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("ReviewTaxiMateMyInfo")}
+        onPress={() => navigation.navigate("ViewWrittenMyReview")}
       >
-        <Text style={styles.buttonText}>내가 남긴 택시 친구 리뷰</Text>
+        <Text style={styles.buttonText}>내가 택시 친구에게 쓴 리뷰</Text>
       </TouchableOpacity>
       <View style={styles.separator} />
 
@@ -38,12 +38,12 @@ function MyInfo({ navigation }) {
       </TouchableOpacity>
       <View style={styles.separator} />
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("Review")}
       >
         <Text style={styles.buttonText}>리뷰(임시)</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }
