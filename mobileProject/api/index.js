@@ -153,10 +153,11 @@ app.get("/users/:userId", (req, res) => {
     });
 });
 
-//친구추가
+//친구추가요청 잘됐는지 불러옴
 app.post("/friend-request", async (req, res) => {
-  const { currentUserId } = req.body;
-
+  const { currentUserId, selectedUserId } = req.body;
+  console.log("이거 왜 ", currentUserId);
+  // 현재 친구추가 누른 사람 아이디
   try {
     console.log("받기목록에 안뜨는거지? 왜?", currentUserId, selectedUserId); // 잘받았는데
     //update the recepient's friendRequestsArray! // 받는사람 이건 잘안됨 ,,
@@ -232,7 +233,7 @@ app.post("/friend-request/accept", async (req, res) => {
 
 // 여기서 부터 그냥 복붙
 
-//endpoint to access all the friends of the logged in user!
+// 친구목록 조회해서 이름 이메일 이미지 불러오는 코드
 app.get("/accepted-friends/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -338,6 +339,7 @@ app.post("/deleteMessages", async (req, res) => {
   }
 });
 
+// 친구요청 보낸 사람 목록 조회하는거지 맞아 근데 이걸 프론트엔드에서 썻나? 안씀.
 app.get("/friend-requests/sent/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -354,8 +356,8 @@ app.get("/friend-requests/sent/:userId", async (req, res) => {
   }
 });
 
+// 로그인한 유저에게서 친구가 누군지 받아오는 코드구나~
 app.get("/friends/:userId", (req, res) => {
-  // 로그인한 유저에게서 친구가 누군지 받아오는 코드구나~
   try {
     const { userId } = req.params; // userId 를 받아와서
 
