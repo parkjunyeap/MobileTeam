@@ -1,3 +1,5 @@
+// 친구 요청받은 사람들 채팅창에 플랫리스트로 채팅방 들어갈 수 잇는 화면
+
 import { StyleSheet, Text, View, ScrollView, Pressable } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { UserType } from "../UserContext";

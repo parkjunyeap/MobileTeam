@@ -355,8 +355,9 @@ app.get("/friend-requests/sent/:userId", async (req, res) => {
 });
 
 app.get("/friends/:userId", (req, res) => {
+  // 로그인한 유저에게서 친구가 누군지 받아오는 코드구나~
   try {
-    const { userId } = req.params;
+    const { userId } = req.params; // userId 를 받아와서
 
     User.findById(userId)
       .populate("friends")

@@ -1,3 +1,5 @@
+// 채팅방 들어갈 수 있는 플랫리스트 화면
+
 import { StyleSheet, Text, View, Pressable, Image } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
