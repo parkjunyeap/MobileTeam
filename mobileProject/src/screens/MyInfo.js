@@ -16,9 +16,9 @@ function MyInfo({ navigation }) {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("ViewMyReview")}
+        onPress={() => navigation.navigate("ViewWrittenMyReview")}
       >
-        <Text style={styles.buttonText}>내가 남긴 택시 친구 리뷰</Text>
+        <Text style={styles.buttonText}>내가 택시 친구에게 쓴 리뷰</Text>
       </TouchableOpacity>
       <View style={styles.separator} />
 

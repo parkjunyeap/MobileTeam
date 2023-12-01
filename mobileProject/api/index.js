@@ -529,3 +529,29 @@ app.post("/FindTaxiMateDetail", async (req, res) => {
     res.status(500).json({ message: "서버 오류가 발생했습니다." });
   }
 });
+
+// 이건 senderID를 기준으로 찾아서 내가 보낸 리뷰 만 볼 수 있음.
+
+app.get("/reviews/sender/:userId", async (req, res) => {
+  const senderId = req.params.userId; // URL 경로에서 userId 추출
+  try {
+    const reviews = await Review.find({ senderId: senderId }) // Review.find(리시브아이디가 : 요청받은리시브아이디)랑 일치하는지 ?
+      .populate("senderId", "name") // senderId를 참조하여 name 필드만 가져옴 senderId 에 name을 가져옴
+      .populate("receiverId", "name"); // receiverId를 참조하여 name 필드만 가져옴
+
+    // JSON 형태로 변환하여 클라이언트에게 보내기 이름으로된거
+    const reviewsWithNames = reviews.map((review) => ({
+      _id: review._id,
+      senderName: review.senderId.name, // sender의 이름
+      receiverName: review.receiverId.name, // receiver의 이름
+      rating: review.rating,
+      comment: review.comment,
+      reviewDate: review.reviewDate,
+    }));
+
+    res.json(reviewsWithNames);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "서버 에러 발생" });
+  }
+});

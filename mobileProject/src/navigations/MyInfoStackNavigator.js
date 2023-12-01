@@ -8,6 +8,8 @@ import MyTaxiMateInfo from "../screens/MyTaxiMateInfo";
 import PaymentList from "../screens/PaymentList";
 import PaymentDetail from "../screens/PaymentDetail";
 
+import ViewWrittenMyReview from "../screens/ViewWrittenMyReview";
+
 import Review from "../screens/Review";
 // 이거는 리뷰 등록하는 스크린인데 테스트 때문에 일단 씀.
 const Stack = createStackNavigator();
@@ -50,11 +52,18 @@ function MyInfoStackNavigator() {
       />
 
       {/*  다른사람 이 받은 택시 리뷰 보기... */}
+      {/* 는 채팅스택에서했구요 */}
 
       <Stack.Screen
         name="PaymentDetail"
         component={PaymentDetail}
         options={{ title: "결제상세내역" }}
+      />
+
+      <Stack.Screen
+        name="ViewWrittenMyReview"
+        component={ViewWrittenMyReview}
+        options={{ title: "내가 친구에게 쓴 리뷰" }}
       />
     </Stack.Navigator>
   );
