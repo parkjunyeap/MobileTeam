@@ -79,6 +79,27 @@ app.post("/register", (req, res) => {
     });
 });
 
+app.post("/registerT", (req, res) => {
+  // 클라이언트로부터 받은 데이터에서 이름, 이메일, 비밀번호, 이미지를 추출
+  const { name, email, password, image,imaget,licenseNumber,carNumber,carName,expirationDate,driverState } = req.body;
+
+  // 새로운 User 모델 인스턴스를 생성
+  const newDriver = new Driver({name, email, password, image,imaget,licenseNumber,carNumber,carName,expirationDate,driverState });
+
+  // 데이터베이스에 새로운 사용자 저장 시도
+  newDriver
+    .save()
+    .then(() => {
+      // 저장 성공 시 200 상태 코드와 함께 성공 메시지 응답
+      res.status(200).json({ message: "유저가 성공적으로 등록됐다." });
+    })
+    .catch((err) => {
+      // 저장 실패 시 콘솔에 에러 로깅하고 500 상태 코드로 클라이언트에게 오류 메시지 응답
+      console.log("에러발생 등록못함", err);
+      res.status(500).json({ message: "에러발생 등록못함" });
+    });
+});
+
 // 토큰 생성 함수
 const createToken = (userId) => {
   // 페이로드에 userId 포함
@@ -131,9 +152,58 @@ app.post("/login", (req, res) => {
     });
 });
 
+// 로그인을 위한 라우트 핸들러
+app.post("/loginT", (req, res) => {
+  // 클라이언트로부터 받은 데이터에서 이메일과 비밀번호를 추출
+  const { email, password } = req.body;
+  console.log("잘받았는지 확인", req.body);
+  // 이메일과 비밀번호가 제공되지 않았을 경우 404 상태 코드로 오류 메시지 응답
+  if (!email || !password) {
+    return res.status(404).json({ message: "이메일 이랑 비밀번호는 필수야" });
+  }
+
+  // User 모델을 사용하여 제공된 이메일과 일치하는 사용자 검색
+  Driver.findOne({ email })
+    .then((driver) => {
+      if (!driver) {
+        return res.status(404).json({ message: "그런 유저없음" });
+      }
+
+      // 제공된 비밀번호가 데이터베이스의 비밀번호와 일치하지 않는 경우 404 상태 코드로 오류 메시지 응답
+      if (driver.password !== password) {
+        return res.status(404).json({ message: "비밀번호 불일치" });
+      }
+
+      // 비밀번호가 일치하는 경우, 사용자 ID로 토큰 생성
+      const token = createToken(driver._id);
+      console.log("잘받았구나", token);
+      // 생성된 토큰을 응답으로 보냄
+      res.status(200).json({ token });
+    })
+    .catch((error) => {
+      // 사용자 검색 중 에러 발생 시 콘솔에 에러 로깅하고 500 상태 코드로 오류 메시지 응답
+      console.log("에러 유저못찾음", error);
+      res.status(500).json({ message: "내부서버오류" });
+    });
+});
+
 // endpoint to access all the users except the user who's is currently logged in!
 
 app.get("/users/:userId", (req, res) => {
+  const loggedInUserId = req.params.userId;
+  // 로그인한 유저를 받아오는건가보다 현재?
+  User.find({ _id: { $ne: loggedInUserId } })
+    // 현재 로그인한 유저 빼고 전부다 가져오기.
+    .then((users) => {
+      res.status(200).json(users);
+    })
+    .catch((err) => {
+      console.log("에러 리트라이빙 유저", err);
+      res.status(500).json({ message: "에러 리트라이빙 유저스" });
+    });
+});
+
+app.get("/drivers/:userId", (req, res) => {
   const loggedInUserId = req.params.userId;
   // 로그인한 유저를 받아오는건가보다 현재?
   User.find({ _id: { $ne: loggedInUserId } })
@@ -477,5 +547,28 @@ app.post("/FindTaxiMateDetail", async (req, res) => {
   } catch (error) {
     console.error("오류:", error.message);
     res.status(500).json({ message: "서버 오류가 발생했습니다." });
+  }
+});
+
+//택시운전사에서의 내정보 불러오기
+app.get("/getMyTaxiInfo/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params; // 프론트엔드에서 userId 만 보냄
+
+    // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보와 name도 조회
+    const driverInfo = await Driver.findById(userId).populate(
+      "name email image imaget carNumber carName licenseNumber expirationDate"
+    );
+
+    console.log("데이터베이스에서 잘받아오나요?", driverInfo);
+    // 잘받아오네요
+    if (driverInfo) {
+      res.json(driverInfo);
+    } else {
+      res.status(404).send("User not found");
+    }
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).send("Internal Server Error");
   }
 });

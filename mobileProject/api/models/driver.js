@@ -18,6 +18,10 @@ const driverSchema = new mongoose.Schema({
     type: String,
     required: true, // 사용자 프로필 이미지, 필수 입력 필드
   },
+  imaget: {
+    type: String,
+    required: true,
+  },
   carNumber: {
     type: String,
     required: true,
@@ -30,7 +34,10 @@ const driverSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-
+  expirationDate:{
+    type:String,
+    required:true,
+  },
   // 택시 운행 상태
   driveState: {
     type: Boolean,
