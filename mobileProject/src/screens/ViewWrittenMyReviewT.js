@@ -1,4 +1,4 @@
-// 내가 친구에게 쓴 리뷰 확인하는 화면
+// 내가 택시기사님 에게 쓴 리뷰 확인하는 화면
 
 import React, { useState, useEffect, useContext } from "react";
 import { View, FlatList, StyleSheet, Text, Image } from "react-native";
@@ -16,7 +16,8 @@ const ViewWrittenMyReview = () => {
     const fetchReviewRequest = async () => {
       try {
         const response = await axios.get(
-          `http://10.20.64.226:8000/reviews/sender/${userId}`
+          `http://10.20.64.226:8000/reviewsT/sender/${userId}` // T가 들어가있음. reviewT에서 가져오는거임이건.
+          // ㅇㅋ
         );
         if (response.status === 200) {
           setReviews(response.data); // 서버로부터 받은 데이터를 상태에 저장합니다.
@@ -36,7 +37,7 @@ const ViewWrittenMyReview = () => {
       keyExtractor={(item) => item._id.toString()} // MongoDB의 _id를 사용합니다.
       ListEmptyComponent={
         <Text style={styles.emptyListStyle}>
-          내가 친구에게 쓴 리뷰가 하나도 없습니다.
+          내가 택시기사님에게 쓴 리뷰가 하나도없습니다.
         </Text>
       } // 여기에 추가
     />

@@ -39,7 +39,11 @@ function ChattingStackNavigator() {
         options={{ title: "친구 찾기 검색" }}
       />
 
-      <Stack.Screen name="ViewMyReview" component={ViewMyReview} />
+      <Stack.Screen
+        name="ViewMyReview"
+        component={ViewMyReview}
+        options={{ title: "내가 받은 리뷰" }}
+      />
 
       <Stack.Screen
         name="ViewFriendReview"
@@ -48,7 +52,11 @@ function ChattingStackNavigator() {
       />
 
       {/* 이거그냥 리뷰 작성하기 화면 */}
-      <Stack.Screen name="writeReview" component={Review} />
+      <Stack.Screen
+        name="writeReview"
+        component={Review}
+        options={{ title: "리뷰 보내기" }}
+      />
       {/* 이름 바꾸기 귀찮으니까. */}
 
       {/*  친구 찾기 화면 */}
