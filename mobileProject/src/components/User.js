@@ -16,7 +16,7 @@ const User = ({ item }) => {
       try {
         console.log("여기들옴?");
         const response = await fetch(
-          `http://10.20.64.226:8000/friend-requests/sent/${userId}`
+          `http://192.168.0.14:8000/friend-requests/sent/${userId}`
         );
 
         const data = await response.json();
@@ -37,7 +37,7 @@ const User = ({ item }) => {
     const fetchUserFriends = async () => {
       try {
         const response = await fetch(
-          `http://10.20.64.226:8000/friends/${userId}`
+          `http://192.168.0.14:8000/friends/${userId}`
         );
 
         const data = await response.json();
@@ -67,7 +67,7 @@ const User = ({ item }) => {
 
   const sendFriendRequest = async (currentUserId, selectedUserId) => {
     try {
-      const response = await fetch("http://10.20.64.226:8000/friend-request", {
+      const response = await fetch("http://192.168.0.14:8000/friend-request", {
         // 친구추가 요청 보내기
         method: "POST",
         headers: {
@@ -80,6 +80,8 @@ const User = ({ item }) => {
       // 선택은 잘되는데 오는게 잘안됨.
       if (response.ok) {
         setRequestSent(true);
+        // 친구 요청이 성공적으로 완료되었다면, userFriends 상태 업데이트
+        // setUserFriends((prevFriends) => [...prevFriends, selectedUserId]);
         console.log("ok 되서 잘 됐다고 뜸?");
       }
     } catch (error) {

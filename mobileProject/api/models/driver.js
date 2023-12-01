@@ -111,31 +111,31 @@ const driverSchema = new mongoose.Schema({
     default: false,
   },
 
-  taxiReview: [
-    {
-      writerId: {
-        type: mongoose.Schema.Types.ObjectId, // 택시 기사를 참조하는 ID
-        ref: "User",
-      }, // 리뷰를 보여줄때는 .name 만 불러오면됨.
-      driverId: {
-        type: mongoose.Schema.Types.ObjectId, // 택시 기사를 참조하는 ID
-        ref: "Driver",
-      }, //
-      rating: {
-        type: Number, // 평점 (예: 1에서 5까지)
-        required: true,
-      },
-      comment: {
-        type: String, // 리뷰 내용
-        required: false,
-      },
-      reviewDate: {
-        type: Date, // 리뷰 작성 날짜
-        default: Date.now,
-      },
-      // 필요한 경우 추가적인 필드를 포함할 수 있습니다.
-    },
-  ],
+  // taxiReview: [
+  //   {
+  //     writerId: {
+  //       type: mongoose.Schema.Types.ObjectId, // 택시 기사를 참조하는 ID
+  //       ref: "User",
+  //     }, // 리뷰를 보여줄때는 .name 만 불러오면됨.
+  //     driverId: {
+  //       type: mongoose.Schema.Types.ObjectId, // 택시 기사를 참조하는 ID
+  //       ref: "Driver",
+  //     }, //
+  //     rating: {
+  //       type: Number, // 평점 (예: 1에서 5까지)
+  //       required: true,
+  //     },
+  //     comment: {
+  //       type: String, // 리뷰 내용
+  //       required: false,
+  //     },
+  //     reviewDate: {
+  //       type: Date, // 리뷰 작성 날짜
+  //       default: Date.now,
+  //     },
+  //     // 필요한 경우 추가적인 필드를 포함할 수 있습니다.
+  //   },
+  // ],
 });
 
 const Driver = mongoose.model("driver", driverSchema); // 'User' 모델로 스키마 컴파일

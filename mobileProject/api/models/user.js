@@ -82,41 +82,49 @@ const userSchema = new mongoose.Schema({
         },
       },
     },
+
+  // 다 스트링으로 해도되나...?
+  // 일단 검색을 지역만으로 검색하게했음,,
+  // 출발지 , 목적지를 어떤 조건으로 검색하게 할지 못정하겠음. 어려움.
+
   // 내 정보의
 
   // 결제내역
-  payment: [
-    {
-      boardingDate: {
-        //탑승일
-        type: String,
-        required: false,
-      },
-      startPoint: {
-        // 출발지
-        type: String,
-        required: false,
-      },
-      endPoint: {
-        //목적지
-        type: String,
-        required: false,
-      },
-      carNumber: {
-        //차량번호
-        type: String,
-        required: false,
-      },
-      carName: {
-        type: String,
-        require: false,
-      },
-      pay: {
-        type: String,
-        require: false,
-      },
-    },
-  ],
+  // payment: [
+  //   {
+  //     // 탑승자유저 ID 추가 하면 리뷰처럼 따로 빼서 관리가능하겠다.
+  //     // 이 결제내역을 택시기사도 볼 수 있게 하고싶었으니까. 택시기사도 자기가 운행을 얼마나해서 금액을 얼마나 받았는지 볼 수 있잖아 이렇게하면
+  //     boardingDate: {
+  //       //탑승일
+  //       type: String,
+  //       required: false,
+  //     },
+  //     startPoint: {
+  //       // 출발지
+  //       type: String,
+  //       required: false,
+  //     },
+  //     endPoint: {
+  //       //목적지
+  //       type: String,
+  //       required: false,
+  //     },
+  //     carNumber: {
+  //       //차량번호   ---> 기사아이디로 대체가능  기사아이디에서 기사이름 참조 , 차량번호 참조
+  //       type: String,
+  //       required: false,
+  //     },
+  //     carName: {
+  //       // 기사이름 ....> 기사아이디로 대체가능  기사아이디에서 기사이름 참조 , 차량번호 참조
+  //       type: String,
+  //       require: false,
+  //     },
+  //     pay: {    // 결제금액
+  //       type: String,
+  //       require: false,
+  //     },
+  //   },
+  // ],
 
   // userRivew
   // userReview: [

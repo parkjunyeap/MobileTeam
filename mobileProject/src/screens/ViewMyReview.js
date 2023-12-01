@@ -4,6 +4,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { View, FlatList, StyleSheet, Text, Image } from "react-native";
 import { UserType } from "../UserContext";
 import axios from "axios";
+import formatDate from "../../hook/formatDate"; // 날짜데이터 잘바꿔줌.
 
 import ReviewItem from "../components/ReviewItem";
 const ViewMyReview = () => {
@@ -15,10 +16,11 @@ const ViewMyReview = () => {
     const fetchReviewRequest = async () => {
       try {
         const response = await axios.get(
-          `http://10.20.64.226:8000/reviews/receiver/${userId}`
+          `http://192.168.0.14:8000/reviews/receiver/${userId}`
         );
         if (response.status === 200) {
           setReviews(response.data); // 서버로부터 받은 데이터를 상태에 저장합니다.
+          console.log(response.data);
         }
       } catch (err) {
         console.error("리뷰 데이터를 가져오는 데 실패했습니다.", err);
