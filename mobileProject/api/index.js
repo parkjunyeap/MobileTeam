@@ -514,8 +514,10 @@ app.post("/FindTaxiMateDetail", async (req, res) => {
     const user = await User.find({
       "infoSetting.province": province,
       "infoSetting.city": city,
-      "infoSetting.favoriteStartPoint": favoriteStartPoint,
-      "infoSetting.favoriteEndPoint": favoriteEndPoint,
+      // "infoSetting.favoriteStartPoint": favoriteStartPoint,
+      // "infoSetting.favoriteEndPoint": favoriteEndPoint,
+
+      // 지역별로 검색할 수 잇게 바꿈일단
     });
     console.log(user);
     if (!user) {

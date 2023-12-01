@@ -14,7 +14,8 @@ import { UserType } from "../UserContext";
 import { useContext } from "react";
 
 const FriendsFindDetail = () => {
-  const { userId, setUserId } = useContext(UserType);
+  const { userId, setUserId } = useContext(UserType); // 여기서 유저 누구로 로그인햇는지 .
+
   console.log({ userId });
 
   const [selectedProvince, setSelectedProvince] = useState(
@@ -31,17 +32,6 @@ const FriendsFindDetail = () => {
     const citiesForProvince = locationData[province];
     setSelectedCity(citiesForProvince[0]);
   };
-
-  // useState 로 관리하는거 즐겨타는 출발지 , 목적지 , 시간 도 해야되는데,,
-
-  const findTaxiInfo = {
-    userId: userId, // 로그인 한 사람 id
-    province: selectedProvince, // 도
-    city: selectedCity, // 시
-    favoriteStartPoint: favoriteStartLocation, // 출발지,
-    favoriteEndPoint: favoriteEndLocation,
-  };
-  console.log("서버로 보낼 상세 설정부분 :", findTaxiInfo);
 
   const handleStartLocationChange = (value) => {
     setFavoriteStartLocation(value);
@@ -73,6 +63,9 @@ const FriendsFindDetail = () => {
       favoriteStartPoint: favoriteStartLocation, // 출발지,
       favoriteEndPoint: favoriteEndLocation,
     };
+
+    // 데이터 다 저장해서 .,.,.
+
     console.log("서버로 보낼 상세 설정부분 :", findTaxiInfo);
     axios
       .post("http://10.20.64.226:8000/FindTaxiMateDetail", findTaxiInfo)
@@ -82,6 +75,7 @@ const FriendsFindDetail = () => {
         if (users.length === 0) {
           console.log("해당하는 사용자를 찾을 수 없습니다.");
         } else {
+          console.log("검색된 유저들 전부 보여주게 배열을.", users); // users 배열 모든 값 해당하는애 출력하기.
           // 사용자 정보 배열을 순회하며 작업 수행
           users.forEach((user) => {
             const userGId = user._id;
@@ -94,13 +88,19 @@ const FriendsFindDetail = () => {
             // 추가 정보 출력 또는 다른 작업 수행
           });
         }
+
+        navigation.navigate("FriendsFindResult", { users: users });
       })
       .catch(function (error) {
         // 오류발생시 실행
         console.log("이 오류 : ", error.message);
       });
     // 이 정보들을 서버로 전송하거나 다른 작업을 수행할 수 있습니다.
-    navigation.goBack();
+
+    // 이런식으로 users 데이터 넘겨주기 가능.
+
+    // 그냥 화면 하나더 만들어서 찾은 사람 해당하는 아이디만 users.map
+    //
   };
 
   return (

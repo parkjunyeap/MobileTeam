@@ -84,7 +84,7 @@ const HomeScreen = () => {
     };
 
     fetchUsers();
-  }, []); // 처음 렌더링 될때 한번만 실행된다..
+  }, []); // 처음 렌더링 될때 한번만 실행되고 , 이걸로
 
   console.log("users", users);
 
@@ -103,6 +103,7 @@ const HomeScreen = () => {
           {users.map((item, index) => (
             <User key={index} item={item} />
           ))}
+          {/*  */}
         </View>
       </ScrollView>
     </View>

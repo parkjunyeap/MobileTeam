@@ -9,8 +9,7 @@ import FriendsFindDetail from "../screens/FriendsFindDetail";
 import ViewMyReview from "../screens/ViewMyReview"; // 이름바꿔야함.
 import Review from "../screens/Review";
 import ViewFriendReview from "../screens/ViewFriendReview";
-
-// 채팅 화면에서 친구를 찾을 수있는 화면 추가.
+import FriendsFindResult from "../screens/FirendsFindResult";
 
 const Stack = createStackNavigator();
 
@@ -40,6 +39,14 @@ function ChattingStackNavigator() {
       />
 
       <Stack.Screen
+        name="FriendsFindResult"
+        component={FriendsFindResult}
+        options={{ title: "친구 검색 결과" }}
+      />
+
+      {/* 스택으로 검색한화면 보여줄예정입니다. */}
+
+      <Stack.Screen
         name="ViewMyReview"
         component={ViewMyReview}
         options={{ title: "내가 받은 리뷰" }}
@@ -57,6 +64,7 @@ function ChattingStackNavigator() {
         component={Review}
         options={{ title: "리뷰 보내기" }}
       />
+
       {/* 이름 바꾸기 귀찮으니까. */}
 
       {/*  친구 찾기 화면 */}
