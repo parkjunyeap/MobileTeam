@@ -130,7 +130,7 @@ const User = ({ item }) => {
                 onPress={() =>
                   navigation.navigate("ViewFriendReview", {
                     selectedUserId: item._id, // 이렇게하면 지금 selectedUserId 도 보내줄
-                    // selectedUserName: item.name, // 선택한 아이템의 이름도 보내줌
+                    selectedUserName: item.name, // 선택한 아이템의 이름도 보내줌
                   })
                 }
               >

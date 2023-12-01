@@ -34,10 +34,22 @@ const ViewWrittenMyReview = () => {
       data={reviews} // 서버로부터 받은 리뷰 데이터를 사용합니다.
       renderItem={({ item }) => <ReviewItem item={item} />}
       keyExtractor={(item) => item._id.toString()} // MongoDB의 _id를 사용합니다.
+      ListEmptyComponent={
+        <Text style={styles.emptyListStyle}>
+          나에게 온 리뷰가 하나도 없습니다.
+        </Text>
+      } // 여기에 추가
     />
   );
 };
-
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  // ...
+  emptyListStyle: {
+    textAlign: "center", // 텍스트를 가운데 정렬합니다.
+    marginTop: 20, // 위쪽 여백을 추가합니다.
+    fontSize: 16, // 텍스트 크기를 지정합니다.
+    // 필요한 경우 추가 스타일을 여기에 추가할 수 있습니다.
+  },
+});
 
 export default ViewWrittenMyReview;
