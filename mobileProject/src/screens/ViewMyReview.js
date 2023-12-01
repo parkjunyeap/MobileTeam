@@ -4,7 +4,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { View, FlatList, StyleSheet, Text, Image } from "react-native";
 import { UserType } from "../UserContext";
 import axios from "axios";
-import formatDate from "../../hook/formatDate"; // 날짜데이터 잘바꿔줌.
 
 import ReviewItem from "../components/ReviewItem";
 const ViewMyReview = () => {

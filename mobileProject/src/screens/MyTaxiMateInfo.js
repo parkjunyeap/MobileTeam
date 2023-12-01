@@ -26,7 +26,7 @@ const MyTaxiMateInfo = () => {
   // 이렇게 하면 !!!!!!!!!!
   // 지금 로그인한 사용자의 userId 를 받아올 수 있네.
   const navigation = useNavigation();
-  const [name, setName] = useState("박준엽");
+  const [name, setName] = useState("박준엽"); // 디폴트 내이름 ㅋㅋ
   const [selectedProvince, setSelectedProvince] = useState(
     Object.keys(locationData)[0]
   );

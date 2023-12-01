@@ -564,6 +564,8 @@ app.get("/reviews/sender/:userId", async (req, res) => {
 });
 
 // 이건 senderID를 기준으로 찾아서 내가 택시기사님에게 보낸 리뷰 만 볼 수 있음.
+// 이건 아직 post 로 기사님에게 하는건 안했음.
+// get 도 택시기사님에 접근해야하는데 잘되나..?? 확인해야됨
 
 app.get("/reviewsT/sender/:userId", async (req, res) => {
   // /reviewsT/sender/ TTTTTTTTTTT 가 들어감.
@@ -591,10 +593,11 @@ app.get("/reviewsT/sender/:userId", async (req, res) => {
 });
 
 // 한번 딱 넣어봣음.
+// 이걸 나중에 post 메소드로 ㅇㅇ
 const insertDummyData = async () => {
   const dummyData = {
-    boarderId: "62b8d67e12345abc12345678",
-    driverId: "62b8d67e12345abc12345679",
+    boarderId: "656203a7e05543faf0d7a0b3", // 테스트로 park / park
+    driverId: "6569a600f3abe1ee79d45bb7", // test 위해서 Driver1@naver.com / 1111
     boardingDate: "2023-09-17T12:00:00.000Z",
     startPoint: "서울역",
     endPoint: "강남역",
@@ -611,3 +614,35 @@ const insertDummyData = async () => {
 };
 
 // insertDummyData();
+
+//`http://192.168.0.14:8000/payments/boarderId/${userId}`
+// 날짜 , 출발지 목적지 , 호출시간 , 차량번호 , 기사이름 , 결제금액 줘야함.
+
+// myInfo 에서 이름뜨게 어떻게 했더라?이름까지 받아왔었구나 ok 이름까지주자
+
+app.get("/boarderId/:userId", async (req, res) => {
+  const boarderId = req.params.userId; // URL 경로에서 userId 추출
+  try {
+    const payments = await Payment.find({ boarderId: boarderId }) // Review.find(리시브아이디가 : 요청받은리시브아이디)랑 일치하는지 ?
+      .populate("boarderId", "name") // senderId를 참조하여 name 필드만 가져옴 senderId 에 name을 가져옴
+      .populate("driverId", "name carNumber") // driverId를 참조하여 name 하고 차량번호 가져옴
+      .lean();
+    // JSON 형태로 변환하여 클라이언트에게 보내기 이름으로된거
+    const paymentsWithNameNumber = payments.map((Payment) => ({
+      _id: Payment._id,
+      boarderName: Payment.boarderId.name, // sender의 이름
+      driverName: Payment.driverId.name, // receiver의 이름
+      boardingDate: Payment.boardingDate,
+      startPoint: Payment.startPoint,
+      endPoint: Payment.endPoint,
+      pay: Payment.pay,
+    }));
+
+    res.json(paymentsWithNameNumber);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "서버 에러 발생" });
+  }
+});
+
+// 이렇게 하는게 맞는지 모르겠는데 이런느낌임
