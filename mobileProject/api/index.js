@@ -36,6 +36,7 @@ const Message = require("./models/message");
 const Driver = require("./models/driver");
 const Review = require("./models/review");
 const ReviewT = require("./models/reviewT"); // 택시기사 리뷰 db 따로뺏쥬
+const Payment = require("./models/payment");
 
 // 임시; // 나중에바꿔야함
 app.post("/write/reviews", (req, res) => {
@@ -588,3 +589,25 @@ app.get("/reviewsT/sender/:userId", async (req, res) => {
     res.status(500).json({ message: "서버 에러 발생" });
   }
 });
+
+// 한번 딱 넣어봣음.
+const insertDummyData = async () => {
+  const dummyData = {
+    boarderId: "62b8d67e12345abc12345678",
+    driverId: "62b8d67e12345abc12345679",
+    boardingDate: "2023-09-17T12:00:00.000Z",
+    startPoint: "서울역",
+    endPoint: "강남역",
+    pay: "15000",
+  };
+
+  try {
+    const payment = new Payment(dummyData);
+    await payment.save();
+    console.log("더미 데이터가 성공적으로 삽입되었습니다.");
+  } catch (error) {
+    console.error("더미 데이터 삽입 실패:", error);
+  }
+};
+
+// insertDummyData();
