@@ -34,11 +34,6 @@ const ViewMyReview = () => {
       data={reviews} // 서버로부터 받은 리뷰 데이터를 사용합니다.
       renderItem={({ item }) => <ReviewItem item={item} />}
       keyExtractor={(item) => item._id.toString()} // MongoDB의 _id를 사용합니다.
-      ListEmptyComponent={
-        <Text style={styles.emptyListStyle}>
-          <Text style={styles.boldText}></Text>당신의 리뷰가 하나도 없습니다.
-        </Text>
-      } // 여기에 추가
     />
   );
 };

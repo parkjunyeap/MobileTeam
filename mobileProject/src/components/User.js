@@ -341,8 +341,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  buttonDisabled: {
-    backgroundColor: "gray", // 비활성화 상태일 때의 배경색
-    // 필요하다면 여기에 다른 스타일 속성들도 추가할 수 있습니다.
-  },
 });
