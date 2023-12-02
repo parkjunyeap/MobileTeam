@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Text, Button } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { TimePickerAndroid } from '@react-native-community/datetimepicker';
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { MAP_KEY } from "../../env";
 import { MaterialCommunityIcons } from "@expo/vector-icons";

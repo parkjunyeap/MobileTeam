@@ -1,16 +1,17 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { StyleSheet, View, Dimensions } from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { StatusBar } from 'expo-status-bar'
+import React,{useState,useRef,useEffect} from 'react'
+import { StyleSheet, Text, View,Dimensions ,ScrollView,Image,FlatList,TouchableOpacity} from 'react-native'
+import { Icon} from 'react-native-elements'
+import MapView, { PROVIDER_GOOGLE,} from 'react-native-maps'; 
 import * as Location from 'expo-location';
-import { colors, parameters } from '../global/styles';
-import { mapStyle } from '../global/mapStyle';
-import { filterData } from '../global/data';
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_WIDTH = Dimensions.get('window').width
+import { colors,parameters } from '../global/styles'
+import { filterData,carsAround } from '../global/data'
+import { mapStyle} from "../global/mapStyle"
 
 const TaxiTouch = () => {
-  const [latlng, setLatLng] = useState({}); // useState를 컴포넌트 내부로 이동
+  const [latlng, setLatLng] = useState({});
 
   const checkPermission = async () => {
     const hasPermission = await Location.requestForegroundPermissionsAsync();
@@ -42,8 +43,7 @@ const TaxiTouch = () => {
   useEffect(() => {
     checkPermission();
     getLocation();
-    console.log(latlng);
-  }, []); // 여기에 빈 의존성 배열을 포함하는 것이 중요합니다.
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -54,12 +54,37 @@ const TaxiTouch = () => {
         customMapStyle={mapStyle}
         showsUserLocation={true}
         followsUserLocation={true}
-        rotateEnabled={true}
-        zoomEnabled={true}
-        toolbarEnabled={true}
       >
-        {/* 여기에 추가적인 지도 요소를 배치하세요 */}
+        {carsAround.map((item, index) => (
+          <MapView.Marker coordinate={item} key={index.toString()}>
+            <Image
+              source={require('../../assets/carMarker.png')}
+              style={styles.carsAround}
+              resizeMode="cover"
+            />
+          </MapView.Marker>
+        ))}
       </MapView>
+
+      <Icon
+        name="map-marker"
+        type="material-community"
+        size={30}
+        color="blue"
+      />
+
+      <FlatList 
+        data={filterData}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <Image style={styles.image2} source={item.image} />
+            <Text style={styles.title}>{item.name}</Text>
+          </View>
+        )}
+      />
     </View>
   );
 };
@@ -74,6 +99,23 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     height: '100%',
   },
+  carsAround: {
+    width: 28,
+    height: 14,
+  },
+  card: {
+    alignItems: "center",
+    margin: SCREEN_WIDTH / 22
+  },
+  image2: {
+    height: 60,
+    width: 60,
+    borderRadius: 30,
+  },
+  title: {
+    color: colors.black,
+    fontSize: 16
+  }
 });
 
 export default TaxiTouch;
