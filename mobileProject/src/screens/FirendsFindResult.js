@@ -1,4 +1,5 @@
 // 검색결과 보여줄 창..
+// route 로 검색결과에 해당하는 user 만 갖고와서 뿌려줌
 import {
   StyleSheet,
   Text,

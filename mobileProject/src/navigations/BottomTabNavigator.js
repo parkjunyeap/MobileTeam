@@ -1,14 +1,13 @@
-// BottomTabNavigator.js
+// 바텀탭
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 // 화면 컴포넌트 임포트
 import TaxiTouch from "../screens/TaxiTouch";
-// import Chatting from "../screens/Chatting";
 
 import MyInfoStackNavigator from "./MyInfoStackNavigator"; // StackNavigator import
-import FriendsFindStackNavigator from "./FriendsFindStackNavigator";
+
 import FriendsListStackNavigator from "./FriendsListStackNavigator";
 import ChattingStackNavigator from "./ChattingStackNavigator";
 import { FontAwesome } from "@expo/vector-icons";
@@ -39,20 +38,7 @@ const BottomTabNavigator = () => {
           ),
         }}
       />
-      {/* 일단 안씀니다. */}
-      {/* <BTab.Screen
-        name="친구찾기"
-        component={FriendsFindStackNavigator}
-        options={{
-          tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons
-              name="account-search"
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      /> */}
+
       <BTab.Screen
         name="택시잡기"
         component={TaxiTouch}

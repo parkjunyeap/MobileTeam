@@ -91,6 +91,17 @@ const driverSchema = new mongoose.Schema({
     required: true, // 사용자 프로필 이미지, 필수 입력 필드
   },
 
+  province: {
+    type: String,
+    required: false,
+  },
+  city: {
+    type: String,
+    required: false,
+  },
+
+  // 이렇게 추가할게~~
+
   personalNumber: {
     type: String,
     required: true,

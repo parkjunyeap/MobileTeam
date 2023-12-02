@@ -1,3 +1,5 @@
+// 친구찾기 화면
+
 import React, { useState, useEffect } from "react";
 import {
   View,

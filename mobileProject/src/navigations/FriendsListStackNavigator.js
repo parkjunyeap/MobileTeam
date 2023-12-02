@@ -1,17 +1,17 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import FriendsList from "../screens/FriendsList";
+import TaxiDriverList from "../screens/TaxiDriverList";
 import FriendsListDetail from "../screens/FriendsListDetail";
 
 const Stack = createStackNavigator();
 
 function FriendsListStackNavigator() {
   return (
-    <Stack.Navigator initialRouteName="FriendsList">
+    <Stack.Navigator initialRouteName="TaxiDriverList">
       <Stack.Screen
-        name="FriendsList"
-        component={FriendsList}
+        name="TaxiDriverList"
+        component={TaxiDriverList}
         options={{
           title: "기사님 목록",
           headerTitleStyle: {

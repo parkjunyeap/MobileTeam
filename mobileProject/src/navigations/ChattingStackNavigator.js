@@ -1,3 +1,5 @@
+// 채팅화면 네비게이터
+
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
