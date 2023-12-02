@@ -304,56 +304,15 @@ const MyTaxiMateInfo = () => {
             onPress={handleReviewButtonClick}
             color="#28a745"
           />
-          <Text> </Text>
-          <View style={styles.locationIcon}>
-            <MaterialCommunityIcons name="map-marker" size={20} />
-          </View>
         </View>
-
-        <Text style={{ fontSize: 20, marginBottom: 5 }}> 즐겨타는 출발지 </Text>
-        <Text> {favoriteEndLocation}</Text>
-        <View style={styles.location}>
-          <GooglePlacesAutocomplete
-            placeholder="자주타는 목적지를 적어주세요!"
-            styles={{
-              container: { flex: 0 },
-              textInput: { paddingLeft: 20, height: 40 },
-            }}
-            onPress={(data) => handleEndLocationChange(data.description)}
-            onFail={(e) => {
-              console.log("GooglePlacesAutocomplete onFail : ", e);
-            }}
-            query={{ key: MAP_KEY, language: "ko", components: "country:kr" }}
-            debounce={400}
+        <View style={{ width: 20 }} />
+        <View style={styles.buttonWrapper}>
+          <Button
+            title="저장"
+            onPress={handleSaveButtonClick}
+            color="#28a745"
           />
-          <View style={styles.locationIcon}>
-            <MaterialCommunityIcons name="map-marker" size={20} />
-          </View>
         </View>
-        <Pressable
-          onPress={handleSaveButtonClick}
-          // onPress={() => {}}
-          style={{
-            width: 200,
-            backgroundColor: "#4A55A2",
-            padding: 15,
-            marginTop: 50,
-            marginLeft: "auto",
-            marginRight: "auto",
-            borderRadius: 6,
-          }}
-        >
-          <Text
-            style={{
-              color: "white",
-              fontSize: 16,
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
-          >
-            수정하기
-          </Text>
-        </Pressable>
       </View>
     </ScrollView>
   );

@@ -16,7 +16,7 @@ const User = ({ item }) => {
       try {
         console.log("여기들옴?");
         const response = await fetch(
-          `http://10.20.64.25:8000/friend-requests/sent/${userId}`
+          `http://192.168.219.105:8000/friend-requests/sent/${userId}`
         );
 
         const data = await response.json();
@@ -37,7 +37,7 @@ const User = ({ item }) => {
     const fetchUserFriends = async () => {
       try {
         const response = await fetch(
-          `http://10.20.64.25:8000/friends/${userId}`
+          `http://192.168.219.105:8000/friends/${userId}`
         );
 
         const data = await response.json();
