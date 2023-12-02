@@ -81,10 +81,10 @@ app.post("/register", (req, res) => {
 
 app.post("/registerT", (req, res) => {
   // 클라이언트로부터 받은 데이터에서 이름, 이메일, 비밀번호, 이미지를 추출
-  const { name, email, password, image,imaget,licenseNumber,carNumber,carName,expirationDate,driverState } = req.body;
+  const { name, email, password, image, imaget, licenseNumber, carNumber, carName, getDate, birthdate, province, city, driverState } = req.body;
 
   // 새로운 User 모델 인스턴스를 생성
-  const newDriver = new Driver({name, email, password, image,imaget,licenseNumber,carNumber,carName,expirationDate,driverState });
+  const newDriver = new Driver({ name, email, password, image, imaget, licenseNumber, carNumber, carName, getDate, birthdate, province, city, driverState });
 
   // 데이터베이스에 새로운 사용자 저장 시도
   newDriver
@@ -184,6 +184,31 @@ app.post("/loginT", (req, res) => {
       // 사용자 검색 중 에러 발생 시 콘솔에 에러 로깅하고 500 상태 코드로 오류 메시지 응답
       console.log("에러 유저못찾음", error);
       res.status(500).json({ message: "내부서버오류" });
+    });
+});
+
+app.post("/UpTImage", async (req, res) => {
+  // 클라이언트로부터 받은 데이터에서 이름, 이메일, 비밀번호, 이미지를 추출
+  console.log(req.body)
+  const userId = req.body.userId;
+
+  // 새로운 User 모델 인스턴스를 생성
+  const newImage = await Driver.findOneAndUpdate(
+    { _id: userId },
+    { image: req.body.image },
+    { new: true, upsert: true }
+  )
+  // 데이터베이스에 새로운 사용자 저장 시도
+  newImage
+    .save()
+    .then(() => {
+      // 저장 성공 시 200 상태 코드와 함께 성공 메시지 응답
+      res.status(200).json({ message: "유저가 성공적으로 등록됐다." });
+    })
+    .catch((err) => {
+      // 저장 실패 시 콘솔에 에러 로깅하고 500 상태 코드로 클라이언트에게 오류 메시지 응답
+      console.log("에러발생 등록못함", err);
+      res.status(500).json({ message: "에러발생 등록못함" });
     });
 });
 
@@ -557,7 +582,7 @@ app.get("/getMyTaxiInfo/:userId", async (req, res) => {
 
     // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보와 name도 조회
     const driverInfo = await Driver.findById(userId).populate(
-      "name email image imaget carNumber carName licenseNumber expirationDate"
+      "name email image imaget carNumber carName licenseNumber getDate"
     );
 
     console.log("데이터베이스에서 잘받아오나요?", driverInfo);

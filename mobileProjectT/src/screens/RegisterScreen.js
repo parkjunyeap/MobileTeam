@@ -14,6 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
 import axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
+import locationData from "../locationData";
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState("");
@@ -24,25 +25,32 @@ const RegisterScreen = () => {
   const [licenseNumber, setLicenseNumber] = useState("");
   const [carNumber, setCarNumber] = useState("")
   const [carName, setCarName] = useState("")
-  const [expirationDate, setExpirationDate] = useState("")
+  const [getDate, setGetDate] = useState("")
+  const [birthdate, setBirthdate] = useState("")
+  const [selectedProvince, setSelectedProvince] = useState(
+    Object.keys(locationData)[0]
+  );
+  const [selectedCity, setSelectedCity] = useState(
+    locationData[Object.keys(locationData)[0]][0]
+  );
   const [driverState, setDriverState] = useState("false")
 
   const navigation = useNavigation();
   // 이거 그냥 네비게이션 써서 화면이동해준다는 뜻
   // navigation.goback() // 이런식으로씀
-  
-  
+
+
   // 프로필 사진
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1, 
+      quality: 1,
     });
 
     if (!result.canceled) {
-      setImaget(result.assets[0].uri);
+      setImage(result.assets[0].uri);
     }
   };
 
@@ -52,12 +60,18 @@ const RegisterScreen = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1, 
+      quality: 1,
     });
 
     if (!result.canceled) {
       setImaget(result.assets[0].uri);
     }
+  };
+
+  const onProvinceChange = (province) => {
+    setSelectedProvince(province);
+    const citiesForProvince = locationData[province];
+    setSelectedCity(citiesForProvince[0]);
   };
 
   const handleRegister = () => {
@@ -70,13 +84,16 @@ const RegisterScreen = () => {
       licenseNumber: licenseNumber,
       carNumber: carNumber,
       carName: carName,
-      expirationDate: expirationDate,
+      getDate: getDate,
+      birthdate: birthdate,
+      province: selectedProvince,
+      city: selectedCity,
       driverState: driverState
     };
     // 유저 객체에 담음 상태변수들
     // send a POST  request to the backend API to register the user
     axios
-      .post("http://10.20.61.43:8000/registerT", driver) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
+      .post("http://192.168.219.105:8000/registerT", driver) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
       .then((response) => {
         // 그러면. res 로 잘됏나 안됏나 받음. 그리고 메시지띄움. 그리고 set으로 다른거 다 빈칸으로만듬
         console.log(response);
@@ -89,7 +106,8 @@ const RegisterScreen = () => {
         setLicenseNumber("");
         setCarNumber("")
         setCarName("")
-        setExpirationDate("")
+        setGetDate("")
+        setBirthdate("")
       })
       .catch((error) => {
         // 에러 받고 출력
@@ -209,7 +227,7 @@ const RegisterScreen = () => {
               <View style={styles.imagePickerContainer}>
                 <TouchableOpacity onPress={pickImageL}>
                   {imaget ? (
-                    <Image source={{ uri: imaget }} style={styles.imagel} />
+                    <Image source={{ uri: imaget }} style={styles.imaget} />
                   ) : (
                     <View style={styles.placeholderContainer}>
                       <Text style={styles.placeholderText}>자격증 사진 등록</Text>
@@ -245,8 +263,8 @@ const RegisterScreen = () => {
               </Text>
 
               <TextInput
-                value={expirationDate}
-                onChangeText={(text) => setExpirationDate(text)}
+                value={getDate}
+                onChangeText={(text) => setGetDate(text)}
                 style={{
                   fontSize: email ? 18 : 18,
                   borderBottomColor: "gray",
@@ -299,6 +317,27 @@ const RegisterScreen = () => {
                 placeholder="차량 명을 입력하세요"
               />
             </View>
+            <Text style={{ fontSize: 20, marginBottom: 5 }}> 택시 운행 지역 </Text>
+            <Picker
+              selectedValue={selectedProvince}
+              onValueChange={(itemValue) => onProvinceChange(itemValue)}
+              style={{ height: 50, width: 250, marginBottom: 10 }}
+            >
+              {Object.keys(locationData).map((province) => (
+                <Picker.Item key={province} label={province} value={province} />
+              ))}
+            </Picker>
+            {/* City Picker */}
+
+            <Picker
+              selectedValue={selectedCity}
+              onValueChange={(itemValue) => setSelectedCity(itemValue)}
+              style={styles.picker}
+            >
+              {locationData[selectedProvince].map((city) => (
+                <Picker.Item key={city} label={city} value={city} />
+              ))}
+            </Picker>
 
             <Pressable
               onPress={handleRegister}
@@ -363,7 +402,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   imaget: {
-    width: 450,
-    height: 150,
+    width: 360,
+    height: 180,
   },
 });

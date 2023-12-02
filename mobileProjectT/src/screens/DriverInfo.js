@@ -1,8 +1,11 @@
 // DriverInfo.js
 import React from "react";
-import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
-import { useContext, useEffect ,useState} from "react";
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Pressable, Alert } from "react-native";
+import { useContext, useEffect, useState } from "react";
 import { UserType } from "../UserContext";
+import axios from "axios";
+import * as ImagePicker from 'expo-image-picker';
+
 const DriverInfo = ({ route }) => {
   // route.params에서 정보를 추출합니다.
   // MyInfoStackNavigator를 통해 전달된 params가 있는지 확인합니다.
@@ -16,13 +19,20 @@ const DriverInfo = ({ route }) => {
   const [licenseNumber, setLicenseNumber] = useState("");
   const [carNumber, setCarNumber] = useState("")
   const [carName, setCarName] = useState("")
-  const [expirationDate, setExpirationDate] = useState("")
+  const [getDate, setGetDate] = useState("")
+  const [birthdate, setBirthdate] = useState("")
+  const [selectedProvince, setSelectedProvince] = useState(
+    Object.keys(locationData)[0]
+  );
+  const [selectedCity, setSelectedCity] = useState(
+    locationData[Object.keys(locationData)[0]][0]
+  );
 
   useEffect(() => {
     const getMyTaxiInfo = async () => {
       try {
         const response = await fetch(
-          `http://10.20.61.43:8000/getMyTaxiInfo/${userId}`
+          `http://192.168.219.105:8000/getMyTaxiInfo/${userId}`
         );
         const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
         // setRecepientData(data);
@@ -36,7 +46,10 @@ const DriverInfo = ({ route }) => {
         setLicenseNumber(data.licenseNumber)
         setCarName(data.carName)
         setCarNumber(data.carNumber)
-        setExpirationDate(data.expirationDate)
+        setGetDate(data.getDate)
+        setBirthdate(data.birthdate)
+        setSelectedProvince(data.selectedProvince)
+        setSelectedCity(data.selectedCity)
 
         // 데이터베이스에 아무 정보도 없으면 "" 빈 문자열 주기.
       } catch (error) {
@@ -47,31 +60,102 @@ const DriverInfo = ({ route }) => {
     getMyTaxiInfo();
   }, []);
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  const handleTimage = () => {
+    const newTInfo = {
+      userId: userId,
+      image: image,
+      birthdate: birthdate,
+      province: selectedProvince,
+      city: selectedCity
+    }
+    axios
+      .post("http://192.168.219.105:8000/UpTInfo", newTInfo) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
+      .then((response) => {
+        // 그러면. res 로 잘됏나 안됏나 받음. 그리고 메시지띄움. 그리고 set으로 다른거 다 빈칸으로만듬
+        console.log(response);
+        Alert.alert("수정 성공!!", "성공적으로 수정되었습니다");
+      })
+      .catch((error) => {
+        // 에러 받고 출력
+        Alert.alert("수정 오류!!", "수정하는 동안 오류가 발생했습니다");
+        console.log("update failed", error);
+      });
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>기사 정보</Text>
-      <View style={styles.imageContainer}>
-        {image ? (
-          <Image source={{ uri: image }} style={styles.image} />
-        ) : (
-          <Text style={styles.placeholderText}>프로필 사진이 없습니다</Text>
-        )}
-      </View>
+      <TouchableOpacity onPress={pickImage}>
+        <View style={styles.imageContainer}>
+          {image ? (
+            <Image source={{ uri: image }} style={styles.image} />
+          ) : (
+            <Text style={styles.placeholderText}>프로필 사진이 없습니다</Text>
+          )}
+        </View>
+      </TouchableOpacity>
+      <Text style={styles.info}>이름: {name}</Text>
+      <Text style={styles.info}>이메일: {email}</Text>
+      <Text style={{ fontSize: 20, marginBottom: 5 }}> 택시타는 동네 </Text>
+        {/* Province Picker */}
+
+        <Picker
+          selectedValue={selectedProvince}
+          onValueChange={(itemValue) => onProvinceChange(itemValue)}
+          style={{ height: 50, width: 250, marginBottom: 10 }}
+        >
+          {Object.keys(locationData).map((province) => (
+            <Picker.Item key={province} label={province} value={province} />
+          ))}
+        </Picker>
       <View style={styles.imageContainer}>
         {imaget ? (
-          <Image source={{ uri: imaget }} style={styles.image} />
+          <Image source={{ uri: imaget }} style={styles.imaget} />
         ) : (
           <Text style={styles.placeholderText}>자격증 사진이 없습니다</Text>
         )}
       </View>
-
       <Text style={styles.info}>자격증 번호: {licenseNumber}</Text>
-      <Text style={styles.info}>이름: {name}</Text>
-      <Text style={styles.info}>이메일: {email}</Text>
-      <Text style={styles.info}>취득 날짜: {expirationDate}</Text>
+      <Text style={styles.info}>취득 날짜: {getDate}</Text>
       <Text style={styles.info}>차량 번호: {carNumber}</Text>
       <Text style={styles.info}>차량 명: {carName}</Text>
-
+      <Pressable
+        onPress={handleTimage}
+        // onPress={() => {}}
+        style={{
+          width: 200,
+          backgroundColor: "#4A55A2",
+          padding: 15,
+          marginTop: 50,
+          marginLeft: "auto",
+          marginRight: "auto",
+          borderRadius: 6,
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            fontSize: 16,
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
+        >
+          수정하기
+        </Text>
+      </Pressable>
     </ScrollView>
   );
 };
@@ -92,6 +176,13 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 75,
+    marginTop: 30,
+    marginBottom: 30,
+  },
+  imaget: {
+    width: 360,
+    height: 180,
+    marginTop: 30,
     marginBottom: 20,
   },
   placeholder: {
@@ -111,6 +202,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
+    marginTop: 20,
   },
   placeholderText: {
     textAlign: 'center',

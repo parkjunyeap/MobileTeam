@@ -9,7 +9,7 @@ const useFetch = (endpoint, query) => {
 
   const options = {
     method: "POST",
-    url: ` 10.20.61.43:3000${endpoint}`,
+    url: ` 192.168.219.105:3000${endpoint}`,
 
     params: { ...query },
   };
