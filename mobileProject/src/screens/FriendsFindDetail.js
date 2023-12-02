@@ -1,5 +1,13 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Text, Button } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Button,
+  KeyboardAvoidingView,
+  ScrollView,
+  Keyboard,
+} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { MAP_KEY } from "../../env";
@@ -16,6 +24,8 @@ import { useContext } from "react";
 const FriendsFindDetail = () => {
   const { userId, setUserId } = useContext(UserType); // 여기서 유저 누구로 로그인햇는지 .
 
+  // const [keyboardHeight, setKeyboardHeight] = useState(0); // 키보드 높이?
+
   console.log({ userId });
 
   const [selectedProvince, setSelectedProvince] = useState(
@@ -26,6 +36,27 @@ const FriendsFindDetail = () => {
   );
   const [favoriteStartLocation, setFavoriteStartLocation] = useState("");
   const [favoriteEndLocation, setFavoriteEndLocation] = useState("");
+
+  // // 키보드 화면 안가려지게 안되는데용?
+  // useEffect(() => {
+  //   const keyboardDidShowListener = Keyboard.addListener(
+  //     "keyboardDidShow",
+  //     (e) => {
+  //       setKeyboardHeight(e.endCoordinates.height);
+  //     }
+  //   );
+  //   const keyboardDidHideListener = Keyboard.addListener(
+  //     "keyboardDidHide",
+  //     () => {
+  //       setKeyboardHeight(0);
+  //     }
+  //   );
+
+  //   return () => {
+  //     keyboardDidHideListener.remove();
+  //     keyboardDidShowListener.remove();
+  //   };
+  // }, []);
 
   const onProvinceChange = (province) => {
     setSelectedProvince(province);
@@ -104,7 +135,17 @@ const FriendsFindDetail = () => {
   };
 
   return (
-    <View style={styles.container}>
+    // <KeyboardAvoidingView
+    //   style={{ flex: 1 }}
+    //   behavior={Platform.OS === "ios" ? "padding" : "height"}
+    //   keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+    // >
+    <ScrollView
+      keyboardShouldPersistTaps="always"
+      listViewDisplayed={false}
+      // 위 코드는 스크롤뷰랑 구글오토컴플레이트 같이 쓸때 나오는 오류 없애려고 한거. 뭔지는 모름.
+      style={styles.container}
+    >
       <Text> 택시를 이용하는 지역</Text>
       <Text>도 : {selectedProvince}</Text>
       <Picker
@@ -116,7 +157,6 @@ const FriendsFindDetail = () => {
           <Picker.Item key={province} label={province} value={province} />
         ))}
       </Picker>
-
       <Text>시 : {selectedCity}</Text>
       <Picker
         selectedValue={selectedCity}
@@ -127,7 +167,6 @@ const FriendsFindDetail = () => {
           <Picker.Item key={city} label={city} value={city} />
         ))}
       </Picker>
-
       <Text> 즐겨타는 출발지 : </Text>
       <View style={styles.location}>
         <GooglePlacesAutocomplete
@@ -147,7 +186,6 @@ const FriendsFindDetail = () => {
           <MaterialCommunityIcons name="map-marker" size={20} />
         </View>
       </View>
-
       <Text> 즐겨타는 목적지 : </Text>
       <View style={styles.location}>
         <GooglePlacesAutocomplete
@@ -167,7 +205,6 @@ const FriendsFindDetail = () => {
           <MaterialCommunityIcons name="map-marker" size={20} />
         </View>
       </View>
-
       {/* 버튼 style 먹이느라 */}
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
@@ -182,7 +219,11 @@ const FriendsFindDetail = () => {
           />
         </View>
       </View>
-    </View>
+      <View />
+      {/* {" "} 이게필요해?? */}
+      {/* 키보드 높이만큼의 여백 생성 */}
+    </ScrollView>
+    // {/* </KeyboardAvoidingView> */}
   );
 };
 

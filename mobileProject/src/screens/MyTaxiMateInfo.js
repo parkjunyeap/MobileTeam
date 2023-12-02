@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, Button, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Button,
+  Alert,
+  ScrollView,
+} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
@@ -15,7 +22,7 @@ import { UserType } from "../UserContext";
 import { useNavigation } from "@react-navigation/native";
 
 import locationData from "../locationData";
-import { ScrollView } from "react-native-gesture-handler";
+
 // 지역 2차원배열 로된거 갖고옴
 
 const MyTaxiMateInfo = () => {
@@ -153,7 +160,7 @@ const MyTaxiMateInfo = () => {
   };
 
   return (
-    <View>
+    <ScrollView keyboardShouldPersistTaps="always" listViewDisplayed={false}>
       <Text style={{ fontWeight: "bold", fontSize: 23, marginBottom: 10 }}>
         {" "}
         이름: {name}{" "}
@@ -187,6 +194,7 @@ const MyTaxiMateInfo = () => {
       <Text> {favoriteStartLocation} </Text>
       <View style={styles.location}>
         <GooglePlacesAutocomplete
+          listViewDisplayed="auto" // 오류 안뜨게 해줄려고 뭔 뜻 뭔기능인지 모르겠음
           placeholder="자주타는 출발지를 적어주세요!"
           styles={{
             container: { flex: 0 },
@@ -209,6 +217,7 @@ const MyTaxiMateInfo = () => {
       <Text> {favoriteEndLocation}</Text>
       <View style={styles.location}>
         <GooglePlacesAutocomplete
+          listViewDisplayed="auto" // 오류 안뜨게 해줄려고 뭔 뜻 뭔기능인지 모르겠음
           placeholder="자주타는 목적지를 적어주세요!"
           styles={{
             container: { flex: 0 },
@@ -264,7 +273,7 @@ const MyTaxiMateInfo = () => {
           />
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

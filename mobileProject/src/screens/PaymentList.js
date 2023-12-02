@@ -59,30 +59,6 @@ const PaymentList = () => {
 
   // 요긴 간략하게 결제내역 보여줄 예정이였는데,,, 일단 그 리뷰마냥 나오게 해봄
 
-  // const goToPaymentDetail = (item) => {
-  //   // Pass the entire item or just specific properties to the PaymentDetail screen
-  //   navigation.navigate("PaymentDetail", { ...item });
-  // };
-
-  // const renderItem = ({ item }) => (
-  //   <TouchableOpacity
-  //     onPress={() => goToPaymentDetail(item)}
-  //     style={styles.itemTouchable}
-  //   >
-  //     <View style={styles.itemContainer}>
-  //       <View style={styles.articleContainer}>
-  //         <Text style={styles.articleName}>{item.articleName}</Text>
-  //         <Text style={styles.date}>{item.date}</Text>
-  //       </View>
-  //       <Text style={styles.details}>
-  //         {item.departure} to {item.arrival}
-  //       </Text>
-  //     </View>
-  //   </TouchableOpacity>
-  // );
-
-  // const itemSeparator = () => <View style={styles.separator} />;
-
   return (
     <FlatList
       data={payments} // 서버로부터 받은 리뷰 데이터를 사용합니다.

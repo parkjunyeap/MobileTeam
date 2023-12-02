@@ -1,3 +1,5 @@
+// 현재 안쓸예정
+
 import React, { useState } from "react";
 import {
   TouchableOpacity,
