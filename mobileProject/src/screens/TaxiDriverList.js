@@ -1,3 +1,5 @@
+// 현재 안쓰거나 , 택시 기사님들 나오게 하면 어떨까 하는 화면 .
+
 import React from "react";
 import {
   StyleSheet,
@@ -23,7 +25,7 @@ const friendsData = [
   // ... 추가 친구 데이터
 ];
 
-const FriendsList = ({ navigation }) => {
+const TaxiDriverList = ({ navigation }) => {
   // navigation prop을 추가해줘야 합니다.
 
   // // 여기 로직 짜야함. 서버에 친구 id 랑 친구 이름 넘겨줘야할듯.
@@ -102,4 +104,4 @@ const styles = StyleSheet.create({
   // ... 추가로 원하는 스타일이 있다면 여기에 추가
 });
 
-export default FriendsList;
+export default TaxiDriverList;

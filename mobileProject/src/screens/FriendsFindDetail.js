@@ -1,5 +1,15 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Text, Button } from "react-native";
+// 친구찾기 화면
+
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Button,
+  KeyboardAvoidingView,
+  ScrollView,
+  Keyboard,
+} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { MAP_KEY } from "../../env";
@@ -12,7 +22,10 @@ import { useContext } from "react";
 import locationData from "../locationData";
 
 const FriendsFindDetail = () => {
-  const { userId, setUserId } = useContext(UserType);
+  const { userId, setUserId } = useContext(UserType); // 여기서 유저 누구로 로그인햇는지 .
+
+  // const [keyboardHeight, setKeyboardHeight] = useState(0); // 키보드 높이?
+
   console.log({ userId });
 
   const [selectedProvince, setSelectedProvince] = useState(
@@ -24,22 +37,32 @@ const FriendsFindDetail = () => {
   const [favoriteStartLocation, setFavoriteStartLocation] = useState("");
   const [favoriteEndLocation, setFavoriteEndLocation] = useState("");
 
+  // // 키보드 화면 안가려지게 안되는데용?
+  // useEffect(() => {
+  //   const keyboardDidShowListener = Keyboard.addListener(
+  //     "keyboardDidShow",
+  //     (e) => {
+  //       setKeyboardHeight(e.endCoordinates.height);
+  //     }
+  //   );
+  //   const keyboardDidHideListener = Keyboard.addListener(
+  //     "keyboardDidHide",
+  //     () => {
+  //       setKeyboardHeight(0);
+  //     }
+  //   );
+
+  //   return () => {
+  //     keyboardDidHideListener.remove();
+  //     keyboardDidShowListener.remove();
+  //   };
+  // }, []);
+
   const onProvinceChange = (province) => {
     setSelectedProvince(province);
     const citiesForProvince = locationData[province];
     setSelectedCity(citiesForProvince[0]);
   };
-
-  // useState 로 관리하는거 즐겨타는 출발지 , 목적지 , 시간 도 해야되는데,,
-
-  const findTaxiInfo = {
-    userId: userId, // 로그인 한 사람 id
-    province: selectedProvince, // 도
-    city: selectedCity, // 시
-    favoriteStartPoint: favoriteStartLocation, // 출발지,
-    favoriteEndPoint: favoriteEndLocation,
-  };
-  console.log("서버로 보낼 상세 설정부분 :", findTaxiInfo);
 
   const handleStartLocationChange = (value) => {
     setFavoriteStartLocation(value);
@@ -71,6 +94,9 @@ const FriendsFindDetail = () => {
       favoriteStartPoint: favoriteStartLocation, // 출발지,
       favoriteEndPoint: favoriteEndLocation,
     };
+
+    // 데이터 다 저장해서 .,.,.
+
     console.log("서버로 보낼 상세 설정부분 :", findTaxiInfo);
     axios
       .post("http://192.168.219.105:8000/FindTaxiMateDetail", findTaxiInfo)
@@ -80,6 +106,7 @@ const FriendsFindDetail = () => {
         if (users.length === 0) {
           console.log("해당하는 사용자를 찾을 수 없습니다.");
         } else {
+          console.log("검색된 유저들 전부 보여주게 배열을.", users); // users 배열 모든 값 해당하는애 출력하기.
           // 사용자 정보 배열을 순회하며 작업 수행
           users.forEach((user) => {
             const userGId = user._id;
@@ -92,17 +119,33 @@ const FriendsFindDetail = () => {
             // 추가 정보 출력 또는 다른 작업 수행
           });
         }
+
+        navigation.navigate("FriendsFindResult", { users: users });
       })
       .catch(function (error) {
         // 오류발생시 실행
         console.log("이 오류 : ", error.message);
       });
     // 이 정보들을 서버로 전송하거나 다른 작업을 수행할 수 있습니다.
-    navigation.goBack();
+
+    // 이런식으로 users 데이터 넘겨주기 가능.
+
+    // 그냥 화면 하나더 만들어서 찾은 사람 해당하는 아이디만 users.map
+    //
   };
 
   return (
-    <View style={styles.container}>
+    // <KeyboardAvoidingView
+    //   style={{ flex: 1 }}
+    //   behavior={Platform.OS === "ios" ? "padding" : "height"}
+    //   keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+    // >
+    <ScrollView
+      keyboardShouldPersistTaps="always"
+      listViewDisplayed={false}
+      // 위 코드는 스크롤뷰랑 구글오토컴플레이트 같이 쓸때 나오는 오류 없애려고 한거. 뭔지는 모름.
+      style={styles.container}
+    >
       <Text> 택시를 이용하는 지역</Text>
       <Text>도 : {selectedProvince}</Text>
       <Picker
@@ -114,7 +157,6 @@ const FriendsFindDetail = () => {
           <Picker.Item key={province} label={province} value={province} />
         ))}
       </Picker>
-
       <Text>시 : {selectedCity}</Text>
       <Picker
         selectedValue={selectedCity}
@@ -125,7 +167,6 @@ const FriendsFindDetail = () => {
           <Picker.Item key={city} label={city} value={city} />
         ))}
       </Picker>
-
       <Text> 즐겨타는 출발지 : </Text>
       <View style={styles.location}>
         <GooglePlacesAutocomplete
@@ -145,7 +186,6 @@ const FriendsFindDetail = () => {
           <MaterialCommunityIcons name="map-marker" size={20} />
         </View>
       </View>
-
       <Text> 즐겨타는 목적지 : </Text>
       <View style={styles.location}>
         <GooglePlacesAutocomplete
@@ -165,7 +205,6 @@ const FriendsFindDetail = () => {
           <MaterialCommunityIcons name="map-marker" size={20} />
         </View>
       </View>
-
       {/* 버튼 style 먹이느라 */}
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
@@ -180,7 +219,11 @@ const FriendsFindDetail = () => {
           />
         </View>
       </View>
-    </View>
+      <View />
+      {/* {" "} 이게필요해?? */}
+      {/* 키보드 높이만큼의 여백 생성 */}
+    </ScrollView>
+    // {/* </KeyboardAvoidingView> */}
   );
 };
 

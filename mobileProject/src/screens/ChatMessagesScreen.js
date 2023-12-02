@@ -1,3 +1,5 @@
+// 채팅방 화면 유튜브 따라한거라 잘모름 .
+
 import {
   StyleSheet,
   Text,

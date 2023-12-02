@@ -33,6 +33,9 @@ app.listen(port, () => {
 const User = require("./models/user");
 const Message = require("./models/message");
 const Driver = require("./models/driver");
+const Review = require("./models/review");
+const ReviewT = require("./models/reviewT"); // 택시기사 리뷰 db 따로뺏쥬
+const Payment = require("./models/payment");
 
 // 임시 // 나중에바꿔야함
 app.post("/reviews", (req, res) => {
@@ -247,10 +250,11 @@ app.get("/drivers/:userId", (req, res) => {
     });
 });
 
-//친구추가
+//친구추가요청 잘됐는지 불러옴
 app.post("/friend-request", async (req, res) => {
   const { currentUserId, selectedUserId } = req.body;
-
+  console.log("이거 왜 ", currentUserId);
+  // 현재 친구추가 누른 사람 아이디
   try {
     console.log("받기목록에 안뜨는거지? 왜?", currentUserId, selectedUserId); // 잘받았는데
     //update the recepient's friendRequestsArray! // 받는사람 이건 잘안됨 ,,
@@ -326,7 +330,7 @@ app.post("/friend-request/accept", async (req, res) => {
 
 // 여기서 부터 그냥 복붙
 
-//endpoint to access all the friends of the logged in user!
+// 친구목록 조회해서 이름 이메일 이미지 불러오는 코드
 app.get("/accepted-friends/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -432,6 +436,7 @@ app.post("/deleteMessages", async (req, res) => {
   }
 });
 
+// 친구요청 보낸 사람 목록 조회하는거지 맞아 근데 이걸 프론트엔드에서 썻나? 안씀.
 app.get("/friend-requests/sent/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -448,9 +453,10 @@ app.get("/friend-requests/sent/:userId", async (req, res) => {
   }
 });
 
+// 로그인한 유저에게서 친구가 누군지 받아오는 코드구나~
 app.get("/friends/:userId", (req, res) => {
   try {
-    const { userId } = req.params;
+    const { userId } = req.params; // userId 를 받아와서
 
     User.findById(userId)
       .populate("friends")
@@ -563,8 +569,10 @@ app.post("/FindTaxiMateDetail", async (req, res) => {
     const user = await User.find({
       "infoSetting.province": province,
       "infoSetting.city": city,
-      "infoSetting.favoriteStartPoint": favoriteStartPoint,
-      "infoSetting.favoriteEndPoint": favoriteEndPoint,
+      // "infoSetting.favoriteStartPoint": favoriteStartPoint,
+      // "infoSetting.favoriteEndPoint": favoriteEndPoint,
+
+      // 지역별로 검색할 수 잇게 바꿈일단
     });
     console.log(user)
     if (!user) {
@@ -602,3 +610,90 @@ app.get("/getMyTaxiInfo/:userId", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+// 이건 senderID를 기준으로 찾아서 내가 택시기사님에게 보낸 리뷰 만 볼 수 있음.
+// 이건 아직 post 로 기사님에게 하는건 안했음.
+// get 도 택시기사님에 접근해야하는데 잘되나..?? 확인해야됨
+
+app.get("/reviewsT/sender/:userId", async (req, res) => {
+  // /reviewsT/sender/ TTTTTTTTTTT 가 들어감.
+  const senderId = req.params.userId; // URL 경로에서 userId 추출
+  try {
+    const reviews = await ReviewT.find({ senderId: senderId }) // Review.find(리시브아이디가 : 요청받은리시브아이디)랑 일치하는지 ?
+      .populate("senderId", "name") // senderId를 참조하여 name 필드만 가져옴 senderId 에 name을 가져옴
+      .populate("receiverId", "name"); // receiverId를 참조하여 name 필드만 가져옴
+
+    // JSON 형태로 변환하여 클라이언트에게 보내기 이름으로된거
+    const reviewsWithNames = reviews.map((review) => ({
+      _id: review._id,
+      senderName: review.senderId.name, // sender의 이름
+      receiverName: review.receiverId.name, // receiver의 이름
+      rating: review.rating,
+      comment: review.comment,
+      reviewDate: review.reviewDate,
+    }));
+
+    res.json(reviewsWithNames);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "서버 에러 발생" });
+  }
+});
+
+// 한번 딱 넣어봣음.
+// 이걸 나중에 post 메소드로 ㅇㅇ
+const insertDummyData = async () => {
+  const dummyData = {
+    boarderId: "656203a7e05543faf0d7a0b3", // 테스트로 park / park
+    driverId: "6569a600f3abe1ee79d45bb7", // test 위해서 Driver1@naver.com / 1111
+    boardingDate: "2023-09-17T12:00:00.000Z",
+    startPoint: "서울역",
+    endPoint: "강남역",
+    pay: "15000",
+  };
+
+  try {
+    const payment = new Payment(dummyData);
+    await payment.save();
+    console.log("더미 데이터가 성공적으로 삽입되었습니다.");
+  } catch (error) {
+    console.error("더미 데이터 삽입 실패:", error);
+  }
+};
+
+// insertDummyData();
+
+//`http://10.20.64.25:8000/payments/boarderId/${userId}`
+// 날짜 , 출발지 목적지 , 호출시간 , 차량번호 , 기사이름 , 결제금액 줘야함.
+
+// myInfo 에서 이름뜨게 어떻게 했더라?이름까지 받아왔었구나 ok 이름까지주자
+
+app.get("/payments/boarderId/:userId", async (req, res) => {
+  const boarderId = req.params.userId; // URL 경로에서 userId 추출
+  console.log(boarderId);
+  try {
+    const payments = await Payment.find({ boarderId: boarderId }) // Review.find(리시브아이디가 : 요청받은리시브아이디)랑 일치하는지 ?
+      .populate("boarderId", "name") // senderId를 참조하여 name 필드만 가져옴 senderId 에 name을 가져옴
+      .populate("driverId", "name carNumber") // driverId를 참조하여 name 하고 차량번호 가져옴
+      .lean();
+    // JSON 형태로 변환하여 클라이언트에게 보내기 이름으로된거
+    const paymentsWithNameNumber = payments.map((Payment) => ({
+      _id: Payment._id,
+      boarderName: Payment.boarderId.name, // sender의 이름
+      driverName: Payment.driverId.name, // 드라이버 의 이름
+      carNumber: Payment.driverId.carNumber, //  드라이버의 차량번호
+      boardingDate: Payment.boardingDate,
+      startPoint: Payment.startPoint,
+      endPoint: Payment.endPoint,
+      pay: Payment.pay,
+    }));
+
+    console.log(paymentsWithNameNumber);
+    res.json(paymentsWithNameNumber);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "서버 에러 발생" });
+  }
+});
+
+// 이렇게 하는게 맞는지 모르겠는데 이런느낌임

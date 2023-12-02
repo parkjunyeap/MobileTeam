@@ -7,6 +7,56 @@ const User = ({ item }) => {
   const { userId } = useContext(UserType);
   const [requestSent, setRequestSent] = useState(false); // 요청 처음엔 실패
   // 현재 로그인 한 사람 누군지 알수있으려고
+  const [friendRequests, sentFriendRequests] = useState([]); // 친구요청 보낸 유저배열
+  const [userFriends, setUserFriends] = useState([]); // 친구인 유저 배열
+
+  useEffect(() => {
+    // 요청 보낸사람 이거
+    const fetchFriendRequests = async () => {
+      try {
+        console.log("여기들옴?");
+        const response = await fetch(
+          `http://10.20.64.25:8000/friend-requests/sent/${userId}`
+        );
+
+        const data = await response.json();
+        console.log("리스폰은 ", data);
+        if (response.ok) {
+          sentFriendRequests(data);
+        } else {
+          console.log("1 에러error", response.status);
+        }
+      } catch (error) {
+        console.log("2 에러 error", error);
+      }
+    };
+    fetchFriendRequests();
+  }, []);
+
+  useEffect(() => {
+    const fetchUserFriends = async () => {
+      try {
+        const response = await fetch(
+          `http://10.20.64.25:8000/friends/${userId}`
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setUserFriends(data);
+        } else {
+          console.log("에러 친구", response.status);
+        }
+      } catch (error) {
+        console.log("Error message", error);
+      }
+    };
+    fetchUserFriends();
+  }, []);
+
+  console.log("친구 요청 보낸사람", friendRequests);
+  console.log("친구인 사람", userFriends);
+
   const [modalVisible, setModalVisible] = useState(false);
 
   // console.log("이렇게하면 이름이나와?: ", userId);
@@ -27,8 +77,12 @@ const User = ({ item }) => {
       });
       console.log(currentUserId, selectedUserId); // 여기에서 친구요청보낼때 선택된 아이디가 뜨겠구나.
 
+      // 선택은 잘되는데 오는게 잘안됨.
       if (response.ok) {
         setRequestSent(true);
+        // 친구 요청이 성공적으로 완료되었다면, userFriends 상태 업데이트
+        // setUserFriends((prevFriends) => [...prevFriends, selectedUserId]);
+        console.log("ok 되서 잘 됐다고 뜸?");
       }
     } catch (error) {
       console.log("error message", error);
@@ -109,7 +163,7 @@ const User = ({ item }) => {
             >
               {/* // 리뷰 남기기 창 */}
 
-              <Pressable
+              {/* <Pressable
                 style={[
                   styles.button,
                   styles.buttonClose,
@@ -123,7 +177,29 @@ const User = ({ item }) => {
                 }
               >
                 <Text style={styles.textStyle}>리뷰 남기기</Text>
+              </Pressable> */}
+
+              <Pressable
+                style={[
+                  styles.button,
+                  styles.buttonClose,
+                  { marginRight: 10, marginTop: 10 },
+                  !userFriends.includes(item._id) && styles.buttonDisabled, // 친구가 아닐 때 스타일 추가
+                ]}
+                onPress={() => {
+                  if (userFriends.includes(item._id)) {
+                    navigation.navigate("writeReview", {
+                      selectedUserId: item._id,
+                      selectedUserName: item.name,
+                    });
+                  }
+                }}
+                disabled={!userFriends.includes(item._id)} // 친구가 아닐 때 버튼 비활성화
+              >
+                <Text style={styles.textStyle}>리뷰 남기기</Text>
               </Pressable>
+
+              {/*  여기 서부터하자 */}
 
               <Pressable
                 style={[styles.button, styles.buttonClose, { marginTop: 10 }]}
@@ -173,19 +249,46 @@ const User = ({ item }) => {
           </View>
         </Pressable>
 
-        <Pressable
-          onPress={() => sendFriendRequest(userId, item._id)}
-          style={{
-            backgroundColor: "#567189",
-            padding: 10,
-            borderRadius: 6,
-            width: 105,
-          }}
-        >
-          <Text style={{ textAlign: "center", color: "white", fontSize: 13 }}>
-            친구 추가
-          </Text>
-        </Pressable>
+        {userFriends.includes(item._id) ? (
+          <Pressable
+            style={{
+              backgroundColor: "#82CD47",
+              padding: 10,
+              width: 105,
+              borderRadius: 6,
+            }}
+          >
+            <Text style={{ textAlign: "center", color: "white" }}>친구</Text>
+          </Pressable>
+        ) : requestSent ||
+          friendRequests.some((friend) => friend._id === item._id) ? (
+          <Pressable
+            style={{
+              backgroundColor: "gray",
+              padding: 10,
+              width: 105,
+              borderRadius: 6,
+            }}
+          >
+            <Text style={{ textAlign: "center", color: "white", fontSize: 13 }}>
+              요청 보냄
+            </Text>
+          </Pressable>
+        ) : (
+          <Pressable
+            onPress={() => sendFriendRequest(userId, item._id)}
+            style={{
+              backgroundColor: "#567189",
+              padding: 10,
+              borderRadius: 6,
+              width: 105,
+            }}
+          >
+            <Text style={{ textAlign: "center", color: "white", fontSize: 13 }}>
+              친구 추가
+            </Text>
+          </Pressable>
+        )}
       </View>
     </>
   );
@@ -237,5 +340,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  buttonDisabled: {
+    backgroundColor: "gray", // 비활성화 상태일 때의 배경색
+    // 필요하다면 여기에 다른 스타일 속성들도 추가할 수 있습니다.
   },
 });

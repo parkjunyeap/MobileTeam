@@ -19,6 +19,7 @@ const ViewMyReview = () => {
         );
         if (response.status === 200) {
           setReviews(response.data); // 서버로부터 받은 데이터를 상태에 저장합니다.
+          console.log(response.data);
         }
       } catch (err) {
         console.error("리뷰 데이터를 가져오는 데 실패했습니다.", err);
@@ -33,6 +34,11 @@ const ViewMyReview = () => {
       data={reviews} // 서버로부터 받은 리뷰 데이터를 사용합니다.
       renderItem={({ item }) => <ReviewItem item={item} />}
       keyExtractor={(item) => item._id.toString()} // MongoDB의 _id를 사용합니다.
+      ListEmptyComponent={
+        <Text style={styles.emptyListStyle}>
+          <Text style={styles.boldText}></Text>당신의 리뷰가 하나도 없습니다.
+        </Text>
+      } // 여기에 추가
     />
   );
 };

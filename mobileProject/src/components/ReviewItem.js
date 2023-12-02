@@ -1,5 +1,6 @@
 import { View, StyleSheet, Text } from "react-native";
 
+import formatDate from "../../hook/formatDate";
 const ReviewItem = ({ item }) => {
   const { senderName, receiverName, rating, reviewDate, comment } = item;
 
@@ -13,7 +14,7 @@ const ReviewItem = ({ item }) => {
         <Text style={styles.name}>받는 사람: {receiverName}</Text>
         <Text style={styles.rating}>{ratingStars}</Text>
         <Text style={styles.text}>{comment}</Text>
-        <Text style={styles.date}>{reviewDate}</Text>
+        <Text style={styles.date}>{formatDate(reviewDate)}</Text>
       </View>
     </View>
   );
