@@ -28,6 +28,16 @@ const BottomTabNavigator = () => {
         tabBarInactiveTintColor: "gray",
       }}
     >
+      <BTab.Screen
+        name="친구"
+        component={ChattingStackNavigator}
+        options={{
+          tabBarIcon: ({ size, color }) => (
+            // <MaterialCommunityIcons name="chat" size={size} color={color} />
+            <FontAwesome5 name="user-friends" size={24} color="black" />
+          ),
+        }}
+      />
       {/* MaterialCommunityIcons 중에서 두가지 고르고, 크기와 색깔은 부모 컴포넌트(BTab.Navigator)에 따라서 적용 */}
       <BTab.Screen
         name="기사님"
@@ -48,16 +58,7 @@ const BottomTabNavigator = () => {
           ),
         }}
       />
-      <BTab.Screen
-        name="친구"
-        component={ChattingStackNavigator}
-        options={{
-          tabBarIcon: ({ size, color }) => (
-            // <MaterialCommunityIcons name="chat" size={size} color={color} />
-            <FontAwesome5 name="user-friends" size={24} color="black" />
-          ),
-        }}
-      />
+
       {/* //스택네비게이터가 둥지틀 장소  */}
       <BTab.Screen
         name="내정보"

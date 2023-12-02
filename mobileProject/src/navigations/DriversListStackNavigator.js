@@ -5,6 +5,7 @@ import TaxiDriverList from "../screens/TaxiDriverList";
 import FriendsListDetail from "../screens/FriendsListDetail";
 
 import Review from "../screens/Review";
+import ViewFriendReview from "../screens/ViewFriendReview";
 
 const Stack = createStackNavigator();
 
@@ -33,7 +34,13 @@ function DriversListStackNavigator() {
       <Stack.Screen
         name="writeReview"
         component={Review}
-        options={{ title: "리뷰 보내기" }}
+        options={{ title: "기사님한테 리뷰 보내기" }}
+      />
+
+      <Stack.Screen
+        name="ViewFriendReview"
+        component={ViewFriendReview}
+        options={{ title: "기사님이 받은 리뷰 " }}
       />
     </Stack.Navigator>
   );

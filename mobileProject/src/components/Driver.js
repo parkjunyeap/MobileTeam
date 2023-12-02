@@ -85,12 +85,13 @@ const Driver = ({ item }) => {
                 ]}
                 onPress={() => {
                   navigation.navigate("writeReview", {
-                    selectedUserId: item._id, // 사실 드라이버 아이디 ,
-                    selectedUserName: item.name, //사실 드라이버 이름
+                    selectedDriverId: item._id, // 사실 드라이버 아이디 ,
+                    selectedDriverName: item.name, //사실 드라이버 이름
                   });
                 }}
               >
                 <Text style={styles.textStyle}>리뷰 남기기</Text>
+                {/* 리뷰 남기기는 되는것같은데??? */}
               </Pressable>
 
               {/*  여기 서부터하자 */}
@@ -99,8 +100,9 @@ const Driver = ({ item }) => {
                 style={[styles.button, styles.buttonClose, { marginTop: 10 }]}
                 onPress={() =>
                   navigation.navigate("ViewFriendReview", {
-                    selectedUserId: item._id, // 이렇게하면 지금 selectedUserId 도 보내줄 // 사실 드라이버 아이디 ,
-                    selectedUserName: item.name, // 선택한 아이템의 이름도 보내줌 //사실 드라이버 이름
+                    // 뷰 프렌드 리뷰로 감 일단 //
+                    selectedDriverId: item._id, // 이렇게하면 지금 selectedUserId 도 보내줄 // 사실 드라이버 아이디 ,
+                    selectedDriverName: item.name, // 선택한 아이템의 이름도 보내줌 //사실 드라이버 이름
                   })
                 }
               >

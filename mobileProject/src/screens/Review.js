@@ -19,15 +19,15 @@ const Review = () => {
 
   const navigation = useNavigation(); // 이게있어야 화면 옮길 수 있음.
 
-  const route = useRoute(); // 현재 라우트에 대한 정보를 가져옵니다.
-  const selectedUserId = route.params?.selectedUserId; // selectedUserId 값을 추출합니다. // // 드라이버에서 왔음 드라이버 아이디
-  const selectedUserName = route.params?.selectedUserName; // selectedUserId 값을 추출합니다. // 드라이버에서 왔음 드라이버 이름
-
-  // 아닌데 그럼. 택시기사 리뷰는 따로 디비로 관리하기로 했으니까 . 좀 다르게해야함..
+  const route = useRoute();
+  const selectedUserId = route.params?.selectedUserId; // 사용자 ID
+  const selectedUserName = route.params?.selectedUserName; // 사용자 이름
+  const selectedDriverId = route.params?.selectedDriverId; // 기사 ID
+  const selectedDriverName = route.params?.selectedDriverName; // 기사 이름
 
   // const [selectedUserName, setSelectedUserNamet] = useState("");
-  console.log("선택한 아이디?", selectedUserId);
-  console.log("선택한 아이디의 이름?", selectedUserName);
+  console.log("선택한 아이디가 유저냐 ", selectedUserId);
+  console.log("선택한 아이디가 드라이버냐 ", selectedDriverId);
 
   // 전송버튼 눌렀을 때는 post 로 여기있는 거 전부 날리면 됨. 데이터를
   const [senderId, setSenderId] = useState(userId); // 로그인 한 userId
@@ -41,25 +41,45 @@ const Review = () => {
   const handleSubmit = () => {
     const reviewData = {
       senderId: senderId,
-      receiverId: selectedUserId,
+      receiverId: selectedDriverId || selectedUserId,
       rating: rating,
       comment: comment,
     };
 
-    console.log(reviewData);
+    console.log("현재 들어온 리뷰데이터 ", reviewData);
     // 현재 바꾼디비랑 안맞아서 못씀.
+
+    // API 엔드포인트 결정
+    let apiEndpoint;
+    if (selectedDriverId) {
+      // 택시 기사에게 보내는 리뷰
+      apiEndpoint = "http://192.168.0.14:8000/write/driverReviews";
+    } else {
+      // 일반 사용자에게 보내는 리뷰
+      apiEndpoint = "http://192.168.0.14:8000/write/reviews";
+    }
+
+    // axios
+    //   .post("http://192.168.0.14:8000/write/reviews", reviewData) // 리뷰 데이터 보내는사람, 받는사람, 별점 , 코멘트
+    //   .then((response) => {
+    //     console.log(response);
+    //     Alert.alert("등록 성공!!", "성공적으로 등록되었습니다");
+    //   })
+    //   .catch((error) => {
+    //     // 오류발생시 실행
+    //     console.log(error.message);
+    //   })
+
+    // POST 요청 보내기
     axios
-      .post("http://10.20.64.25:8000/write/reviews", reviewData) // 리뷰 데이터 보내는사람, 받는사람, 별점 , 코멘트
+      .post(apiEndpoint, reviewData)
       .then((response) => {
         console.log(response);
+        Alert.alert("등록 성공!!", "성공적으로 등록되었습니다");
       })
       .catch((error) => {
-        // 오류발생시 실행
         console.log(error.message);
-      })
-      .then(() => {});
-
-    Alert.alert("등록 성공!!", "성공적으로 등록되었습니다");
+      });
   };
 
   return (
@@ -72,7 +92,10 @@ const Review = () => {
           onFinishRating={(value) => setRating(value)}
           style={styles.rating}
         />
-        <Text> {selectedUserName}님에게 리뷰를 보냅니다. </Text>
+        <Text>
+          {" "}
+          {selectedDriverName || selectedUserName}님에게 리뷰를 보냅니다.{" "}
+        </Text>
 
         <TextInput
           style={styles.input}

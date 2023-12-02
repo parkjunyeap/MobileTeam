@@ -90,7 +90,7 @@ const HomeScreen = () => {
       setUserId(userId);
 
       axios
-        .get(`http://10.20.64.25:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
+        .get(`http://192.168.0.14:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
         .then((response) => {
           console.log("Response data:", response.data); // 전부 찍힘.
           setUsers(response.data);
@@ -124,20 +124,6 @@ const HomeScreen = () => {
 1;
 export default HomeScreen;
 
-const styles = StyleSheet.create({
-  // button: {
-  //   // Match the style with your design
-  //   backgroundColor: "#4CAF50", // This is the green background
-  //   padding: 15,
-  //   borderRadius: 5,
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  // },
-  // buttonText: {
-  //   color: "#fff",
-  //   // Add other styles for your text if needed
-  // },
-  // 버튼 쓰는게 없구요
-});
+const styles = StyleSheet.create({});
 
 // 갑자기?
