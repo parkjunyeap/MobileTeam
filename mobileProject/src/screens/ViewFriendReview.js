@@ -1,3 +1,5 @@
+// 선택한 친구의 리뷰 보여지는 화면
+
 import React, { useState, useEffect, useContext } from "react";
 import { View, FlatList, StyleSheet, Text, Image } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native"; // useRoute를 통해 데이터를받아올 수 있다.

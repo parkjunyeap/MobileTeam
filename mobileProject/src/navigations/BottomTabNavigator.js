@@ -8,7 +8,7 @@ import TaxiTouch from "../screens/TaxiTouch";
 
 import MyInfoStackNavigator from "./MyInfoStackNavigator"; // StackNavigator import
 
-import FriendsListStackNavigator from "./FriendsListStackNavigator";
+import DriversListStackNavigator from "./DriversListStackNavigator";
 import ChattingStackNavigator from "./ChattingStackNavigator";
 import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -31,7 +31,7 @@ const BottomTabNavigator = () => {
       {/* MaterialCommunityIcons 중에서 두가지 고르고, 크기와 색깔은 부모 컴포넌트(BTab.Navigator)에 따라서 적용 */}
       <BTab.Screen
         name="기사님"
-        component={FriendsListStackNavigator}
+        component={DriversListStackNavigator}
         options={{
           tabBarIcon: ({ size, color }) => (
             <FontAwesome name="drivers-license-o" size={24} color="black" />

@@ -4,9 +4,11 @@ import { createStackNavigator } from "@react-navigation/stack";
 import TaxiDriverList from "../screens/TaxiDriverList";
 import FriendsListDetail from "../screens/FriendsListDetail";
 
+import Review from "../screens/Review";
+
 const Stack = createStackNavigator();
 
-function FriendsListStackNavigator() {
+function DriversListStackNavigator() {
   return (
     <Stack.Navigator initialRouteName="TaxiDriverList">
       <Stack.Screen
@@ -20,13 +22,21 @@ function FriendsListStackNavigator() {
           },
         }}
       />
+      {/* 이거 상세필요없이 그냥 바로 모달창 띄 워서 하면될듯? */}
       <Stack.Screen
         name="FriendsListDetail"
         component={FriendsListDetail}
         options={{ title: "친구 상세정보" }}
       />
+
+      {/* 리뷰 보내는거는 택시 기사도 똑같으려나? id  */}
+      <Stack.Screen
+        name="writeReview"
+        component={Review}
+        options={{ title: "리뷰 보내기" }}
+      />
     </Stack.Navigator>
   );
 }
 
-export default FriendsListStackNavigator;
+export default DriversListStackNavigator;

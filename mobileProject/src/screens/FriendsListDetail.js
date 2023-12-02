@@ -1,5 +1,5 @@
 // 현재 안쓸 예정인 화면
-
+// 안씀요
 import React from "react";
 import { View, StyleSheet, Text, Button } from "react-native";
 

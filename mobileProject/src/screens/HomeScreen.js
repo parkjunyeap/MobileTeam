@@ -103,7 +103,9 @@ const HomeScreen = () => {
     fetchUsers();
   }, []); // 처음 렌더링 될때 한번만 실행되고 , 이걸로
 
-  console.log("users", users);
+  // console.log("users", users);
+
+  // 이거 users 너무 많이 나와서 주석처리함.
 
   return (
     <View>
@@ -123,16 +125,19 @@ const HomeScreen = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  button: {
-    // Match the style with your design
-    backgroundColor: "#4CAF50", // This is the green background
-    padding: 15,
-    borderRadius: 5,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    // Add other styles for your text if needed
-  },
+  // button: {
+  //   // Match the style with your design
+  //   backgroundColor: "#4CAF50", // This is the green background
+  //   padding: 15,
+  //   borderRadius: 5,
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
+  // buttonText: {
+  //   color: "#fff",
+  //   // Add other styles for your text if needed
+  // },
+  // 버튼 쓰는게 없구요
 });
+
+// 갑자기?

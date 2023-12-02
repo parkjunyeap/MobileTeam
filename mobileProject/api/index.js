@@ -620,6 +620,7 @@ const insertDummyData = async () => {
 
 // myInfo 에서 이름뜨게 어떻게 했더라?이름까지 받아왔었구나 ok 이름까지주자
 
+// 결제내역에는 일단 이정도만??
 app.get("/payments/boarderId/:userId", async (req, res) => {
   const boarderId = req.params.userId; // URL 경로에서 userId 추출
   console.log(boarderId);
@@ -649,3 +650,51 @@ app.get("/payments/boarderId/:userId", async (req, res) => {
 });
 
 // 이렇게 하는게 맞는지 모르겠는데 이런느낌임
+
+app.get("/driverList", async (req, res) => {
+  // 요청은 없고요.
+  try {
+    const drivers = await Driver.find({}); // 모든 드라이버 데이터 검색
+    res.status(200).json(drivers); // 검색 결과를 JSON 형식으로 반환
+  } catch (error) {
+    res.status(500).json({ message: "서버 오류 발생", error: error });
+  }
+});
+
+// app.get("/users/:userId", (req, res) => {
+//   const loggedInUserId = req.params.userId;
+//   // 로그인한 유저를 받아오는건가보다 현재?
+//   User.find({ _id: { $ne: loggedInUserId } })
+//     // 현재 로그인한 유저 빼고 전부다 가져오기.
+//     .then((users) => {
+//       res.status(200).json(users);
+//     })
+//     .catch((err) => {
+//       console.log("에러 리트라이빙 유저", err);
+//       res.status(500).json({ message: "에러 리트라이빙 유저스" });
+//     });
+// });
+
+// 드라이버 더미 데이터 예시
+const driverData = {
+  name: "김철수", // 예시 이름
+  email: "chulsoo.kim@example.com", // 예시 이메일
+  password: "securePassword123!", // 예시 비밀번호
+  image: "profile_pic_chulsoo.jpg", // 예시 프로필 이미지 파일명
+  imaget: "driver_license_chulsoo.jpg", // 예시 자격증 이미지 파일명
+  carNumber: "서울 123가 4567", // 예시 차량 번호
+  carName: "Kia K5", // 예시 차량 이름
+  licenseNumber: "01-23456789", // 예시 자격증 번호
+  getDate: "2023-01-01", // 예시 습득 날짜
+  driveState: false, // 예시 운행 상태
+  birthdate: new Date("1980-04-15"), // 예시 생년월일
+  province: "서울특별시", // 예시 도
+  city: "강남구", // 예시 시
+};
+
+// 더미 데이터를 데이터베이스에 저장하는 예시 코드
+// const newDriver = new Driver(driverData);
+// newDriver
+//   .save()
+//   .then(() => console.log("더미 데이터가 성공적으로 저장되었습니다."))
+//   .catch((err) => console.error("데이터 저장 중 오류 발생: ", err));

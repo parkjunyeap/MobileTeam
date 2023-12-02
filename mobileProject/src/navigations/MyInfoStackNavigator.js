@@ -3,7 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import MyInfo from "../screens/MyInfo";
 import ViewMyReview from "../screens/ViewMyReview";
-// import ReviewTaxiMyInfo from "../screens/ReviewTaxiMyInfo";
+
 import MyTaxiMateInfo from "../screens/MyTaxiMateInfo";
 import PaymentList from "../screens/PaymentList";
 import PaymentDetail from "../screens/PaymentDetail";

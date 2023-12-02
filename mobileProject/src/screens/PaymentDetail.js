@@ -1,3 +1,5 @@
+// 아직 안했는데 할 수 도있음.
+
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 

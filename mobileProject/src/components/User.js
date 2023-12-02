@@ -1,3 +1,5 @@
+// 유저 친구요청 , 요청보냄, 친구 , 그리고 리뷰남기기, 리뷰보기 등 하나의 컴포넌트에서 다 할 수 있음요.
+
 import React, { useState, useContext, useEffect } from "react";
 import { StyleSheet, Text, View, Image, Pressable, Modal } from "react-native";
 import { UserType } from "../UserContext";
@@ -161,24 +163,6 @@ const User = ({ item }) => {
                 alignItems: "center",
               }}
             >
-              {/* // 리뷰 남기기 창 */}
-
-              {/* <Pressable
-                style={[
-                  styles.button,
-                  styles.buttonClose,
-                  { marginRight: 10, marginTop: 10 },
-                ]}
-                onPress={() =>
-                  navigation.navigate("writeReview", {
-                    selectedUserId: item._id, // 이렇게하면 지금 selectedUserId 도 보내줄
-                    selectedUserName: item.name, // 선택한 아이템의 이름도 보내줌
-                  })
-                }
-              >
-                <Text style={styles.textStyle}>리뷰 남기기</Text>
-              </Pressable> */}
-
               <Pressable
                 style={[
                   styles.button,

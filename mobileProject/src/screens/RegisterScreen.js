@@ -1,3 +1,5 @@
+// 회원가입화면
+
 import {
   StyleSheet,
   Text,

@@ -1,3 +1,5 @@
+// 로그인 화면
+
 import {
   KeyboardAvoidingView,
   Pressable,

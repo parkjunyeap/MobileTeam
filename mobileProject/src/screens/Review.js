@@ -1,4 +1,7 @@
 // 리뷰 작성해서 상대한테 보내기 부분.
+// 다른 화면 다 똑같음 리뷰보내는화면은.
+// 택시기사한테 보내는 화면은 달라야할지도???????
+// 아직 안했음.
 
 import React, { useEffect, useState } from "react";
 import { View, TextInput, Button, StyleSheet, Text, Alert } from "react-native";
@@ -17,8 +20,10 @@ const Review = () => {
   const navigation = useNavigation(); // 이게있어야 화면 옮길 수 있음.
 
   const route = useRoute(); // 현재 라우트에 대한 정보를 가져옵니다.
-  const selectedUserId = route.params?.selectedUserId; // selectedUserId 값을 추출합니다.
-  const selectedUserName = route.params?.selectedUserName; // selectedUserId 값을 추출합니다.
+  const selectedUserId = route.params?.selectedUserId; // selectedUserId 값을 추출합니다. // // 드라이버에서 왔음 드라이버 아이디
+  const selectedUserName = route.params?.selectedUserName; // selectedUserId 값을 추출합니다. // 드라이버에서 왔음 드라이버 이름
+
+  // 아닌데 그럼. 택시기사 리뷰는 따로 디비로 관리하기로 했으니까 . 좀 다르게해야함..
 
   // const [selectedUserName, setSelectedUserNamet] = useState("");
   console.log("선택한 아이디?", selectedUserId);
