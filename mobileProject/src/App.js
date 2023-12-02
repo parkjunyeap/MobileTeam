@@ -29,27 +29,23 @@
 // };
 
 // export default App;
-
-import { StyleSheet, Text, View } from "react-native";
+import React from 'react' //추가
+import { StyleSheet, Text, View ,Dimensions} from "react-native";
 import StackNavigator from "./navigations/StackNavigator";
-import { UserContext } from "./UserContext";
-
-export default function App() {
-  return (
-    <>
-      {/* 이런식으로 전역으로 감싸줌 */}
-      <UserContext>
-        <StackNavigator />
-      </UserContext>
-    </>
-  );
+import HomePage from './src/screens/HomePage';
+const App = () => {
+  return(
+    <View style = {styles.container}>
+      <HomePage/>
+    </View>
+  )
 }
 
+export default App
+
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+  container:{
+    flex:1
+  }
+})

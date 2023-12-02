@@ -47,7 +47,7 @@ const LoginScreen = () => {
     };
 
     axios
-      .post("http://10.20.60.3:8000/login", user)
+      .post("http://172.30.1.78:8000/login", user)
       .then((response) => {
         console.log(response);
         const token = response.data.token;

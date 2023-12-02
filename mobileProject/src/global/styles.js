@@ -1,5 +1,5 @@
 import { getStatusBarHeight } from 'react-native-status-bar-height';
-
+//영상에서는 yarn으로 설치했지만 우리는 지금까지 npm으로해서 npm으로 설치함
 // 44 - on iPhoneX
 // 20 - on iOS device
 // X - on Android platfrom (runtime value)
