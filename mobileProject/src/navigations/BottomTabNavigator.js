@@ -11,6 +11,9 @@ import MyInfoStackNavigator from "./MyInfoStackNavigator"; // StackNavigator imp
 import FriendsFindStackNavigator from "./FriendsFindStackNavigator";
 import FriendsListStackNavigator from "./FriendsListStackNavigator";
 import ChattingStackNavigator from "./ChattingStackNavigator";
+import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 const BTab = createBottomTabNavigator();
 
@@ -28,19 +31,16 @@ const BottomTabNavigator = () => {
     >
       {/* MaterialCommunityIcons 중에서 두가지 고르고, 크기와 색깔은 부모 컴포넌트(BTab.Navigator)에 따라서 적용 */}
       <BTab.Screen
-        name="친구목록"
+        name="기사님"
         component={FriendsListStackNavigator}
         options={{
           tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons
-              name="account-group"
-              size={size}
-              color={color}
-            />
+            <FontAwesome name="drivers-license-o" size={24} color="black" />
           ),
         }}
       />
-      <BTab.Screen
+      {/* 일단 안씀니다. */}
+      {/* <BTab.Screen
         name="친구찾기"
         component={FriendsFindStackNavigator}
         options={{
@@ -52,22 +52,23 @@ const BottomTabNavigator = () => {
             />
           ),
         }}
-      />
+      /> */}
       <BTab.Screen
         name="택시잡기"
         component={TaxiTouch}
         options={{
           tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons name="car" size={size} color={color} />
+            <FontAwesome name="taxi" size={24} color="black" />
           ),
         }}
       />
       <BTab.Screen
-        name="채팅"
+        name="친구"
         component={ChattingStackNavigator}
         options={{
           tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons name="chat" size={size} color={color} />
+            // <MaterialCommunityIcons name="chat" size={size} color={color} />
+            <FontAwesome5 name="user-friends" size={24} color="black" />
           ),
         }}
       />
@@ -77,7 +78,7 @@ const BottomTabNavigator = () => {
         component={MyInfoStackNavigator}
         options={{
           tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons name="account" size={size} color={color} />
+            <Ionicons name="person-circle" size={24} color="black" />
           ),
         }}
       />

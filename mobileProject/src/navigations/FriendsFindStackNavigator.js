@@ -1,3 +1,7 @@
+// 일단 친구찾기 부분 없앰.
+
+// 이거 안씀!!
+
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 

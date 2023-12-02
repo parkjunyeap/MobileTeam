@@ -12,7 +12,13 @@ function FriendsListStackNavigator() {
       <Stack.Screen
         name="FriendsList"
         component={FriendsList}
-        options={{ title: "친구 목록" }}
+        options={{
+          title: "기사님 목록",
+          headerTitleStyle: {
+            fontSize: 16, // 폰트 크기 설정
+            fontWeight: "bold", // 폰트 두께 설정
+          },
+        }}
       />
       <Stack.Screen
         name="FriendsListDetail"

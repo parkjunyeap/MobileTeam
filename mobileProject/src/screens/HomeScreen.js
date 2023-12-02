@@ -10,6 +10,7 @@ import {
 import React, { useLayoutEffect, useContext, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+
 import { MaterialIcons } from "@expo/vector-icons";
 import { UserType } from "../UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -35,18 +36,34 @@ const HomeScreen = () => {
       ),
       headerRight: () => (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <MaterialIcons
+            name="person-search"
+            size={24}
+            color="black"
+            padding={14}
+            onPress={() => navigation.navigate("FriendsFindDetail")}
+          />
+
           <Ionicons
             onPress={() => navigation.navigate("Chats")}
-            name="chatbox-ellipses-outline"
+            name="chatbox-ellipses"
             size={24}
             color="black"
           />
-          <MaterialIcons
+
+          {/* <MaterialIcons
             onPress={() => navigation.navigate("Friends")}
             name="people-outline"
             size={24}
             color="black"
             padding={14}
+          /> */}
+          <Ionicons
+            onPress={() => navigation.navigate("Friends")}
+            name="person-add-sharp"
+            size={24}
+            padding={14}
+            color="black"
           />
         </View>
       ),
@@ -91,13 +108,6 @@ const HomeScreen = () => {
   return (
     <View>
       <ScrollView>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("FriendsFindDetail")}
-        >
-          <Text style={styles.buttonText}>친구 찾기</Text>
-        </TouchableOpacity>
-
         <View style={{ padding: 15 }}>
           {/* // index = key , item == item.... */}
           {users.map((item, index) => (

@@ -21,7 +21,13 @@ function MyInfoStackNavigator() {
       <Stack.Screen
         name="MyInfo"
         component={MyInfo}
-        options={{ title: "내 정보" }}
+        options={{
+          title: "내 정보",
+          headerTitleStyle: {
+            fontSize: 16, // 폰트 크기 설정
+            fontWeight: "bold", // 폰트 두께 설정
+          },
+        }}
       />
       <Stack.Screen
         name="MyTaxiMateInfo"
