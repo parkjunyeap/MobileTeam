@@ -5,6 +5,8 @@ import { useContext, useEffect, useState } from "react";
 import { UserType } from "../UserContext";
 import axios from "axios";
 import * as ImagePicker from 'expo-image-picker';
+import { Picker } from "@react-native-picker/picker";
+import locationData from "../locationData";
 
 const DriverInfo = ({ route }) => {
   // route.params에서 정보를 추출합니다.
@@ -48,8 +50,8 @@ const DriverInfo = ({ route }) => {
         setCarNumber(data.carNumber)
         setGetDate(data.getDate)
         setBirthdate(data.birthdate)
-        setSelectedProvince(data.selectedProvince)
-        setSelectedCity(data.selectedCity)
+        setSelectedProvince(data.province)
+        setSelectedCity(data.city)
 
         // 데이터베이스에 아무 정보도 없으면 "" 빈 문자열 주기.
       } catch (error) {
@@ -94,7 +96,6 @@ const DriverInfo = ({ route }) => {
         console.log("update failed", error);
       });
   }
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>기사 정보</Text>
@@ -109,18 +110,30 @@ const DriverInfo = ({ route }) => {
       </TouchableOpacity>
       <Text style={styles.info}>이름: {name}</Text>
       <Text style={styles.info}>이메일: {email}</Text>
-      <Text style={{ fontSize: 20, marginBottom: 5 }}> 택시타는 동네 </Text>
-        {/* Province Picker */}
+      <Text style={styles.info}>생년월일: {birthdate}</Text>
+      <Text style={{ fontSize: 20, marginBottom: 5 }}> 택시 운행 지역 </Text>
+      {/* Province Picker */}
 
-        <Picker
-          selectedValue={selectedProvince}
-          onValueChange={(itemValue) => onProvinceChange(itemValue)}
-          style={{ height: 50, width: 250, marginBottom: 10 }}
-        >
-          {Object.keys(locationData).map((province) => (
-            <Picker.Item key={province} label={province} value={province} />
-          ))}
-        </Picker>
+      <Picker
+        selectedValue={selectedProvince}
+        onValueChange={(itemValue) => setSelectedProvince(itemValue)}
+        style={{ height: 50, width: 250, marginBottom: 10 }}
+      >
+        {Object.keys(locationData).map((province) => (
+          <Picker.Item key={province} label={province} value={province} />
+        ))}
+      </Picker>
+
+      <Picker
+        selectedValue={selectedCity}
+        onValueChange={(itemValue) => setSelectedCity(itemValue)}
+        style={styles.picker}
+      >
+        {locationData[selectedProvince]?.map((city) => (
+          <Picker.Item key={city} label={city} value={city} />
+        ))}
+      </Picker>
+
       <View style={styles.imageContainer}>
         {imaget ? (
           <Image source={{ uri: imaget }} style={styles.imaget} />
@@ -211,7 +224,24 @@ const styles = StyleSheet.create({
   info: {
     fontSize: 16,
     marginBottom: 10,
-  }
+  },
+  picker: {
+    height: 50,
+    width: 250,
+    marginBottom: 20, // Picker들 사이의 간격을 조정
+  },
+
+  location: {
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    borderBottomWidth: 0.5,
+    // borderBottomColor : GRAY.LIGHT,
+  },
+  locationIcon: {
+    position: "absolute",
+    left: 20,
+    top: 16,
+  },
 });
 
 export default DriverInfo;

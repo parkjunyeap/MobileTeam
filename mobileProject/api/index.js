@@ -187,19 +187,24 @@ app.post("/loginT", (req, res) => {
     });
 });
 
-app.post("/UpTImage", async (req, res) => {
+app.post("/UpTInfo", async (req, res) => {
   // 클라이언트로부터 받은 데이터에서 이름, 이메일, 비밀번호, 이미지를 추출
   console.log(req.body)
   const userId = req.body.userId;
 
   // 새로운 User 모델 인스턴스를 생성
-  const newImage = await Driver.findOneAndUpdate(
+  const newTInfo = await Driver.findOneAndUpdate(
     { _id: userId },
-    { image: req.body.image },
+    {
+      image: req.body.image,
+      birthdate: req.body.birthdate,
+      province: req.body.province,
+      city:req.body.city
+    },
     { new: true, upsert: true }
   )
   // 데이터베이스에 새로운 사용자 저장 시도
-  newImage
+  newTInfo
     .save()
     .then(() => {
       // 저장 성공 시 200 상태 코드와 함께 성공 메시지 응답
@@ -582,7 +587,7 @@ app.get("/getMyTaxiInfo/:userId", async (req, res) => {
 
     // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보와 name도 조회
     const driverInfo = await Driver.findById(userId).populate(
-      "name email image imaget carNumber carName licenseNumber getDate"
+      "name email image imaget carNumber carName licenseNumber getDate birthdate province city"
     );
 
     console.log("데이터베이스에서 잘받아오나요?", driverInfo);
