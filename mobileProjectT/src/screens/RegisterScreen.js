@@ -30,7 +30,9 @@ const RegisterScreen = () => {
   const navigation = useNavigation();
   // 이거 그냥 네비게이션 써서 화면이동해준다는 뜻
   // navigation.goback() // 이런식으로씀
-
+  
+  
+  // 프로필 사진
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -40,7 +42,20 @@ const RegisterScreen = () => {
     });
 
     if (!result.canceled) {
-      // result.base64에 Base64 인코딩된 이미지 데이터가 저장됩니다.
+      setImaget(result.assets[0].uri);
+    }
+  };
+
+  // 자격증 사진
+  const pickImageL = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1, 
+    });
+
+    if (!result.canceled) {
       setImaget(result.assets[0].uri);
     }
   };
@@ -172,22 +187,19 @@ const RegisterScreen = () => {
 
             <View style={{ marginTop: 10 }}>
               <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
-                프로필 사진 url
+                프로필 등록
               </Text>
-
-              <TextInput
-                value={image}
-                onChangeText={(text) => setImage(text)}
-                style={{
-                  fontSize: email ? 18 : 18,
-                  borderBottomColor: "gray",
-                  borderBottomWidth: 1,
-                  marginVertical: 10,
-                  width: 300,
-                }}
-                placeholderTextColor={"black"}
-                placeholder="url로 입력하세요"
-              />
+              <View style={styles.imagePickerContainer}>
+                <TouchableOpacity onPress={pickImage}>
+                  {image ? (
+                    <Image source={{ uri: image }} style={styles.image} />
+                  ) : (
+                    <View style={styles.placeholderContainer}>
+                      <Text style={styles.placeholderText}>자격증 사진 등록</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              </View>
             </View>
 
             <View style={{ marginTop: 10 }}>
@@ -195,9 +207,9 @@ const RegisterScreen = () => {
                 자격증 등록
               </Text>
               <View style={styles.imagePickerContainer}>
-                <TouchableOpacity onPress={pickImage}>
+                <TouchableOpacity onPress={pickImageL}>
                   {imaget ? (
-                    <Image source={{ uri: imaget }} style={styles.image} />
+                    <Image source={{ uri: imaget }} style={styles.imagel} />
                   ) : (
                     <View style={styles.placeholderContainer}>
                       <Text style={styles.placeholderText}>자격증 사진 등록</Text>
@@ -229,7 +241,7 @@ const RegisterScreen = () => {
 
             <View>
               <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
-                유효 기간
+                취득 날짜
               </Text>
 
               <TextInput
@@ -243,7 +255,7 @@ const RegisterScreen = () => {
                   width: 300,
                 }}
                 placeholderTextColor={"black"}
-                placeholder="유효 기간를 입력하세요"
+                placeholder="취득 날짜를 입력하세요"
               />
             </View>
 
@@ -349,5 +361,9 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     resizeMode: 'cover',
+  },
+  imaget: {
+    width: 450,
+    height: 150,
   },
 });

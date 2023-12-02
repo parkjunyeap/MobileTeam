@@ -50,7 +50,13 @@ const DriverInfo = ({ route }) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>기사 정보</Text>
-
+      <View style={styles.imageContainer}>
+        {image ? (
+          <Image source={{ uri: image }} style={styles.image} />
+        ) : (
+          <Text style={styles.placeholderText}>프로필 사진이 없습니다</Text>
+        )}
+      </View>
       <View style={styles.imageContainer}>
         {imaget ? (
           <Image source={{ uri: imaget }} style={styles.image} />
@@ -60,12 +66,11 @@ const DriverInfo = ({ route }) => {
       </View>
 
       <Text style={styles.info}>자격증 번호: {licenseNumber}</Text>
-      <Text style={styles.info}>등록 사진: {image}</Text>
       <Text style={styles.info}>이름: {name}</Text>
       <Text style={styles.info}>이메일: {email}</Text>
-      <Text style={styles.info}>유효 기간: {expirationDate}</Text>
-      <Text style={styles.info}>차량 번호: {expirationDate}</Text>
-      <Text style={styles.info}>차량 명: {expirationDate}</Text>
+      <Text style={styles.info}>취득 날짜: {expirationDate}</Text>
+      <Text style={styles.info}>차량 번호: {carNumber}</Text>
+      <Text style={styles.info}>차량 명: {carName}</Text>
 
     </ScrollView>
   );
