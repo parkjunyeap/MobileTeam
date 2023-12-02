@@ -31,9 +31,9 @@ const ViewFriendReview = () => {
 
   return (
     <View>
-      <Text style={styles.emptyListStyle}>
+      {/* <Text style={styles.emptyListStyle}>
         {selectedUserName}님 리뷰입니다.
-      </Text>
+      </Text> */}
       <FlatList
         data={reviews} // 서버로부터 받은 리뷰 데이터를 사용합니다.
         renderItem={({ item }) => <ReviewItem item={item} />}
@@ -59,6 +59,9 @@ const styles = StyleSheet.create({
   },
   boldText: {
     fontWeight: "bold", // 볼드 스타일 적용
+  },
+  flatListContainer: {
+    paddingBottom: 20, // 여기서 20은 예시이며, 필요에 따라 조정 가능
   },
 });
 
