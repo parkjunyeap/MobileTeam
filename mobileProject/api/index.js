@@ -615,13 +615,14 @@ const insertDummyData = async () => {
 
 // insertDummyData();
 
-//`http://192.168.0.14:8000/payments/boarderId/${userId}`
+//`http://10.20.64.25:8000/payments/boarderId/${userId}`
 // 날짜 , 출발지 목적지 , 호출시간 , 차량번호 , 기사이름 , 결제금액 줘야함.
 
 // myInfo 에서 이름뜨게 어떻게 했더라?이름까지 받아왔었구나 ok 이름까지주자
 
-app.get("/boarderId/:userId", async (req, res) => {
+app.get("/payments/boarderId/:userId", async (req, res) => {
   const boarderId = req.params.userId; // URL 경로에서 userId 추출
+  console.log(boarderId);
   try {
     const payments = await Payment.find({ boarderId: boarderId }) // Review.find(리시브아이디가 : 요청받은리시브아이디)랑 일치하는지 ?
       .populate("boarderId", "name") // senderId를 참조하여 name 필드만 가져옴 senderId 에 name을 가져옴
@@ -631,13 +632,15 @@ app.get("/boarderId/:userId", async (req, res) => {
     const paymentsWithNameNumber = payments.map((Payment) => ({
       _id: Payment._id,
       boarderName: Payment.boarderId.name, // sender의 이름
-      driverName: Payment.driverId.name, // receiver의 이름
+      driverName: Payment.driverId.name, // 드라이버 의 이름
+      carNumber: Payment.driverId.carNumber, //  드라이버의 차량번호
       boardingDate: Payment.boardingDate,
       startPoint: Payment.startPoint,
       endPoint: Payment.endPoint,
       pay: Payment.pay,
     }));
 
+    console.log(paymentsWithNameNumber);
     res.json(paymentsWithNameNumber);
   } catch (err) {
     console.error(err);

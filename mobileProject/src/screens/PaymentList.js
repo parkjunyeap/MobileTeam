@@ -18,6 +18,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useContext } from "react";
 import { UserType } from "../UserContext";
 import axios from "axios";
+
+import PaymentItem from "../components/PaymentItem";
 // import { set } from "mongoose"; // 이거뭔데?
 
 // const dummyData = {
@@ -33,6 +35,7 @@ import axios from "axios";
 
 const PaymentList = () => {
   const { userId, setUserId } = useContext(UserType);
+  console.log("결제내역을 위한 아이디", userId);
   const [payments, setPayments] = useState([]); // 결제내역 데이터 상태
 
   const navigation = useNavigation();
@@ -41,13 +44,13 @@ const PaymentList = () => {
     const paymentRequest = async () => {
       try {
         const response = await axios.get(
-          `http://192.168.0.14:8000/payments/boarderId/${userId}`
+          `http://10.20.64.25:8000/payments/boarderId/${userId}`
         );
         if (response.status === 200) {
           setPayments(response.data); //결제내역 을 로그인한유저기준으로 갖고옴
         }
       } catch (err) {
-        console.log(err);
+        console.log("여기서 에러인거지??", err);
       }
     };
 
