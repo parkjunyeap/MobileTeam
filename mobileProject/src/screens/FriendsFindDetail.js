@@ -11,10 +11,6 @@ import { UserType } from "../UserContext";
 import { useContext } from "react";
 import locationData from "../locationData";
 
-import axios from "axios";
-import { UserType } from "../UserContext";
-import { useContext } from "react";
-
 const FriendsFindDetail = () => {
   const { userId, setUserId } = useContext(UserType);
   console.log({ userId });

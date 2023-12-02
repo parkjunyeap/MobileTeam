@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, Button, Alert } from "react-native";
+import { View, StyleSheet, Text, Pressable, Alert,TouchableOpacity,Image } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 // 즐겨타는 출발지 , 목적지 자동완성
 import { MAP_KEY } from "../../env";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
+import * as ImagePicker from 'expo-image-picker';
 import TimePicker from "../components/TimePicker";
 import axios from "axios";
 
@@ -30,6 +30,7 @@ const MyTaxiMateInfo = () => {
   // 지금 로그인한 사용자의 userId 를 받아올 수 있네.
   const navigation = useNavigation();
   const [name, setName] = useState("박준엽");
+  const [image,setImage]=useState(null)
   const [selectedProvince, setSelectedProvince] = useState(
     Object.keys(locationData)[0]
   );
@@ -47,6 +48,19 @@ const MyTaxiMateInfo = () => {
     hour: "01",
     minute: "00",
   });
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
 
   const onProvinceChange = (province) => {
     setSelectedProvince(province);
@@ -67,6 +81,7 @@ const MyTaxiMateInfo = () => {
 
       console.log("불러온 data:", data);
       setName(data.name);
+      setImage(data.image)
       setSelectedProvince(data.infoSetting.province || "충청남도");
       setSelectedCity(data.infoSetting.city || "아산시");
       console.log("data 즐겨타는출발지:", data.infoSetting.favoriteStartPoint);
@@ -113,7 +128,7 @@ const MyTaxiMateInfo = () => {
     const viewTaxiMateInfo = async () => {
       try {
         const response = await fetch(
-          `http://10.20.60.1:8000/ViewTaxiMateInfo/${userId}`
+          `http://192.168.219.105:8000/ViewTaxiMateInfo/${userId}`
         );
 
         const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
@@ -147,23 +162,10 @@ const MyTaxiMateInfo = () => {
     viewTaxiMateInfo();
   }, []); //useEffect에 있는 []는 이 코드를 앱이 시작될 때 딱 한 번만 실행
   const handleSaveButtonClick = () => {
-    // 콘솔로그 잘들어갔는지.
-    console.log("프론트엔드에 잘들어갔는지요.");
-    console.log("선택한 도:", selectedProvince);
-    console.log("선택한 시:", selectedCity);
-    console.log("즐겨타는 출발지:", favoriteStartLocation);
-    console.log("즐겨타는 목적지:", favoriteEndLocation);
-    console.log(
-      "즐겨타는 시간대 1:",
-      favoriteTime1.hour + ":" + favoriteTime1.minute
-    );
-    console.log(
-      "즐겨타는 시간대 2:",
-      favoriteTime2.hour + ":" + favoriteTime2.minute
-    );
-    //
+  
     const userTaxiInfo = {
       userId: userId, // 로그인 한 사람 id
+      image:image,
       province: selectedProvince, // 도
       city: selectedCity, // 시
       favoriteStartPoint: favoriteStartLocation, // 출발지,
@@ -191,6 +193,15 @@ const MyTaxiMateInfo = () => {
   };
   return (
     <ScrollView>
+      <TouchableOpacity onPress={pickImage}>
+        <View style={styles.imageContainer}>
+          {image ? (
+            <Image source={{ uri: image }} style={styles.image} />
+          ) : (
+            <Text style={styles.placeholderText}>프로필 사진이 없습니다</Text>
+          )}
+        </View>
+      </TouchableOpacity>
       <Text style={{ fontWeight: "bold", fontSize: 23, marginBottom: 10 }}>
         {" "}
         이름: {name}{" "}
@@ -262,6 +273,30 @@ const MyTaxiMateInfo = () => {
             <MaterialCommunityIcons name="map-marker" size={20} />
           </View>
         </View>
+        <Pressable
+        onPress={handleSaveButtonClick}
+        // onPress={() => {}}
+        style={{
+          width: 200,
+          backgroundColor: "#4A55A2",
+          padding: 15,
+          marginTop: 50,
+          marginLeft: "auto",
+          marginRight: "auto",
+          borderRadius: 6,
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            fontSize: 16,
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
+        >
+          수정하기
+        </Text>
+      </Pressable>
     </ScrollView>
   );
 };
@@ -272,7 +307,13 @@ const styles = StyleSheet.create({
     width: 250,
     marginBottom: 20, // Picker들 사이의 간격을 조정
   },
-
+  image: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    marginTop: 30,
+    marginBottom: 30,
+  },
   location: {
     paddingHorizontal: 20,
     paddingVertical: 5,
@@ -295,6 +336,25 @@ const styles = StyleSheet.create({
     flex: 1, // each button will take half of the container width
     borderRadius: 5, // slight roundness to the corners
     overflow: "hidden", // ensures the borderRadius is respected
+  },
+  placeholder: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: '#e1e1e1',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  imageContainer: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: '#e1e1e1',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    marginTop: 20,
   },
 });
 

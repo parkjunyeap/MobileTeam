@@ -98,12 +98,6 @@ const HomeScreen = () => {
         <Text style={styles.buttonText}>친구 찾기</Text>
       </TouchableOpacity>
       <ScrollView>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("FriendsFindDetail")}
-        >
-          <Text style={styles.buttonText}>친구 찾기</Text>
-        </TouchableOpacity>
 
         <View style={{ padding: 15 }}>
           {/* // index = key , item == item.... */}

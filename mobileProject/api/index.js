@@ -482,7 +482,7 @@ app.post("/setTaxiMateInfo", async (req, res) => {
     // 사용자 정보 업데이트
     const updatedUser = await User.findOneAndUpdate(
       { _id: userId },
-      {
+      { image:req.body.image,
         infoSetting: {
           province: req.body.province,
           city: req.body.city,
@@ -539,7 +539,7 @@ app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
 
     // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보와 name도 조회
     const userInfo = await User.findById(userId).select(
-      "infoSetting name -_id" // 이름까지 같이 받아옴
+      "infoSetting name image -_id" // 이름까지 같이 받아옴
     );
 
     console.log("데이터베이스에서 잘받아오나요?", userInfo);
