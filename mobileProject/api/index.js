@@ -867,8 +867,13 @@ app.get("/payments/boarderId/:userId", async (req, res) => {
   try {
     const payments = await Payment.find({ boarderId: boarderId }) // Review.find(리시브아이디가 : 요청받은리시브아이디)랑 일치하는지 ?
       .populate("boarderId", "name") // senderId를 참조하여 name 필드만 가져옴 senderId 에 name을 가져옴
-      .populate("driverId", "name carNumber") // driverId를 참조하여 name 하고 차량번호 가져옴
+      .populate("driverId", "name carNumber", "Driver") // driverId를 참조하여 name 하고 차량번호 가져옴
+
+      // .populate("driverId", "name carNumber" )  원래이건데
       .lean();
+
+    console.log(payments);
+
     // JSON 형태로 변환하여 클라이언트에게 보내기 이름으로된거
     const paymentsWithNameNumber = payments.map((Payment) => ({
       _id: Payment._id,
@@ -888,6 +893,10 @@ app.get("/payments/boarderId/:userId", async (req, res) => {
     res.status(500).json({ message: "서버 에러 발생" });
   }
 });
+
+// 경로 대소문자 구분: Mongoose는 모델 이름을 대소문자를 구분하여 처리합니다.
+//  driverSchema를 'Driver'로 등록했다면, populate 메소드에서도 'Driver'를 사용해야 합니다.
+//   populate("driverId", "name carNumber") 대신 populate("driverId", "name carNumber", "Driver")를 사용해보세요.
 
 // 이렇게 하는게 맞는지 모르겠는데 이런느낌임
 
@@ -916,24 +925,39 @@ app.get("/driverList", async (req, res) => {
 // });
 
 // 드라이버 더미 데이터 예시
-const driverData = {
-  name: "김철수", // 예시 이름
-  email: "chulsoo.kim@example.com", // 예시 이메일
-  password: "securePassword123!", // 예시 비밀번호
-  image: "profile_pic_chulsoo.jpg", // 예시 프로필 이미지 파일명
-  imaget: "driver_license_chulsoo.jpg", // 예시 자격증 이미지 파일명
-  carNumber: "서울 123가 4567", // 예시 차량 번호
-  carName: "Kia K5", // 예시 차량 이름
-  licenseNumber: "01-23456789", // 예시 자격증 번호
-  getDate: "2023-01-01", // 예시 습득 날짜
-  driveState: false, // 예시 운행 상태
-  birthdate: new Date("1980-04-15"), // 예시 생년월일
-  province: "서울특별시", // 예시 도
-  city: "강남구", // 예시 시
-};
+// const driverData = {
+//   name: "김철수", // 예시 이름
+//   email: "chulsoo.kim@example.com", // 예시 이메일
+//   password: "securePassword123!", // 예시 비밀번호
+//   image: "profile_pic_chulsoo.jpg", // 예시 프로필 이미지 파일명
+//   imaget: "driver_license_chulsoo.jpg", // 예시 자격증 이미지 파일명
+//   carNumber: "서울 123가 4567", // 예시 차량 번호
+//   carName: "Kia K5", // 예시 차량 이름
+//   licenseNumber: "01-23456789", // 예시 자격증 번호
+//   getDate: "2023-01-01", // 예시 습득 날짜
+//   driveState: false, // 예시 운행 상태
+//   birthdate: new Date("1980-04-15"), // 예시 생년월일
+//   province: "서울특별시", // 예시 도
+//   city: "강남구", // 예시 시
+// };
 
-// 더미 데이터를 데이터베이스에 저장하는 예시 코드
-// const newDriver = new Driver(driverData);
+// const driverData2 = {
+//   name: "박영희", // 예시 이름
+//   email: "younghui.park@example.com", // 예시 이메일
+//   password: "securePassword456!", // 예시 비밀번호
+//   image: "profile_pic_younghui.jpg", // 예시 프로필 이미지 파일명
+//   imaget: "driver_license_younghui.jpg", // 예시 자격증 이미지 파일명
+//   carNumber: "인천 789나 1011", // 예시 차량 번호
+//   carName: "Hyundai Sonata", // 예시 차량 이름
+//   licenseNumber: "02-98765432", // 예시 자격증 번호
+//   getDate: "2023-02-15", // 예시 습득 날짜
+//   driveState: true, // 예시 운행 상태
+//   birthdate: new Date("1985-08-25"), // 예시 생년월일
+//   province: "인천광역시", // 예시 도
+//   city: "부평구", // 예시 시
+// };
+// // 더미 데이터를 데이터베이스에 저장하는 예시 코드
+// const newDriver = new Driver(driverData2);
 // newDriver
 //   .save()
 //   .then(() => console.log("더미 데이터가 성공적으로 저장되었습니다."))
