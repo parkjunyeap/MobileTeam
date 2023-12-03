@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import MultiSelect from 'react-native-multiple-select';
 import { MAP_KEY } from "../../env";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 // import TimePicker from "../components/TimePicker";
@@ -34,9 +35,11 @@ const FriendsFindDetail = () => {
   const [selectedCity, setSelectedCity] = useState(
     locationData[Object.keys(locationData)[0]][0]
   );
-  const [favoriteStartLocation, setFavoriteStartLocation] = useState("");
-  const [favoriteEndLocation, setFavoriteEndLocation] = useState("");
+  const [favoriteStartLocation, setFavoriteStartLocation] = useState([]);
+  const [favoriteStartLocationI, setFavoriteStartLocationI] = useState([]);
 
+  const [favoriteEndLocation, setFavoriteEndLocation] = useState([]);
+  const [favoriteEndLocationI, setFavoriteEndLocationI] = useState([]);
   // // 키보드 화면 안가려지게 안되는데용?
   // useEffect(() => {
   //   const keyboardDidShowListener = Keyboard.addListener(
@@ -64,13 +67,19 @@ const FriendsFindDetail = () => {
     setSelectedCity(citiesForProvince[0]);
   };
 
-  const handleStartLocationChange = (value) => {
-    setFavoriteStartLocation(value);
+  const handleStartLocationChange = (place) => {
+    setFavoriteStartLocation([...favoriteStartLocation, place]);
   };
+  const handleStartLocationIChange = (items) => {
+    setFavoriteStartLocationI(items)
+  }
 
-  const handleEndLocationChange = (value) => {
-    setFavoriteEndLocation(value);
+  const handleEndLocationChange = (place) => {
+    setFavoriteEndLocation([...favoriteEndLocation, place]);
   };
+  const handleEndLocationIChange = (items) => {
+    setFavoriteEndLocationI(items)
+  }
 
   const handleReset = () => {
     setSelectedProvince(Object.keys(locationData)[0]);
@@ -99,7 +108,7 @@ const FriendsFindDetail = () => {
 
     console.log("서버로 보낼 상세 설정부분 :", findTaxiInfo);
     axios
-      .post("http:// 10.20.60.60:8000/FindTaxiMateDetail", findTaxiInfo)
+      .post("http://10.20.64.10:8000/FindTaxiMateDetail", findTaxiInfo)
       .then(function (response) {
         console.log("확인 :", response);
         const users = response.data.user;
@@ -140,7 +149,7 @@ const FriendsFindDetail = () => {
     //   behavior={Platform.OS === "ios" ? "padding" : "height"}
     //   keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     // >
-    <ScrollView
+    <View
       keyboardShouldPersistTaps="always"
       listViewDisplayed={false}
       // 위 코드는 스크롤뷰랑 구글오토컴플레이트 같이 쓸때 나오는 오류 없애려고 한거. 뭔지는 모름.
@@ -170,18 +179,32 @@ const FriendsFindDetail = () => {
       <Text> 즐겨타는 출발지 : </Text>
       <View style={styles.location}>
         <GooglePlacesAutocomplete
-          placeholder="자주타는 출발지를 적어주세요!"
+          placeholder="출발지를 적어주세요!"
           styles={{
             container: { flex: 0 },
             textInput: { paddingLeft: 20, height: 40 },
           }}
-          onPress={(data) => handleStartLocationChange(data.description)}
+          onPress={(data, details) => handleStartLocationChange(data)}
           onFail={(e) => {
             console.log("GooglePlacesAutocomplete onFail : ", e);
           }}
           query={{ key: MAP_KEY, language: "ko", components: "country:kr" }}
           debounce={400}
         />
+        <MultiSelect
+          items={favoriteStartLocation}
+          uniqueKey="start_place_id"
+          onSelectedItemsChange={handleStartLocationIChange}
+          selectedItems={favoriteStartLocationI}
+          selectText="위에서 위치를 찾고 이곳을 눌러 검색에 추가하세요!!!"
+          searchInputPlaceholderText="찾기"
+          displayKey="description"
+        />
+        <Text>
+          {favoriteStartLocationI.map((item) => (
+            <Text key={item.start_place_id}>{item.description}</Text>
+          ))}
+        </Text>
         <View style={styles.locationIcon}>
           <MaterialCommunityIcons name="map-marker" size={20} />
         </View>
@@ -189,18 +212,32 @@ const FriendsFindDetail = () => {
       <Text> 즐겨타는 목적지 : </Text>
       <View style={styles.location}>
         <GooglePlacesAutocomplete
-          placeholder="자주타는 목적지를 적어주세요!"
+          placeholder="목적지를 적어주세요!"
           styles={{
             container: { flex: 0 },
             textInput: { paddingLeft: 20, height: 40 },
           }}
-          onPress={(data) => handleEndLocationChange(data.description)}
+          onPress={(data, details) => handleEndLocationChange(data)}
           onFail={(e) => {
             console.log("GooglePlacesAutocomplete onFail : ", e);
           }}
           query={{ key: MAP_KEY, language: "ko", components: "country:kr" }}
           debounce={400}
         />
+        <MultiSelect
+          items={favoriteEndLocation}
+          uniqueKey="end_place_id"
+          onSelectedItemsChange={handleEndLocationIChange}
+          selectedItems={favoriteEndLocationI}
+          selectText="위에서 위치를 찾고 이곳을 눌러 검색에 추가하세요!!!"
+          searchInputPlaceholderText="찾기"
+          displayKey="description"
+        />
+        <Text>
+          {favoriteEndLocationI.map((item) => (
+            <Text key={item.end_place_id}>{item.description}</Text>
+          ))}
+        </Text>
         <View style={styles.locationIcon}>
           <MaterialCommunityIcons name="map-marker" size={20} />
         </View>
@@ -222,7 +259,7 @@ const FriendsFindDetail = () => {
       <View />
       {/* {" "} 이게필요해?? */}
       {/* 키보드 높이만큼의 여백 생성 */}
-    </ScrollView>
+    </View>
     // {/* </KeyboardAvoidingView> */}
   );
 };

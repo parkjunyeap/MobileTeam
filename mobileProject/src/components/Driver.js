@@ -35,6 +35,16 @@ const Driver = ({ item }) => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
+          <Image
+              style={{
+                width: 70,
+                height: 70,
+                borderRadius: 25,
+                resizeMode: "cover",
+              }}
+              source={{ uri: item.image }}
+              // ㅇ처음엔 사진
+            />
             <Text style={styles.modalText}> {item.name}</Text>
 
             <Text> 이메일 : {item.email}</Text>
@@ -136,7 +146,7 @@ const Driver = ({ item }) => {
                 borderRadius: 25,
                 resizeMode: "cover",
               }}
-              source={{ uri: item.Image }}
+              source={{ uri: item.image }}
               // ㅇ처음엔 사진
             />
           </View>

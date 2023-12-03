@@ -855,7 +855,7 @@ const insertDummyData = async () => {
 
 // insertDummyData();
 
-//`http:// 10.20.60.60:8000/payments/boarderId/${userId}`
+//`http://10.20.60.60:8000/payments/boarderId/${userId}`
 // 날짜 , 출발지 목적지 , 호출시간 , 차량번호 , 기사이름 , 결제금액 줘야함.
 
 // myInfo 에서 이름뜨게 어떻게 했더라?이름까지 받아왔었구나 ok 이름까지주자
