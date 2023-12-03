@@ -99,7 +99,7 @@ const FriendsFindDetail = () => {
 
     console.log("서버로 보낼 상세 설정부분 :", findTaxiInfo);
     axios
-      .post("http://10.20.64.10:8000/FindTaxiMateDetail", findTaxiInfo)
+      .post("http:// 10.20.60.60:8000/FindTaxiMateDetail", findTaxiInfo)
       .then(function (response) {
         console.log("확인 :", response);
         const users = response.data.user;
