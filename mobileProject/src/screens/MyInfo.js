@@ -40,12 +40,13 @@ function MyInfo({ navigation }) {
       </TouchableOpacity>
       <View style={styles.separator} />
 
-      {/* <TouchableOpacity
+      <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("Review")}
+        onPress={() => navigation.navigate("BookingList")}
       >
-        <Text style={styles.buttonText}>리뷰(임시)</Text>
-      </TouchableOpacity> */}
+        <Text style={styles.buttonText}>예약 내역</Text>
+      </TouchableOpacity>
+      <View style={styles.separator} />
     </View>
   );
 }

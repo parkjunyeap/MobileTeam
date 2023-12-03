@@ -82,7 +82,7 @@ const BookingTaxiDriver = () => {
     console.log("현재 들어온 예약데이터 ", bookingData);
 
     axios
-      .post("http://10.20.64.10:8000/bookings", bookingData)
+      .post("http://192.168.0.14:8000/bookings", bookingData)
       .then((response) => {
         console.log(response);
         Alert.alert("예약 성공!!", "성공적으로 예약되었습니다");
