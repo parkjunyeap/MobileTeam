@@ -105,6 +105,7 @@ const User = ({ item }) => {
   }, [navigation]);
 
   // console.log(item.infoSetting.province);
+
   return (
     <>
       <Modal
@@ -224,7 +225,7 @@ const User = ({ item }) => {
                 borderRadius: 25,
                 resizeMode: "cover",
               }}
-              source={{ uri: item.Image }}
+              source={{ uri: item?.image }}
             />
           </View>
           <View style={{ marginLeft: 12, flex: 1 }}>

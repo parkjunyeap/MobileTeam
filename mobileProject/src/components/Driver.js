@@ -136,7 +136,7 @@ const Driver = ({ item }) => {
                 borderRadius: 25,
                 resizeMode: "cover",
               }}
-              source={{ uri: item.Image }}
+              source={{ uri: item?.image }}
               // ㅇ처음엔 사진
             />
           </View>
