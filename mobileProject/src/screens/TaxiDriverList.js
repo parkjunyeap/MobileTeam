@@ -21,7 +21,7 @@ const HomeScreen = () => {
   useEffect(() => {
     const fetchDrivers = async () => {
       axios
-        .get("http://192.168.0.14:8000/driverList/") // 드라이버 아이디 전부 넘김.
+        .get("http://10.20.64.10:8000/driverList/") // 드라이버 아이디 전부 넘김.
         .then((response) => {
           console.log("Response data:", response.data); // 전부 찍힘.
           setDrivers(response.data); // 드라이버를 배열에 다 넣고

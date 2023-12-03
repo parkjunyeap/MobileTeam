@@ -7,11 +7,11 @@ import {
   Pressable,
   Alert,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
 import locationData from "../locationData";
@@ -24,22 +24,21 @@ const RegisterScreen = () => {
   const [image, setImage] = useState("");
   const [imaget, setImaget] = useState(null);
   const [licenseNumber, setLicenseNumber] = useState("");
-  const [carNumber, setCarNumber] = useState("")
-  const [carName, setCarName] = useState("")
-  const [getDate, setGetDate] = useState("")
-  const [birthdate, setBirthdate] = useState("")
+  const [carNumber, setCarNumber] = useState("");
+  const [carName, setCarName] = useState("");
+  const [getDate, setGetDate] = useState("");
+  const [birthdate, setBirthdate] = useState("");
   const [selectedProvince, setSelectedProvince] = useState(
     Object.keys(locationData)[0]
   );
   const [selectedCity, setSelectedCity] = useState(
     locationData[Object.keys(locationData)[0]][0]
   );
-  const [driverState, setDriverState] = useState("false")
+  const [driverState, setDriverState] = useState("false");
 
   const navigation = useNavigation();
   // 이거 그냥 네비게이션 써서 화면이동해준다는 뜻
   // navigation.goback() // 이런식으로씀
-
 
   // 프로필 사진
   const pickImage = async () => {
@@ -89,12 +88,12 @@ const RegisterScreen = () => {
       birthdate: birthdate,
       province: selectedProvince,
       city: selectedCity,
-      driverState: driverState
+      driverState: driverState,
     };
     // 유저 객체에 담음 상태변수들
     // send a POST  request to the backend API to register the user
     axios
-      .post("http://192.168.219.105:8000/registerT", driver) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
+      .post("http://10.20.64.10:8000/registerT", driver) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
       .then((response) => {
         // 그러면. res 로 잘됏나 안됏나 받음. 그리고 메시지띄움. 그리고 set으로 다른거 다 빈칸으로만듬
         console.log(response);
@@ -105,10 +104,10 @@ const RegisterScreen = () => {
         setImage("");
         setImaget("");
         setLicenseNumber("");
-        setCarNumber("")
-        setCarName("")
-        setGetDate("")
-        setBirthdate("")
+        setCarNumber("");
+        setCarName("");
+        setGetDate("");
+        setBirthdate("");
       })
       .catch((error) => {
         // 에러 받고 출력
@@ -234,7 +233,9 @@ const RegisterScreen = () => {
                     <Image source={{ uri: image }} style={styles.image} />
                   ) : (
                     <View style={styles.placeholderContainer}>
-                      <Text style={styles.placeholderText}>자격증 사진 등록</Text>
+                      <Text style={styles.placeholderText}>
+                        자격증 사진 등록
+                      </Text>
                     </View>
                   )}
                 </TouchableOpacity>
@@ -251,7 +252,9 @@ const RegisterScreen = () => {
                     <Image source={{ uri: imaget }} style={styles.imaget} />
                   ) : (
                     <View style={styles.placeholderContainer}>
-                      <Text style={styles.placeholderText}>자격증 사진 등록</Text>
+                      <Text style={styles.placeholderText}>
+                        자격증 사진 등록
+                      </Text>
                     </View>
                   )}
                 </TouchableOpacity>
@@ -298,7 +301,6 @@ const RegisterScreen = () => {
               />
             </View>
 
-
             <View>
               <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
                 차량 번호
@@ -338,7 +340,10 @@ const RegisterScreen = () => {
                 placeholder="차량 명을 입력하세요"
               />
             </View>
-            <Text style={{ fontSize: 20, marginBottom: 5 }}> 택시 운행 지역 </Text>
+            <Text style={{ fontSize: 20, marginBottom: 5 }}>
+              {" "}
+              택시 운행 지역{" "}
+            </Text>
             <Picker
               selectedValue={selectedProvince}
               onValueChange={(itemValue) => onProvinceChange(itemValue)}
@@ -388,7 +393,9 @@ const RegisterScreen = () => {
               onPress={() => navigation.goBack()}
               style={{ marginTop: 15 }}
             >
-              <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
+              <Text
+                style={{ textAlign: "center", color: "gray", fontSize: 16 }}
+              >
                 이미 계정이 있으신가요? 로그인
               </Text>
             </Pressable>
@@ -404,23 +411,23 @@ export default RegisterScreen;
 const styles = StyleSheet.create({
   imagePickerContainer: {
     marginBottom: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   placeholderContainer: {
     width: 150,
     height: 150,
-    backgroundColor: '#e1e1e1',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#e1e1e1",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 20,
   },
   placeholderText: {
-    color: '#a1a1a1',
+    color: "#a1a1a1",
   },
   image: {
     width: 150,
     height: 150,
-    resizeMode: 'cover',
+    resizeMode: "cover",
   },
   imaget: {
     width: 360,

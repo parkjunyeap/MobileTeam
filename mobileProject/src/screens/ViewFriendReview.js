@@ -28,7 +28,7 @@ const ViewFriendReview = () => {
   //   const fetchReviewRequest = async () => {
   //     try {
   //       const response = await axios.get(
-  //         `http://192.168.0.14:8000/reviews/receiver/${selectedUserId}`
+  //         `http://10.20.64.10:8000/reviews/receiver/${selectedUserId}`
   //       );
   //       if (response.status === 200) {
   //         setReviews(response.data); // 서버로부터 받은 데이터를 상태에 저장합니다.
@@ -48,10 +48,10 @@ const ViewFriendReview = () => {
         let apiUrl;
         if (selectedDriverId) {
           // 드라이버에 대한 리뷰를 요청하는 경우
-          apiUrl = `http://192.168.0.14:8000/reviews/receiver/driver/${selectedDriverId}`;
+          apiUrl = `http://10.20.64.10:8000/reviews/receiver/driver/${selectedDriverId}`;
         } else if (selectedUserId) {
           // 사용자에 대한 리뷰를 요청하는 경우
-          apiUrl = `http://192.168.0.14:8000/reviews/receiver/user/${selectedUserId}`;
+          apiUrl = `http://10.20.64.10:8000/reviews/receiver/user/${selectedUserId}`;
         } else {
           console.log("선택된 ID가 없습니다.");
           return;
@@ -71,9 +71,9 @@ const ViewFriendReview = () => {
 
   return (
     <View>
-      <Text style={styles.emptyListStyle}>
+      {/* <Text style={styles.emptyListStyle}>
         {selectedDriverName || selectedUserName}님 리뷰입니다.
-      </Text>
+      </Text> */}
       <FlatList
         data={reviews} // 서버로부터 받은 리뷰 데이터를 사용합니다.
         renderItem={({ item }) => <ReviewItem item={item} />}

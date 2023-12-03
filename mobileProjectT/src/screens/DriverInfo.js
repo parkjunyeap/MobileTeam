@@ -1,10 +1,19 @@
 // DriverInfo.js
 import React from "react";
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Pressable, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Pressable,
+  Alert,
+} from "react-native";
 import { useContext, useEffect, useState } from "react";
 import { UserType } from "../UserContext";
 import axios from "axios";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
 import locationData from "../locationData";
 
@@ -19,10 +28,10 @@ const DriverInfo = ({ route }) => {
   const [image, setImage] = useState("");
   const [imaget, setImaget] = useState(null);
   const [licenseNumber, setLicenseNumber] = useState("");
-  const [carNumber, setCarNumber] = useState("")
-  const [carName, setCarName] = useState("")
-  const [getDate, setGetDate] = useState("")
-  const [birthdate, setBirthdate] = useState("")
+  const [carNumber, setCarNumber] = useState("");
+  const [carName, setCarName] = useState("");
+  const [getDate, setGetDate] = useState("");
+  const [birthdate, setBirthdate] = useState("");
   const [selectedProvince, setSelectedProvince] = useState(
     Object.keys(locationData)[0]
   );
@@ -34,24 +43,24 @@ const DriverInfo = ({ route }) => {
     const getMyTaxiInfo = async () => {
       try {
         const response = await fetch(
-          `http://192.168.219.105:8000/getMyTaxiInfo/${userId}`
+          `http://10.20.64.10:8000/getMyTaxiInfo/${userId}`
         );
         const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
         // setRecepientData(data);
         //이런식으로 set 어쩌구 (data) 해주면될것같은데.
 
         console.log("불러온 data:", data);
-        setEmail(data.email)
-        setName(data.name)
-        setImage(data.image)
-        setImaget(data.imaget)
-        setLicenseNumber(data.licenseNumber)
-        setCarName(data.carName)
-        setCarNumber(data.carNumber)
-        setGetDate(data.getDate)
-        setBirthdate(data.birthdate)
-        setSelectedProvince(data.province)
-        setSelectedCity(data.city)
+        setEmail(data.email);
+        setName(data.name);
+        setImage(data.image);
+        setImaget(data.imaget);
+        setLicenseNumber(data.licenseNumber);
+        setCarName(data.carName);
+        setCarNumber(data.carNumber);
+        setGetDate(data.getDate);
+        setBirthdate(data.birthdate);
+        setSelectedProvince(data.province);
+        setSelectedCity(data.city);
 
         // 데이터베이스에 아무 정보도 없으면 "" 빈 문자열 주기.
       } catch (error) {
@@ -81,10 +90,10 @@ const DriverInfo = ({ route }) => {
       image: image,
       birthdate: birthdate,
       province: selectedProvince,
-      city: selectedCity
-    }
+      city: selectedCity,
+    };
     axios
-      .post("http://192.168.219.105:8000/UpTInfo", newTInfo) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
+      .post("http://10.20.64.10:8000/UpTInfo", newTInfo) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
       .then((response) => {
         // 그러면. res 로 잘됏나 안됏나 받음. 그리고 메시지띄움. 그리고 set으로 다른거 다 빈칸으로만듬
         console.log(response);
@@ -95,7 +104,7 @@ const DriverInfo = ({ route }) => {
         Alert.alert("수정 오류!!", "수정하는 동안 오류가 발생했습니다");
         console.log("update failed", error);
       });
-  }
+  };
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>기사 정보</Text>
@@ -178,7 +187,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20
+    padding: 20,
   },
   header: {
     fontSize: 22,
@@ -202,24 +211,24 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 75,
-    backgroundColor: '#e1e1e1',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#e1e1e1",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 20,
   },
   imageContainer: {
     width: 150,
     height: 150,
     borderRadius: 75,
-    backgroundColor: '#e1e1e1',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#e1e1e1",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 20,
     marginTop: 20,
   },
   placeholderText: {
-    textAlign: 'center',
-    color: '#a1a1a1',
+    textAlign: "center",
+    color: "#a1a1a1",
   },
   info: {
     fontSize: 16,

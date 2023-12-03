@@ -46,12 +46,11 @@ const LoginScreen = () => {
     };
 
     axios
-      .post("http://192.168.219.105:8000/loginT", user)
+      .post("http://10.20.64.10:8000/loginT", user)
       .then((response) => {
         //console.log(response);
-        const token = response.data.token
-        
-        ;
+        const token = response.data.token;
+
         console.log("token이 만들어지긴 하는거야?", token);
         AsyncStorage.setItem("authToken", token);
 

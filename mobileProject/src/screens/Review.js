@@ -31,7 +31,7 @@ const Review = () => {
 
   // 전송버튼 눌렀을 때는 post 로 여기있는 거 전부 날리면 됨. 데이터를
   const [senderId, setSenderId] = useState(userId); // 로그인 한 userId
-  const [receiverId, setReceiverId] = useState(selectedUserId); // 선택된 , 받는사람 id
+  const [receiverId, setReceiverId] = useState(""); // 선택된 , 받는사람 id // 아무것도 없었다가 생기면
   const [rating, setRating] = useState(3); // 기본 별점
   const [comment, setComment] = useState(""); // 사용자가 적은 메시지
   const [reviewDate, setReviewDate] = useState("");
@@ -53,14 +53,14 @@ const Review = () => {
     let apiEndpoint;
     if (selectedDriverId) {
       // 택시 기사에게 보내는 리뷰
-      apiEndpoint = "http://192.168.0.14:8000/write/driverReviews";
+      apiEndpoint = "http://10.20.64.10:8000/write/driverReviews";
     } else {
       // 일반 사용자에게 보내는 리뷰
-      apiEndpoint = "http://192.168.0.14:8000/write/reviews";
+      apiEndpoint = "http://10.20.64.10:8000/write/reviews";
     }
 
     // axios
-    //   .post("http://192.168.0.14:8000/write/reviews", reviewData) // 리뷰 데이터 보내는사람, 받는사람, 별점 , 코멘트
+    //   .post("http://10.20.64.10:8000/write/reviews", reviewData) // 리뷰 데이터 보내는사람, 받는사람, 별점 , 코멘트
     //   .then((response) => {
     //     console.log(response);
     //     Alert.alert("등록 성공!!", "성공적으로 등록되었습니다");
@@ -71,6 +71,7 @@ const Review = () => {
     //   })
 
     // POST 요청 보내기
+
     axios
       .post(apiEndpoint, reviewData)
       .then((response) => {
