@@ -8,9 +8,12 @@ import {
   KeyboardAvoidingView,
   Pressable,
   Alert,
+  Image,
+  TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 
 const RegisterScreen = () => {
@@ -20,6 +23,19 @@ const RegisterScreen = () => {
   const [image, setImage] = useState("");
   const navigation = useNavigation();
   // 이거 그냥 네비게이션 써서 화면이동해준다는 뜻
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
   // navigation.goback() // 이런식으로씀
   const handleRegister = () => {
     const user = {
@@ -138,22 +154,19 @@ const RegisterScreen = () => {
 
           <View style={{ marginTop: 10 }}>
             <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
-              프로필 사진 url
+              프로필 등록
             </Text>
-
-            <TextInput
-              value={image}
-              onChangeText={(text) => setImage(text)}
-              style={{
-                fontSize: email ? 18 : 18,
-                borderBottomColor: "gray",
-                borderBottomWidth: 1,
-                marginVertical: 10,
-                width: 300,
-              }}
-              placeholderTextColor={"black"}
-              placeholder="url로 입력하세요"
-            />
+            <View style={styles.imagePickerContainer}>
+              <TouchableOpacity onPress={pickImage}>
+                {image ? (
+                  <Image source={{ uri: image }} style={styles.image} />
+                ) : (
+                  <View style={styles.placeholderContainer}>
+                    <Text style={styles.placeholderText}>자격증 사진 등록</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
 
           <Pressable
@@ -196,4 +209,25 @@ const RegisterScreen = () => {
 
 export default RegisterScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  imagePickerContainer: {
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  placeholderContainer: {
+    width: 150,
+    height: 150,
+    backgroundColor: "#e1e1e1",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  placeholderText: {
+    color: "#a1a1a1",
+  },
+  image: {
+    width: 150,
+    height: 150,
+    resizeMode: "cover",
+  },
+});

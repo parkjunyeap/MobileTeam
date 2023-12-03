@@ -5,8 +5,11 @@ import {
   View,
   StyleSheet,
   Text,
-  Button,
+  Pressable,
   Alert,
+  TouchableOpacity,
+  Button,
+  Image,
   ScrollView,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
@@ -15,12 +18,12 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 // 즐겨타는 출발지 , 목적지 자동완성
 import { MAP_KEY } from "../../env";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
+import * as ImagePicker from "expo-image-picker";
 import TimePicker from "../components/TimePicker";
 import axios from "axios";
-import { useContext } from "react";
 
 import { UserType } from "../UserContext";
+import { useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import locationData from "../locationData";
@@ -30,12 +33,16 @@ import locationData from "../locationData";
 const MyTaxiMateInfo = () => {
   // 이렇게하면 로그인한유저 갖고올 수 있음.
   const { userId, setUserId } = useContext(UserType);
+  console.log({ userId });
+  // friendId, friendName 주고싶은데;;
+  // 이렇게 하는건 props 만 줘
 
   console.log("여기에 로그인한사람 떠야함. 마이택시인포 ", userId);
   // 이렇게 하면 !!!!!!!!!!
   // 지금 로그인한 사용자의 userId 를 받아올 수 있네.
   const navigation = useNavigation();
-  const [name, setName] = useState("박준엽"); // 디폴트 내이름 ㅋㅋ
+  const [name, setName] = useState("박준엽");
+  const [image, setImage] = useState(null);
   const [selectedProvince, setSelectedProvince] = useState(
     Object.keys(locationData)[0]
   );
@@ -53,6 +60,19 @@ const MyTaxiMateInfo = () => {
     hour: "01",
     minute: "00",
   });
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
 
   const onProvinceChange = (province) => {
     setSelectedProvince(province);
@@ -73,6 +93,7 @@ const MyTaxiMateInfo = () => {
 
       console.log("불러온 data:", data);
       setName(data.name);
+      setImage(data.image);
       setSelectedProvince(data.infoSetting.province || "충청남도");
       setSelectedCity(data.infoSetting.city || "아산시");
       console.log("data 즐겨타는출발지:", data.infoSetting.favoriteStartPoint);
@@ -115,26 +136,47 @@ const MyTaxiMateInfo = () => {
     // 나한테 온 리뷰 보기임.
     // 리뷰 보기 버튼 클릭 시 실행할 코드 작성
   };
+  useEffect(() => {
+    const viewTaxiMateInfo = async () => {
+      try {
+        const response = await fetch(
+          `http://192.168.219.105:8000/ViewTaxiMateInfo/${userId}`
+        );
 
+        const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
+        // setRecepientData(data);
+        //이런식으로 set 어쩌구 (data) 해주면될것같은데.
+
+        console.log("불러온 data:", data);
+        setSelectedProvince(data.infoSetting.province || "충청남도");
+        setSelectedCity(data.infoSetting.city || "아산시");
+        console.log(
+          "data 즐겨타는출발지:",
+          data.infoSetting.favoriteStartPoint
+        );
+        setFavoriteStartLocation(data.infoSetting.favoriteStartPoint || ""); // 원래이럼
+        // setFavoriteStartLocation(data.infoSetting.favoriteStartPoint); // 이렇게바꿔도 똑같고.
+        setFavoriteEndLocation(data.infoSetting.favoriteEndPoint || "");
+        setFavoriteTime1({
+          hour: data.infoSetting.favoriteTimeFrame1.hour || "01",
+          minute: data.infoSetting.favoriteTimeFrame1.minute || "00",
+        });
+        setFavoriteTime2({
+          hour: data.infoSetting.favoriteTimeFrame2.hour || "01",
+          minute: data.infoSetting.favoriteTimeFrame2.minute || "00",
+        });
+        // 데이터베이스에 아무 정보도 없으면 "" 빈 문자열 주기.
+      } catch (error) {
+        console.log("error retrieving details", error);
+      }
+    };
+
+    viewTaxiMateInfo();
+  }, []); //useEffect에 있는 []는 이 코드를 앱이 시작될 때 딱 한 번만 실행
   const handleSaveButtonClick = () => {
-    // 콘솔로그 잘들어갔는지.
-    console.log("프론트엔드에 잘들어갔는지요.");
-    console.log("선택한 도:", selectedProvince);
-    console.log("선택한 시:", selectedCity);
-    console.log("즐겨타는 출발지:", favoriteStartLocation);
-    console.log("즐겨타는 목적지:", favoriteEndLocation);
-    console.log(
-      "즐겨타는 시간대 1:",
-      favoriteTime1.hour + ":" + favoriteTime1.minute
-    );
-    console.log(
-      "즐겨타는 시간대 2:",
-      favoriteTime2.hour + ":" + favoriteTime2.minute
-    );
-
-    //
     const userTaxiInfo = {
       userId: userId, // 로그인 한 사람 id
+      image: image,
       province: selectedProvince, // 도
       city: selectedCity, // 시
       favoriteStartPoint: favoriteStartLocation, // 출발지,
@@ -146,7 +188,7 @@ const MyTaxiMateInfo = () => {
 
     // 유저택시정보저장
     axios
-      .post("http://192.168.0.14:8000/setTaxiMateInfo", userTaxiInfo)
+      .post("http://192.168.219.105:8000/setTaxiMateInfo", userTaxiInfo)
       .then(function (response) {
         console.log(response);
         Alert.alert(
@@ -160,9 +202,17 @@ const MyTaxiMateInfo = () => {
         Alert.alert("알수없는 오류");
       });
   };
-
   return (
-    <ScrollView keyboardShouldPersistTaps="always" listViewDisplayed={false}>
+    <ScrollView>
+      <TouchableOpacity onPress={pickImage}>
+        <View style={styles.imageContainer}>
+          {image ? (
+            <Image source={{ uri: image }} style={styles.image} />
+          ) : (
+            <Text style={styles.placeholderText}>프로필 사진이 없습니다</Text>
+          )}
+        </View>
+      </TouchableOpacity>
       <Text style={{ fontWeight: "bold", fontSize: 23, marginBottom: 10 }}>
         {" "}
         이름: {name}{" "}
@@ -215,7 +265,7 @@ const MyTaxiMateInfo = () => {
         </View>
       </View>
 
-      <Text style={{ fontSize: 20, marginBottom: 5 }}> 즐겨타는 출발지 </Text>
+      <Text style={{ fontSize: 20, marginBottom: 5 }}> 즐겨타는 목적지 </Text>
       <Text> {favoriteEndLocation}</Text>
       <View style={styles.location}>
         <GooglePlacesAutocomplete
@@ -285,7 +335,13 @@ const styles = StyleSheet.create({
     width: 250,
     marginBottom: 20, // Picker들 사이의 간격을 조정
   },
-
+  image: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    marginTop: 30,
+    marginBottom: 30,
+  },
   location: {
     paddingHorizontal: 20,
     paddingVertical: 5,
@@ -308,6 +364,25 @@ const styles = StyleSheet.create({
     flex: 1, // each button will take half of the container width
     borderRadius: 5, // slight roundness to the corners
     overflow: "hidden", // ensures the borderRadius is respected
+  },
+  placeholder: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: "#e1e1e1",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  imageContainer: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: "#e1e1e1",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+    marginTop: 20,
   },
 });
 

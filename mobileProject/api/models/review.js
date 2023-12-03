@@ -27,5 +27,4 @@ const reviewSchema = new mongoose.Schema({
 const Review = mongoose.model("Review", reviewSchema); // 'User' 모델로 스키마 컴파일
 
 module.exports = Review; // 모듈로 내보내기, 다른 파일에서 사용 가능
-
 //

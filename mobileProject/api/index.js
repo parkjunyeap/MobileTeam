@@ -13,7 +13,6 @@ app.use(bodyParser.urlencoded({ extended: false })); // URL 인코딩된 데이�
 app.use(bodyParser.json()); // JSON 데이터를 파싱하는 bodyParser 미들웨어를 사용하도록 설정합니다.
 app.use(passport.initialize()); // 앱에 passport 미들웨어를 초기화하여 사용하도록 설정합니다.
 const jwt = require("jsonwebtoken"); // jsonwebtoken 모듈을 가져옵니다. JWT(JSON Web Tokens)를 생성하고 검증하는 데 사용됩니다.
-
 mongoose
   .connect("mongodb+srv://bab0234:bab0234@cluster0.gp66aaf.mongodb.net/", {
     useNewUrlParser: true,
@@ -41,16 +40,10 @@ const Payment = require("./models/payment");
 // 임시; // 나중에바꿔야함    // 여기가 유저에게 리뷰 보내줌
 app.post("/write/reviews", (req, res) => {
   // 요청받아
+  const { title, score } = req.body; // 클라이언트에서 전달한 데이터에서 title과 score를 추출
+  // console.log(req.params);
 
-  console.log(req);
-  const { senderId, receiverId, rating, comment } = req.body; // 클라이언트에서 전달한 데이터에서 title과 score를 추출
-
-  const newReview = new Review({
-    senderId,
-    receiverId,
-    rating,
-    comment,
-  });
+  const newReview = new Review({ title, score });
 
   newReview
     .save()
@@ -83,8 +76,9 @@ app.post("/write/driverReviews", (req, res) => {
       res.status(200).json({ message: "택시기사 리뷰가 성공적으로 등록됐다." });
     })
     .catch((err) => {
-      console.log("에러발생 등록못함", err);
-      res.status(500).json({ message: "에러발생 등록못함" });
+      res.json({
+        message: "리뷰 등록 실패",
+      });
     });
 });
 
@@ -110,6 +104,55 @@ app.post("/register", (req, res) => {
     });
 });
 
+app.post("/registerT", (req, res) => {
+  // 클라이언트로부터 받은 데이터에서 이름, 이메일, 비밀번호, 이미지를 추출
+  const {
+    name,
+    email,
+    password,
+    image,
+    imaget,
+    licenseNumber,
+    carNumber,
+    carName,
+    getDate,
+    birthdate,
+    province,
+    city,
+    driverState,
+  } = req.body;
+
+  // 새로운 User 모델 인스턴스를 생성
+  const newDriver = new Driver({
+    name,
+    email,
+    password,
+    image,
+    imaget,
+    licenseNumber,
+    carNumber,
+    carName,
+    getDate,
+    birthdate,
+    province,
+    city,
+    driverState,
+  });
+
+  // 데이터베이스에 새로운 사용자 저장 시도
+  newDriver
+    .save()
+    .then(() => {
+      // 저장 성공 시 200 상태 코드와 함께 성공 메시지 응답
+      res.status(200).json({ message: "유저가 성공적으로 등록됐다." });
+    })
+    .catch((err) => {
+      // 저장 실패 시 콘솔에 에러 로깅하고 500 상태 코드로 클라이언트에게 오류 메시지 응답
+      console.log("에러발생 등록못함", err);
+      res.status(500).json({ message: "에러발생 등록못함" });
+    });
+});
+
 // 토큰 생성 함수
 const createToken = (userId) => {
   // 페이로드에 userId 포함
@@ -119,7 +162,7 @@ const createToken = (userId) => {
   };
 
   // jsonwebtoken 라이브러리를 사용하여 페이로드와 비밀 키로 JWT 생성
-  const token = jwt.sign(payload, "Q$r2K6W8n!jCW%Zk", { expiresIn: "1h" });
+  const token = jwt.sign(payload, "Q$r2K6W8n!jCW%Zk", { expiresIn: "2m" });
   console.log("여기서 토큰을 발행못하나보다", token);
   // 생성된 토큰 반환하지만 현재 함수는 반환 값을 사용하지 않음. 반환 구문 추가 필요
   // 여기까지 토큰 발행잘하는데?
@@ -131,7 +174,6 @@ app.post("/login", (req, res) => {
   // 클라이언트로부터 받은 데이터에서 이메일과 비밀번호를 추출
   const { email, password } = req.body;
   console.log("잘받았는지 확인", req.body);
-
   // 이메일과 비밀번호가 제공되지 않았을 경우 404 상태 코드로 오류 메시지 응답
   if (!email || !password) {
     return res.status(404).json({ message: "이메일 이랑 비밀번호는 필수야" });
@@ -163,9 +205,88 @@ app.post("/login", (req, res) => {
     });
 });
 
+// 로그인을 위한 라우트 핸들러
+app.post("/loginT", (req, res) => {
+  // 클라이언트로부터 받은 데이터에서 이메일과 비밀번호를 추출
+  const { email, password } = req.body;
+  console.log("잘받았는지 확인", req.body);
+  // 이메일과 비밀번호가 제공되지 않았을 경우 404 상태 코드로 오류 메시지 응답
+  if (!email || !password) {
+    return res.status(404).json({ message: "이메일 이랑 비밀번호는 필수야" });
+  }
+
+  // User 모델을 사용하여 제공된 이메일과 일치하는 사용자 검색
+  Driver.findOne({ email })
+    .then((driver) => {
+      if (!driver) {
+        return res.status(404).json({ message: "그런 유저없음" });
+      }
+
+      // 제공된 비밀번호가 데이터베이스의 비밀번호와 일치하지 않는 경우 404 상태 코드로 오류 메시지 응답
+      if (driver.password !== password) {
+        return res.status(404).json({ message: "비밀번호 불일치" });
+      }
+
+      // 비밀번호가 일치하는 경우, 사용자 ID로 토큰 생성
+      const token = createToken(driver._id);
+      console.log("잘받았구나", token);
+      // 생성된 토큰을 응답으로 보냄
+      res.status(200).json({ token });
+    })
+    .catch((error) => {
+      // 사용자 검색 중 에러 발생 시 콘솔에 에러 로깅하고 500 상태 코드로 오류 메시지 응답
+      console.log("에러 유저못찾음", error);
+      res.status(500).json({ message: "내부서버오류" });
+    });
+});
+
+app.post("/UpTInfo", async (req, res) => {
+  // 클라이언트로부터 받은 데이터에서 이름, 이메일, 비밀번호, 이미지를 추출
+  console.log(req.body);
+  const userId = req.body.userId;
+
+  // 새로운 User 모델 인스턴스를 생성
+  const newTInfo = await Driver.findOneAndUpdate(
+    { _id: userId },
+    {
+      image: req.body.image,
+      birthdate: req.body.birthdate,
+      province: req.body.province,
+      city: req.body.city,
+    },
+    { new: true, upsert: true }
+  );
+  // 데이터베이스에 새로운 사용자 저장 시도
+  newTInfo
+    .save()
+    .then(() => {
+      // 저장 성공 시 200 상태 코드와 함께 성공 메시지 응답
+      res.status(200).json({ message: "유저가 성공적으로 등록됐다." });
+    })
+    .catch((err) => {
+      // 저장 실패 시 콘솔에 에러 로깅하고 500 상태 코드로 클라이언트에게 오류 메시지 응답
+      console.log("에러발생 등록못함", err);
+      res.status(500).json({ message: "에러발생 등록못함" });
+    });
+});
+
 // endpoint to access all the users except the user who's is currently logged in!
 
 app.get("/users/:userId", (req, res) => {
+  const loggedInUserId = req.params.userId;
+  // 로그인한 유저를 받아오는건가보다 현재?
+  User.find({ _id: { $ne: loggedInUserId } })
+    // 현재 로그인한 유저 빼고 전부다 가져오기.
+    .then((users) => {
+      res.status(200).json(users);
+    })
+    .catch((err) => {
+      console.log("에러 리트라이빙 유저", err);
+      res.status(500).json({ message: "에러 리트라이빙 유저스" });
+    });
+});
+
+app.get("/drivers/:userId", (req, res) => {
   const loggedInUserId = req.params.userId;
   // 로그인한 유저를 받아오는건가보다 현재?
   User.find({ _id: { $ne: loggedInUserId } })
@@ -418,6 +539,7 @@ app.post("/setTaxiMateInfo", async (req, res) => {
     const updatedUser = await User.findOneAndUpdate(
       { _id: userId },
       {
+        image: req.body.image,
         infoSetting: {
           province: req.body.province,
           city: req.body.city,
@@ -444,13 +566,37 @@ app.post("/setTaxiMateInfo", async (req, res) => {
   }
 });
 
+// app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
+//   try {
+//     // URL 파라미터에서 userId 추출
+//     const { userId } = req.params; // 프론트엔드에서 userId 만 보냄
+
+//     // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보만 조회
+//     const userInfo = await User.findById(userId).select("infoSetting -_id"); //_id 로 조회
+//     console.log("데이터베이스에서 잘받아오나요?", userInfo);
+//     // 잘받아오네요
+//     // userInfo가 존재하면 infoSetting 필드만 클라이언트에게 JSON 형태로 전송
+
+//     if (userInfo) {
+//       res.json(userInfo);
+//     } else {
+//       // 사용자를 찾을 수 없는 경우 404 에러 전송
+//       res.status(404).send("User not found");
+//     }
+//   } catch (error) {
+//     // 에러 처리
+//     console.error("Server error:", error);
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
+
 app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
   try {
     const { userId } = req.params; // 프론트엔드에서 userId 만 보냄
 
     // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보와 name도 조회
     const userInfo = await User.findById(userId).select(
-      "infoSetting name -_id" // 이름까지 같이 받아옴
+      "infoSetting name image -_id" // 이름까지 같이 받아옴
     );
 
     console.log("데이터베이스에서 잘받아오나요?", userInfo);
@@ -587,29 +733,26 @@ app.post("/FindTaxiMateDetail", async (req, res) => {
   }
 });
 
-// 이건 senderID를 기준으로 찾아서 내가 친구에게 보낸 리뷰 만 볼 수 있음.
-
-app.get("/reviews/sender/:userId", async (req, res) => {
-  const senderId = req.params.userId; // URL 경로에서 userId 추출
+//택시운전사에서의 내정보 불러오기
+app.get("/getMyTaxiInfo/:userId", async (req, res) => {
   try {
-    const reviews = await Review.find({ senderId: senderId }) // Review.find(리시브아이디가 : 요청받은리시브아이디)랑 일치하는지 ?
-      .populate("senderId", "name") // senderId를 참조하여 name 필드만 가져옴 senderId 에 name을 가져옴
-      .populate("receiverId", "name"); // receiverId를 참조하여 name 필드만 가져옴
+    const { userId } = req.params; // 프론트엔드에서 userId 만 보냄
 
-    // JSON 형태로 변환하여 클라이언트에게 보내기 이름으로된거
-    const reviewsWithNames = reviews.map((review) => ({
-      _id: review._id,
-      senderName: review.senderId.name, // sender의 이름
-      receiverName: review.receiverId.name, // receiver의 이름
-      rating: review.rating,
-      comment: review.comment,
-      reviewDate: review.reviewDate,
-    }));
+    // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보와 name도 조회
+    const driverInfo = await Driver.findById(userId).populate(
+      "name email image imaget carNumber carName licenseNumber getDate birthdate province city"
+    );
 
-    res.json(reviewsWithNames);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "서버 에러 발생" });
+    console.log("데이터베이스에서 잘받아오나요?", driverInfo);
+    // 잘받아오네요
+    if (driverInfo) {
+      res.json(driverInfo);
+    } else {
+      res.status(404).send("User not found");
+    }
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).send("Internal Server Error");
   }
 });
 

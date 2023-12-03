@@ -21,6 +21,7 @@ import jwt_decode from "jwt-decode"; // 유튜브에선 이렇게 import 하네
 // import * as jwtDecode from "jwt-decode"; // 다안되면 이렇게
 import axios from "axios";
 import User from "../components/User";
+
 const HomeScreen = () => {
   const navigation = useNavigation();
   const { userId, setUserId } = useContext(UserType);
@@ -90,7 +91,11 @@ const HomeScreen = () => {
       setUserId(userId);
 
       axios
+<<<<<<< HEAD
         .get(`http://192.168.0.14:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
+=======
+        .get(`http://192.168.219.105:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
+>>>>>>> oh-use
         .then((response) => {
           console.log("Response data:", response.data); // 전부 찍힘.
           setUsers(response.data);
@@ -109,6 +114,12 @@ const HomeScreen = () => {
 
   return (
     <View>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("FriendsFindDetail")}
+      >
+        <Text style={styles.buttonText}>친구 찾기</Text>
+      </TouchableOpacity>
       <ScrollView>
         <View style={{ padding: 15 }}>
           {/* // index = key , item == item.... */}

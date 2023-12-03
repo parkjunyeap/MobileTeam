@@ -16,12 +16,10 @@ import { MAP_KEY } from "../../env";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 // import TimePicker from "../components/TimePicker";
 import { useNavigation } from "@react-navigation/native";
-
-import locationData from "../locationData";
-
 import axios from "axios";
 import { UserType } from "../UserContext";
 import { useContext } from "react";
+import locationData from "../locationData";
 
 const FriendsFindDetail = () => {
   const { userId, setUserId } = useContext(UserType); // 여기서 유저 누구로 로그인햇는지 .

@@ -24,6 +24,8 @@ const reviewTSchema = new mongoose.Schema({
   },
 });
 
-const ReviewT = mongoose.model("ReviewT", reviewTSchema); // 'Review' 모델로 스키마 컴파일
+const Review = mongoose.model("ReviewT", reviewTSchema); // 'Driver' 모델로 스키마 컴파일
 
-module.exports = ReviewT; // 모듈로 내보내기, 다른 파일에서 사용 가능
+module.exports = Review; // 모듈로 내보내기, 다른 파일에서 사용 가능
+
+//
