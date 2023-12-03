@@ -910,6 +910,32 @@ app.get("/driverList", async (req, res) => {
   }
 });
 
+app.get("/driverList/payment/:userId", async (req, res) => {
+  // /driverList/payment/:userId
+  const userId = req.params.userId; // URL에서 userId 파라미터 받기
+
+  // params로 해야되는구나
+
+  console.log("userID잘받아옴? 왜 잘못받아옴??", userId);
+  try {
+    // Payment 데이터베이스에서 해당 userId의 결제 내역 검색
+    const payments = await Payment.find({ boarderId: userId });
+
+    console.log(payments);
+    // 결제 내역에서 모든 driverId 추출
+    const driverIds = payments.map((payment) => payment.driverId);
+
+    // Driver 데이터베이스에서 해당 driverId의 드라이버 검색
+    const drivers = await Driver.find({ _id: { $in: driverIds } });
+
+    console.log(drivers);
+
+    res.status(200).json(drivers); // 검색 결과를 JSON 형식으로 반환
+  } catch (error) {
+    res.status(500).json({ message: "서버 오류 발생", error: error });
+  }
+});
+
 // app.get("/users/:userId", (req, res) => {
 //   const loggedInUserId = req.params.userId;
 //   // 로그인한 유저를 받아오는건가보다 현재?
