@@ -70,6 +70,5 @@ const driverSchema = new mongoose.Schema({
 });
 
 const Driver = mongoose.model("Driver", driverSchema); // 'User' 모델로 스키마 컴파일
-const Driver = mongoose.model("Driver", driverSchema); // 'User' 모델로 스키마 컴파일
 
 module.exports = Driver; // 모듈로 내보내기, 다른 파일에서 사용 가능
