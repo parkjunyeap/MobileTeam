@@ -35,6 +35,18 @@ const Driver = ({ item }) => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
+            <View style={{ flexDirection: "row" }}>
+              <Image
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 10,
+                  resizeMode: "cover",
+                }}
+                source={{ uri: item?.image }}
+                // ㅇ처음엔 사진
+              />
+            </View>
             <Text style={styles.modalText}> {item.name}</Text>
 
             <Text> 이메일 : {item.email}</Text>
@@ -66,7 +78,7 @@ const Driver = ({ item }) => {
             </Text>
 
             <Text>
-              운행 상태 :{item.driveState === true ? "운행중" : "쉬시는 중"}
+              운행 상태 :{item.driveState === true ? "운행중" : "쉬는중"}
             </Text>
 
             <View
@@ -107,6 +119,19 @@ const Driver = ({ item }) => {
                 }
               >
                 <Text style={styles.textStyle}>리뷰 보기</Text>
+              </Pressable>
+
+              <Pressable
+                style={[styles.button, styles.buttonClose, { marginTop: 10 }]}
+                onPress={() =>
+                  navigation.navigate("BookingTaxiDriver", {
+                    // 뷰 프렌드 리뷰로 감 일단 //
+                    selectedDriverId: item._id, // 이렇게하면 지금 selectedUserId 도 보내줄 // 사실 드라이버 아이디 ,
+                    selectedDriverName: item.name, // 선택한 아이템의 이름도 보내줌 //사실 드라이버 이름
+                  })
+                }
+              >
+                <Text style={styles.textStyle}>리뷰 닫기</Text>
               </Pressable>
             </View>
 

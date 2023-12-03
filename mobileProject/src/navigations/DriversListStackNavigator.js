@@ -43,8 +43,11 @@ function DriversListStackNavigator() {
         options={{ title: "기사님이 받은 리뷰 " }}
       />
 
-      {/* <Stack.Screen 
-      /> */}
+      <Stack.Screen
+        name="BookingTaxiDriver"
+        component={BookingTaxiDriver}
+        options={{ title: "택시 예약" }}
+      />
     </Stack.Navigator>
   );
 }

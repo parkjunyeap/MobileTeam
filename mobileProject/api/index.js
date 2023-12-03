@@ -36,26 +36,26 @@ const Driver = require("./models/driver"); // 드라이버가 왜 자꾸 누락�
 const Review = require("./models/review");
 const ReviewT = require("./models/reviewT"); // 택시기사 리뷰 db 따로뺏쥬
 const Payment = require("./models/payment");
+const Booking = require("./models/booking");
 
-// // 임시; // 나중에바꿔야함    // 여기가 유저에게 리뷰 보내줌
-// app.post("/write/reviews", (req, res) => {
-//   // 요청받아
-//   const { title, score } = req.body; // 클라이언트에서 전달한 데이터에서 title과 score를 추출
-//   // console.log(req.params);
+// 예약 하기
+app.post("/bookings", async (req, res) => {
+  try {
+    const newBooking = new Booking({
+      bookingDate: req.body.bookingDate,
+      bookingTime: req.body.bookingTime,
+      boarderId: req.body.boarderId,
+      driverId: req.body.driverId,
+      startPoint: req.body.startPoint,
+      endPoint: req.body.endPoint,
+    });
 
-//   const newReview = new Review({ title, score });
-
-//   newReview
-//     .save()
-//     .then(() => {
-//       res.status(200).json({ message: "유저 리뷰 가 성공적으로 등록됐다." });
-//     })
-//     .catch((err) => {
-//       console.log("에러발생 등록못함", err);
-//       res.status(500).json({ message: "에러발생 등록못함" });
-//     });
-// });
-
+    await newBooking.save(); // 데이터베이스에 예약 저장
+    res.status(201).send(newBooking); // 성공적으로 저장된 예약 객체 반환
+  } catch (error) {
+    res.status(400).send(error); // 에러 처리
+  }
+});
 // 요기 오류날 수 있는 부분 // 리뷰쓰기
 app.post("/write/reviews", (req, res) => {
   // 요청받아
