@@ -27,6 +27,8 @@ const PaymentItem = ({ item }) => {
         <Text style={styles.date}>{formatDate(boardingDate)}</Text>
       </View>
     </View>
+
+    // 공유 버튼 만들어서 Text 클립보드에 복사되게? 만들어봐야지.
   );
 };
 

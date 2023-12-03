@@ -6,7 +6,7 @@ import ViewMyReview from "../screens/ViewMyReview";
 
 import MyTaxiMateInfo from "../screens/MyTaxiMateInfo";
 import PaymentList from "../screens/PaymentList";
-import PaymentDetail from "../screens/PaymentDetail";
+// import PaymentDetail from "../screens/PaymentDetail";
 import ViewWrittenMyReviewT from "../screens/ViewWrittenMyReviewT";
 
 import ViewWrittenMyReview from "../screens/ViewWrittenMyReview";
@@ -53,12 +53,12 @@ function MyInfoStackNavigator() {
 
       {/*  다른사람 이 받은 택시 리뷰 보기... */}
       {/* 는 채팅스택에서했구요 */}
-
+      {/* 
       <Stack.Screen
         name="PaymentDetail"
         component={PaymentDetail}
         options={{ title: "결제상세내역" }}
-      />
+      /> */}
 
       <Stack.Screen
         name="ViewWrittenMyReview"
