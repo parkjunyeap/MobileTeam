@@ -109,7 +109,11 @@ const Driver = ({ item }) => {
               {/*  여기 서부터하자 */}
 
               <Pressable
-                style={[styles.button, styles.buttonClose, { marginTop: 10 }]}
+                style={[
+                  styles.button,
+                  styles.buttonClose,
+                  { marginRight: 10, marginTop: 10 },
+                ]}
                 onPress={() =>
                   navigation.navigate("ViewFriendReview", {
                     // 뷰 프렌드 리뷰로 감 일단 //
@@ -131,7 +135,7 @@ const Driver = ({ item }) => {
                   })
                 }
               >
-                <Text style={styles.textStyle}>리뷰 닫기</Text>
+                <Text style={styles.textStyle}>예약</Text>
               </Pressable>
             </View>
 

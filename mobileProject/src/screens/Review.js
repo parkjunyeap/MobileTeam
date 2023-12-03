@@ -59,19 +59,6 @@ const Review = () => {
       apiEndpoint = "http://10.20.64.10:8000/write/reviews";
     }
 
-    // axios
-    //   .post("http://10.20.64.10:8000/write/reviews", reviewData) // 리뷰 데이터 보내는사람, 받는사람, 별점 , 코멘트
-    //   .then((response) => {
-    //     console.log(response);
-    //     Alert.alert("등록 성공!!", "성공적으로 등록되었습니다");
-    //   })
-    //   .catch((error) => {
-    //     // 오류발생시 실행
-    //     console.log(error.message);
-    //   })
-
-    // POST 요청 보내기
-
     axios
       .post(apiEndpoint, reviewData)
       .then((response) => {

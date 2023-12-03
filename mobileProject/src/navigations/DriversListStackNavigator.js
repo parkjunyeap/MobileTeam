@@ -2,11 +2,10 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import TaxiDriverList from "../screens/TaxiDriverList";
-import FriendsListDetail from "../screens/FriendsListDetail";
 
 import Review from "../screens/Review";
 import ViewFriendReview from "../screens/ViewFriendReview";
-
+import BookingTaxiDriver from "../screens/BookingTaxiDriver";
 const Stack = createStackNavigator();
 
 function DriversListStackNavigator() {

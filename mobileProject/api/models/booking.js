@@ -8,14 +8,14 @@ const bookingSchema = new mongoose.Schema({
   // 유저아이디  --   // 유저이름
   // 드라이버아이디  -- //   드라이버이름?
   bookingDate: {
-    type: Date,
-    required: false, // 날짜 입력 (피커이용)
+    type: String,
+    required: true, // 날짜 입력 (피커이용)
     // 시간 탑승
   },
 
   bookingTime: {
     type: String,
-    required: false, // 시간 입력
+    required: true, // 시간 입력
     // 시간 탑승
   },
 
