@@ -1,21 +1,47 @@
 // 택시 기사님들 나오게 하면 어떨까 하는 화면 .
 
-import { StyleSheet, Text, View, ScrollView } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import React, { useContext, useEffect, useState, useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-
+import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import Driver from "../components/Driver";
 // 일단 쓸필요가없지
 // import User from "../components/User";
+import { Image } from "react-native";
 
-const HomeScreen = () => {
+const TaxiDriverList = () => {
   const navigation = useNavigation();
+  const moneyImage = require("../../assets/money.png");
   // const { userId, setUserId } = useContext(UserType); // 현재 로그인한 유저아이디 갖고와서 그 유저 아이디에
   // // 결제내역에 있는 유저 아이디만 화면에 뿌려줄 수 있게도 ..
 
   const [drivers, setDrivers] = useState([]);
   // 택시기사 배열 로갖고올거
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: "",
+      headerLeft: () => (
+        <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+          {"   "} 기사님 목록
+        </Text>
+      ),
+      headerRight: () => (
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <TouchableOpacity onPress={() => {}} style={{ padding: 14 }}>
+            <Image source={moneyImage} style={{ width: 24, height: 24 }} />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, []);
 
   // 처음에 그냥 바로
   useEffect(() => {
@@ -40,22 +66,19 @@ const HomeScreen = () => {
     <View>
       <ScrollView>
         <View style={{ padding: 15 }}>
-          {/* // index = key , item == item.... */}
-          {/* {users.map((item, index) => (
-            <User key={index} item={item} />
-          ))} */}
-
           {drivers.map((item, index) => (
             <Driver key={index} item={item} />
           ))}
-          {/*  */}
+
+          {/* 드라이버 배열에서 . map 에 key , item 해서  그 키에 맞는 아이템들 */}
+          {/* Driver({item}) = {해서 여기서 item.name, email} 등 쓸 수 있따! */}
         </View>
       </ScrollView>
     </View>
   );
 };
 1;
-export default HomeScreen;
+export default TaxiDriverList;
 
 const styles = StyleSheet.create({
   // button: {
