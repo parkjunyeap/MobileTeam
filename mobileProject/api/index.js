@@ -853,28 +853,6 @@ const insertDummyData = async () => {
   }
 };
 
-// // 더미 데이터 생성
-// const dummyBooking = new Booking({
-//   bookingDate: "2023-12-05", // 예시 날짜
-//   bookingTime: "10:00", // 예시 시간
-//   // boarderId와 driverId는 실제 User와 Driver 모델의 ObjectId를 사용해야 합니다.
-//   boarderId: "656203a7e05543faf0d7a0b3",
-//   driverId: "6569a600f3abe1ee79d45bb7",
-//   startPoint: "출발지 주소",
-//   endPoint: "도착지 주소",
-// });
-
-// // 데이터베이스에 저장
-// dummyBooking
-//   .save()
-//   .then(() => console.log("Booking saved!"))
-//   .catch((err) => console.error("Error saving booking:", err));
-
-// insertDummyData();
-
-//`http://192.168.0.14:8000/payments/boarderId/${userId}`
-// 날짜 , 출발지 목적지 , 호출시간 , 차량번호 , 기사이름 , 결제금액 줘야함.
-
 // myInfo 에서 이름뜨게 어떻게 했더라?이름까지 받아왔었구나 ok 이름까지주자
 
 // 결제내역에는 일단 이정도만??
@@ -1066,40 +1044,6 @@ app.get("/Booking/boarderId/:userId", async (req, res) => {
   }
 });
 
-// //결제내역에는 일단 이정도만??
-// app.get("/payments/boarderId/:userId", async (req, res) => {
-//   const boarderId = req.params.userId; // URL 경로에서 userId 추출
-//   console.log(boarderId);
-//   try {
-//     const payments = await Payment.find({ boarderId: boarderId }) // Review.find(리시브아이디가 : 요청받은리시브아이디)랑 일치하는지 ?
-//       .populate("boarderId", "name") // senderId를 참조하여 name 필드만 가져옴 senderId 에 name을 가져옴
-//       .populate("driverId", "name carNumber", "Driver") // driverId를 참조하여 name 하고 차량번호 가져옴
-
-//       // .populate("driverId", "name carNumber" )  원래이건데
-//       .lean();
-
-//     console.log(payments);
-
-//     // JSON 형태로 변환하여 클라이언트에게 보내기 이름으로된거
-//     const paymentsWithNameNumber = payments.map((Payment) => ({
-//       _id: Payment._id,
-//       boarderName: Payment.boarderId.name, // sender의 이름
-//       driverName: Payment.driverId.name, // 드라이버 의 이름
-//       carNumber: Payment.driverId.carNumber, //  드라이버의 차량번호
-//       boardingDate: Payment.boardingDate,
-//       startPoint: Payment.startPoint,
-//       endPoint: Payment.endPoint,
-//       pay: Payment.pay,
-//     }));
-
-//     console.log(paymentsWithNameNumber);
-//     res.json(paymentsWithNameNumber);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: "서버 에러 발생" });
-//   }
-// });
-
 // 예약 삭제 라우트 부킹삭제
 app.delete("/booking/del/:bookingId", async (req, res) => {
   try {
@@ -1115,6 +1059,8 @@ app.delete("/booking/del/:bookingId", async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+// 리뷰 삭제를 하는데,, WriteId랑 유저아이디랑 비교해서 일치하는 아이디만 삭제가능하게 하고싶은데 ???
 
 app.delete("/Review/del/:writeId", async (req, res) => {
   // 리뷰 삭제
