@@ -22,6 +22,26 @@ const BookingList = () => {
 
   const navigation = useNavigation();
 
+  const deleteBooking = async (bookingId) => {
+    try {
+      await axios.delete(`http://10.20.34.195:8000/Booking/del/${bookingId}`);
+
+      setBooking((prevBookings) =>
+        prevBookings.filter((b) => b._id !== bookingId)
+      );
+
+      const task = Booking.filter((b) => b._id !== bookingId);
+
+      console.log(task);
+      setBooking(task);
+
+      alert("성공적으로 예약을 취소하였습니다."); // 성공 메시지 표시
+    } catch (err) {
+      console.error("Error deleting booking:", err);
+      // 오류 처리
+    }
+  };
+
   useEffect(() => {
     const bookingRequest = async () => {
       try {
@@ -38,12 +58,15 @@ const BookingList = () => {
     };
 
     bookingRequest();
-  }, [Booking]);
+  }, []);
   // 요긴 간략하게 결제내역 보여줄 예정이였는데,,, 일단 그 리뷰마냥 나오게 해봄
   return (
     <FlatList
       data={Booking} // 서버로부터 받은 리뷰 데이터를 사용합니다.
-      renderItem={({ item }) => <BookingItem item={item} />}
+      // renderItem={({ item }) => <BookingItem item={item} />}
+      renderItem={({ item }) => (
+        <BookingItem item={item} onDelete={deleteBooking} />
+      )}
       keyExtractor={(item) => item._id.toString()} // MongoDB의 _id를 사용합니다.
     />
   );
