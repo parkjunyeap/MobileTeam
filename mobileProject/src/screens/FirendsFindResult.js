@@ -21,7 +21,7 @@ const FirendsFindResult = () => {
   const route = useRoute();
   const navigation = useNavigation();
 
-  const { users } = route.params || {}; // users가 없는 경우를 대비해 빈 객체로 초기화
+  const { userPCs, userSEs } = route.params || {}; // users가 없는 경우를 대비해 빈 객체로 초기화
 
   console.log("route.params:", route.params);
 
@@ -33,12 +33,17 @@ const FirendsFindResult = () => {
     <View>
       <ScrollView>
         <View style={{ padding: 15 }}>
-          {users ? (
-            users.map((item, index) => <User key={index} item={item} />)
+          {userPCs && userSEs ? (
+            [...new Set([...userPCs, ...userSEs])].length > 0 ? (
+              [...new Set([...userPCs, ...userSEs])].map((item, index) => <User key={index} item={item} />)
+            ) : (
+              <Text>No users found.</Text>
+            )
           ) : (
-            <Text>No users found.</Text>
+            <Text>Loading...</Text>
           )}
         </View>
+
       </ScrollView>
     </View>
   );
