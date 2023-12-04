@@ -19,7 +19,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 
 const TaxiDriverList = () => {
-  const [showTrue, setShowTrue] = useState(false); // 기본값 false
+  const [showTrue, setShowTrue] = useState(false); // 기본값 false // 결제내역
+
+  const [bookingTrue, setBookingTrue] = useState(false); // 예약내역
+  // 누를때만 true 로 하고
+  // 다른거 눌릴때 false
+
+  // 취소버튼 만들어서 누르면 delete 하게
 
   const navigation = useNavigation();
   const moneyImage = require("../../assets/money.png");
@@ -28,24 +34,57 @@ const TaxiDriverList = () => {
 
   console.log("유저아이디 잘갖고왔는지 드라이버스크린에서;;:", userId);
   // 유저아이디
-  const [drivers, setDrivers] = useState([]);
+
   // 택시기사 배열 로갖고올거
-  const [payDrivers, setPaydrivers] = useState([]);
+  const [drivers, setDrivers] = useState([]);
 
   // 결제한 택시기사
+  const [payDrivers, setPaydrivers] = useState([]);
 
-  const fetchPayDrivers = async () => {
-    // 이게 결제한 택시기사 //
-    try {
-      const response = await axios.get(
-        `http://192.168.0.14:8000/driverList/payment/${userId}`
-      );
-      setPaydrivers(response.data); // 새로운 데이터로 상태 업데이트
-      console.log("결제한 택시기사 ", response.data);
-    } catch (error) {
-      console.log("error retrieving new drivers", error);
-    }
-  };
+  // 예약한 기사
+  const [bookingDrivers, setBookingDrivers] = useState([]);
+  useEffect(() => {
+    const fetchPayDrivers = async () => {
+      // 이게 결제한 택시기사 //
+      try {
+        const response = await axios.get(
+          `http://10.20.34.195:8000/driverList/payment/${userId}`
+        );
+        setPaydrivers(response.data); // 새로운 데이터로 상태 업데이트
+        console.log("결제한 택시기사 ", response.data);
+      } catch (error) {
+        console.log("error retrieving new drivers", error);
+      }
+    };
+
+    const fetchDrivers = async () => {
+      axios
+        .get("http://10.20.34.195:8000/driverList/") // 드라이버 아이디 전부 넘김.
+        .then((response) => {
+          console.log("Response data:", response.data); // 전부 찍힘.
+          setDrivers(response.data); // 드라이버를 배열에 다 넣는게 끝
+        })
+        .catch((error) => {
+          console.log("error retrieving drivers", error);
+        });
+    };
+
+    const fetchBookingDrivers = async () => {
+      try {
+        const response = await axios.get(
+          `http://10.20.34.195:8000/driverList/booking/${userId}` // 예약한드라이버
+        );
+        setBookingDrivers(response.data); // 새로운 데이터로 상태 업데이트
+        console.log("결제한 택시기사 ", response.data);
+      } catch (error) {
+        console.log("error retrieving new drivers", error);
+      }
+    };
+
+    fetchBookingDrivers();
+    fetchDrivers();
+    fetchPayDrivers();
+  }, []);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -64,6 +103,7 @@ const TaxiDriverList = () => {
               size={32}
               color="black"
               onPress={() => {
+                setBookingTrue(false);
                 setShowTrue(false);
               }}
             />
@@ -72,10 +112,23 @@ const TaxiDriverList = () => {
 
           <View style={{ alignItems: "center" }}>
             <Entypo
+              name="clock"
+              size={32}
+              color="black"
+              onPress={() => {
+                setBookingTrue(true);
+              }}
+            />
+            <Text style={{ color: "black" }}>예약</Text>
+          </View>
+
+          <View style={{ alignItems: "center" }}>
+            <Entypo
               name="credit"
               size={32}
               color="black"
               onPress={() => {
+                setBookingTrue(false);
                 setShowTrue(true);
               }}
             />
@@ -86,40 +139,23 @@ const TaxiDriverList = () => {
     });
   });
 
-  useEffect(() => {
-    fetchPayDrivers();
-  }, []);
-
-  // 처음에 그냥 바로
-  useEffect(() => {
-    const fetchDrivers = async () => {
-      axios
-        .get("http://192.168.0.14:8000/driverList/") // 드라이버 아이디 전부 넘김.
-        .then((response) => {
-          console.log("Response data:", response.data); // 전부 찍힘.
-          setDrivers(response.data); // 드라이버를 배열에 다 넣는게 끝
-        })
-        .catch((error) => {
-          console.log("error retrieving drivers", error);
-        });
-    };
-
-    fetchDrivers();
-  }, []); // 처음 렌더링 될때 한번만 실행되고 , ㄴㄴ setDriver 이 달라질때마다??
-
   console.log("drivers", drivers);
 
   return (
     <View>
       <ScrollView>
         <View style={{ padding: 15 }}>
-          {/* {drivers.map((item, index) => (
+          {/* {(showTrue ? payDrivers : drivers).map((item, index) => (
             <Driver key={index} item={item} />
           ))} */}
 
-          {(showTrue ? payDrivers : drivers).map((item, index) => (
-            <Driver key={index} item={item} />
-          ))}
+          {bookingTrue
+            ? bookingDrivers.map((item, index) => (
+                <Driver key={index} item={item} />
+              ))
+            : (showTrue ? payDrivers : drivers).map((item, index) => (
+                <Driver key={index} item={item} />
+              ))}
 
           {/* 드라이버 배열에서 . map 에 key , item 해서  그 키에 맞는 아이템들 */}
           {/* Driver({item}) = {해서 여기서 item.name, email} 등 쓸 수 있따! */}

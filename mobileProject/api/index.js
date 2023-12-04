@@ -872,7 +872,7 @@ const insertDummyData = async () => {
 
 // insertDummyData();
 
-//`http://192.168.0.14:8000/payments/boarderId/${userId}`
+//`http://10.20.34.195:8000/payments/boarderId/${userId}`
 // 날짜 , 출발지 목적지 , 호출시간 , 차량번호 , 기사이름 , 결제금액 줘야함.
 
 // myInfo 에서 이름뜨게 어떻게 했더라?이름까지 받아왔었구나 ok 이름까지주자
@@ -941,6 +941,33 @@ app.get("/driverList/payment/:userId", async (req, res) => {
     console.log(payments);
     // 결제 내역에서 모든 driverId 추출
     const driverIds = payments.map((payment) => payment.driverId);
+
+    // Driver 데이터베이스에서 해당 driverId의 드라이버 검색
+    const drivers = await Driver.find({ _id: { $in: driverIds } });
+
+    console.log(drivers);
+
+    res.status(200).json(drivers); // 검색 결과를 JSON 형식으로 반환
+  } catch (error) {
+    res.status(500).json({ message: "서버 오류 발생", error: error });
+  }
+});
+
+// 부킹 드라이버
+app.get("/driverList/booking/:userId", async (req, res) => {
+  // /driverList/payment/:userId
+  const userId = req.params.userId; // URL에서 userId 파라미터 받기
+
+  // params로 해야되는구나
+
+  console.log("userID잘받아옴? 왜 잘못받아옴??", userId);
+  try {
+    // Payment 데이터베이스에서 해당 userId의 결제 내역 검색
+    const bookings = await Booking.find({ boarderId: userId });
+
+    console.log(bookings);
+    // 예약 내역에서 모든 driverId 추출
+    const driverIds = bookings.map((booking) => booking.driverId);
 
     // Driver 데이터베이스에서 해당 driverId의 드라이버 검색
     const drivers = await Driver.find({ _id: { $in: driverIds } });
@@ -1072,3 +1099,19 @@ app.get("/Booking/boarderId/:userId", async (req, res) => {
 //     res.status(500).json({ message: "서버 에러 발생" });
 //   }
 // });
+
+// 예약 삭제 라우트 부킹삭제
+app.delete("/booking/del/:bookingId", async (req, res) => {
+  try {
+    const booking = await Booking.findByIdAndDelete(req.params.bookingId);
+
+    console.log(booking);
+    // 잘갖고왔는지아이디..
+    if (!booking) {
+      return res.status(404).send("No booking found");
+    }
+    res.status(200).send("Booking deleted successfully");
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});

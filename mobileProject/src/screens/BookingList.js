@@ -26,7 +26,7 @@ const BookingList = () => {
     const bookingRequest = async () => {
       try {
         const response = await axios.get(
-          `http://192.168.0.14:8000/Booking/boarderId/${userId}`
+          `http://10.20.34.195:8000/Booking/boarderId/${userId}`
         );
         if (response.status === 200) {
           setBooking(response.data); //결제내역 을 로그인한유저기준으로 갖고옴
@@ -38,7 +38,7 @@ const BookingList = () => {
     };
 
     bookingRequest();
-  }, []);
+  }, [Booking]);
   // 요긴 간략하게 결제내역 보여줄 예정이였는데,,, 일단 그 리뷰마냥 나오게 해봄
   return (
     <FlatList

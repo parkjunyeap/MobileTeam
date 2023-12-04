@@ -43,7 +43,7 @@ const DriverInfo = ({ route }) => {
     const getMyTaxiInfo = async () => {
       try {
         const response = await fetch(
-          `http://192.168.0.14:8000/getMyTaxiInfo/${userId}`
+          `http://10.20.34.195:8000/getMyTaxiInfo/${userId}`
         );
         const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
         // setRecepientData(data);
@@ -93,7 +93,7 @@ const DriverInfo = ({ route }) => {
       city: selectedCity,
     };
     axios
-      .post("http://192.168.0.14:8000/UpTInfo", newTInfo) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
+      .post("http://10.20.34.195:8000/UpTInfo", newTInfo) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
       .then((response) => {
         // 그러면. res 로 잘됏나 안됏나 받음. 그리고 메시지띄움. 그리고 set으로 다른거 다 빈칸으로만듬
         console.log(response);
