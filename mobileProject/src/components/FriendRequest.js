@@ -9,7 +9,7 @@ const FriendRequest = ({ item, friendRequests, setFriendRequests }) => {
   const acceptRequest = async (friendRequestId) => {
     try {
       const response = await fetch(
-        "http://172.30.1.78:8000/friend-request/accept",
+        "http://10.20.33.9330.1.78:8000/friend-request/accept",
         {
           method: "POST",
           headers: {

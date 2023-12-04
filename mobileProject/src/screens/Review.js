@@ -17,7 +17,7 @@ const Review = () => {
     };
 
     // 현재 바꾼디비랑 안맞아서 못씀.
-    Axios.post("http://172.30.1.78:8000/reviews", reviewData)
+    Axios.post("http://10.20.33.9330.1.78:8000/reviews", reviewData)
       .then(function (response) {
         console.log(response.data);
       })
