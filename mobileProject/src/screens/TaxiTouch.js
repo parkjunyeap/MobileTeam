@@ -1,7 +1,9 @@
 import React, { useState, useRef } from 'react';
-import {View, Image,  Text, StyleSheet} from 'react-native';
+import {View, Image,  Text, Dimensions, StyleSheet} from 'react-native';
 import MapView, {Callout, PROVIDER_GOOGLE, Marker, Circle, Polyline, Polygon} from 'react-native-maps';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'; //으악 이거 입력 ㅠㅠ
+import MapViewDirections from 'react-native-maps-directions';
+
 import { GOOGLE_MAPS_API_KEY } from '../config/constants';
 
 export default function GoogleMapsScreen() {
@@ -122,17 +124,17 @@ export default function GoogleMapsScreen() {
       provider = {PROVIDER_GOOGLE}
       style = {styles.map}
       region={{ //첫 화면 구성
-        latitude:36.47,
-        longitude:127.43,
+        latitude:36.798900,
+        longitude:127.075214,
         latitudeDelta:0.1,
         longitudeDelta:0.1,
         }}>
           {origin !== undefined? <Marker
           coordinate={origin}>
           </Marker> :null}
-          {destination !== undefined? <Marker
+          {destination !== undefined? (<Marker
           coordinate={destination}>
-          </Marker> :null}
+          </Marker>) :null}
 
         {/* // 마커 꾸미기
         <Marker 
