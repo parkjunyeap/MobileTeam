@@ -1,6 +1,7 @@
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
-import Clipboard from "@react-native-clipboard/clipboard";
+// import Clipboard from "@react-native-clipboard/clipboard";
+import { Clipboard } from "react-native";
 import formatDate from "../../hook/formatDate";
 import axios from "axios";
 const BookingItem = ({ item, onDelete }) => {
@@ -17,14 +18,23 @@ const BookingItem = ({ item, onDelete }) => {
 
   console.log("부킹아이디잘갖고옴", item);
 
+  console.log(Clipboard);
+
   const handleDelete = () => {
     onDelete(item._id); // 예약 아이디를 사용하여 삭제 함수 호출
   };
 
-  const handleShare = () => {
+  const handleShare = async () => {
     const bookingInfo = `예약 날짜: ${bookingDate}\n예약 시간: ${bookingTime}\n탑승자명: ${boarderName}\n기사명: ${driverName}\n출발지: ${startPoint}\n도착지: ${endPoint}`;
-    Clipboard.setString(bookingInfo);
-    alert("예약 정보가 클립보드에 복사되었습니다.");
+
+    console.log("로고도 잘찍히는데왜?", bookingInfo);
+
+    try {
+      await Clipboard.setString(bookingInfo);
+      alert("예약 정보가 클립보드에 복사되었습니다.");
+    } catch (e) {
+      alert(e, "복사에 실패하였습니다");
+    }
   };
 
   return (

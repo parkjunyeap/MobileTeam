@@ -872,7 +872,7 @@ const insertDummyData = async () => {
 
 // insertDummyData();
 
-//`http://10.20.34.195:8000/payments/boarderId/${userId}`
+//`http://192.168.0.14:8000/payments/boarderId/${userId}`
 // 날짜 , 출발지 목적지 , 호출시간 , 차량번호 , 기사이름 , 결제금액 줘야함.
 
 // myInfo 에서 이름뜨게 어떻게 했더라?이름까지 받아왔었구나 ok 이름까지주자
@@ -1111,6 +1111,22 @@ app.delete("/booking/del/:bookingId", async (req, res) => {
       return res.status(404).send("No booking found");
     }
     res.status(200).send("Booking deleted successfully");
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+app.delete("/Review/del/:writeId", async (req, res) => {
+  // 리뷰 삭제
+  try {
+    const review = await Review.findByIdAndDelete(req.params.writeId);
+
+    console.log(review);
+    // 잘갖고왔는지아이디..
+    if (!review) {
+      return res.status(404).send("No review found");
+    }
+    res.status(200).send("Review deleted successfully");
   } catch (error) {
     res.status(500).send(error);
   }

@@ -7,8 +7,9 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  Alert,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+
 import { useContext } from "react";
 import { UserType } from "../UserContext";
 import axios from "axios";
@@ -20,25 +21,35 @@ const BookingList = () => {
   console.log("결제내역을 위한 아이디", userId);
   const [Booking, setBooking] = useState([]); // 결제내역 데이터 상태
 
-  const navigation = useNavigation();
-
   const deleteBooking = async (bookingId) => {
     try {
-      await axios.delete(`http://10.20.34.195:8000/Booking/del/${bookingId}`);
-
-      setBooking((prevBookings) =>
-        prevBookings.filter((b) => b._id !== bookingId)
+      // 사용자에게 예약 취소를 확인
+      Alert.alert(
+        "예약 취소", // 제목
+        "예약을 취소하시겠습니까?", // 메시지
+        [
+          {
+            text: "취소",
+            onPress: () => console.log("취소됨"),
+            style: "cancel",
+          },
+          {
+            text: "확인",
+            onPress: async () => {
+              await axios.delete(
+                `http://192.168.0.14:8000/Booking/del/${bookingId}`
+              );
+              setBooking((prevBookings) =>
+                prevBookings.filter((b) => b._id !== bookingId)
+              );
+              alert("성공적으로 예약을 취소하였습니다.");
+            },
+          },
+        ],
+        { cancelable: false }
       );
-
-      const task = Booking.filter((b) => b._id !== bookingId);
-
-      console.log(task);
-      setBooking(task);
-
-      alert("성공적으로 예약을 취소하였습니다."); // 성공 메시지 표시
     } catch (err) {
       console.error("Error deleting booking:", err);
-      // 오류 처리
     }
   };
 
@@ -46,7 +57,7 @@ const BookingList = () => {
     const bookingRequest = async () => {
       try {
         const response = await axios.get(
-          `http://10.20.34.195:8000/Booking/boarderId/${userId}`
+          `http://192.168.0.14:8000/Booking/boarderId/${userId}`
         );
         if (response.status === 200) {
           setBooking(response.data); //결제내역 을 로그인한유저기준으로 갖고옴

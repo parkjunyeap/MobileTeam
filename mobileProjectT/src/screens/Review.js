@@ -45,7 +45,7 @@ const Review = () => {
     console.log(reviewData);
     // 현재 바꾼디비랑 안맞아서 못씀.
     axios
-      .post("http://10.20.34.195:8000/write/reviews", reviewData) // 리뷰 데이터 보내는사람, 받는사람, 별점 , 코멘트
+      .post("http://192.168.0.14:8000/write/reviews", reviewData) // 리뷰 데이터 보내는사람, 받는사람, 별점 , 코멘트
       .then((response) => {
         console.log(response);
       })
