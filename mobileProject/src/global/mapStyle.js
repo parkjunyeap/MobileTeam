@@ -1,4 +1,4 @@
-export const mapStyle = [
+/*export const mapStyle = [
     {
         "featureType": "administrative",
         "elementType": "geometry.fill",
@@ -290,4 +290,4 @@ export const mapStyle = [
             }
         ]
     }
-]
+]*/
