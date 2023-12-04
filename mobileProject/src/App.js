@@ -32,11 +32,11 @@
 import React from 'react' //추가
 import { StyleSheet, Text, View ,Dimensions} from "react-native";
 import StackNavigator from "./navigations/StackNavigator";
-import HomePage from './src/screens/HomePage';
+import TaxiTouch from './screens/TaxiTouch';
 const App = () => {
   return(
     <View style = {styles.container}>
-      <HomePage/>
+      <TaxiTouch/>
     </View>
   )
 }
