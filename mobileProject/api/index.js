@@ -732,23 +732,28 @@ app.post("/FindTaxiMateDetail", async (req, res) => {
   try {
     const { province, city, favoriteStartPoint, favoriteEndPoint } = req.body;
     // MongoDB에서 사용자 정보를 조회
-    console.log(req.body);
-    const user = await User.find({
+    console.log("데이터 확인 :", req.body);
+
+    const userPC = await User.find({
       "infoSetting.province": province,
       "infoSetting.city": city,
-      // "infoSetting.favoriteStartPoint": favoriteStartPoint,
-      // "infoSetting.favoriteEndPoint": favoriteEndPoint,
-
-      // 지역별로 검색할 수 잇게 바꿈일단
     });
-    console.log(user);
-    if (!user) {
+    const userSE = await User.find({
+      "infoSetting.favoriteStartPoint": favoriteStartPoint,
+      "infoSetting.favoriteEndPoint": favoriteEndPoint,
+    });
+
+    //   // 지역별로 검색할 수 잇게 바꿈일단
+    // });
+    console.log("Searched by 도/시", userPC);
+    console.log("Searched by 주 이용 위치", userSE);
+    if ((!userPC || userPC.length === 0) && (!userSE || userSE.length === 0)) {
       // 해당하는 사용자를 찾지 못한 경우 에러 응답
       return res.status(404).json({ message: "해당되는 사용자가 없습니다." });
     }
 
     // 사용자 정보를 클라이언트에 응답
-    res.status(200).json({ user });
+    res.status(200).json({ userPC, userSE });
   } catch (error) {
     console.error("오류:", error.message);
     res.status(500).json({ message: "서버 오류가 발생했습니다." });

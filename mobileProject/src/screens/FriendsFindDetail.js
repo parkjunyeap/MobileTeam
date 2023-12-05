@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import MultiSelect from "react-native-multiple-select";
 import { MAP_KEY } from "../../env";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 // import TimePicker from "../components/TimePicker";
@@ -34,9 +35,11 @@ const FriendsFindDetail = () => {
   const [selectedCity, setSelectedCity] = useState(
     locationData[Object.keys(locationData)[0]][0]
   );
-  const [favoriteStartLocation, setFavoriteStartLocation] = useState("");
-  const [favoriteEndLocation, setFavoriteEndLocation] = useState("");
+  const [favoriteStartLocation, setFavoriteStartLocation] = useState([]);
+  const [favoriteStartLocationI, setFavoriteStartLocationI] = useState([]);
 
+  const [favoriteEndLocation, setFavoriteEndLocation] = useState([]);
+  const [favoriteEndLocationI, setFavoriteEndLocationI] = useState([]);
   // // 키보드 화면 안가려지게 안되는데용?
   // useEffect(() => {
   //   const keyboardDidShowListener = Keyboard.addListener(
@@ -64,12 +67,18 @@ const FriendsFindDetail = () => {
     setSelectedCity(citiesForProvince[0]);
   };
 
-  const handleStartLocationChange = (value) => {
-    setFavoriteStartLocation(value);
+  const handleStartLocationChange = (start_place) => {
+    setFavoriteStartLocation([...favoriteStartLocation, start_place]);
+  };
+  const handleStartLocationIChange = (items) => {
+    setFavoriteStartLocationI(items);
   };
 
-  const handleEndLocationChange = (value) => {
-    setFavoriteEndLocation(value);
+  const handleEndLocationChange = (end_place) => {
+    setFavoriteEndLocation([...favoriteEndLocation, end_place]);
+  };
+  const handleEndLocationIChange = (items) => {
+    setFavoriteEndLocationI(items);
   };
 
   const handleReset = () => {
@@ -84,15 +93,21 @@ const FriendsFindDetail = () => {
   const handleSaveButtonClick = () => {
     console.log("선택한 도:", selectedProvince);
     console.log("선택한 시:", selectedCity);
-    console.log("즐겨타는 출발지:", favoriteStartLocation);
-    console.log("즐겨타는 목적지:", favoriteEndLocation);
+    console.log(
+      "즐겨타는 출발지:",
+      favoriteStartLocation.map((item) => item.description)
+    );
+    console.log(
+      "즐겨타는 목적지:",
+      favoriteEndLocation.map((item) => item.description)
+    );
 
     const findTaxiInfo = {
       userId: userId, // 로그인 한 사람 id
       province: selectedProvince, // 도
       city: selectedCity, // 시
-      favoriteStartPoint: favoriteStartLocation, // 출발지,
-      favoriteEndPoint: favoriteEndLocation,
+      favoriteStartPoint: favoriteStartLocation.map((item) => item.description), // 출발지,
+      favoriteEndPoint: favoriteEndLocation.map((item) => item.description),
     };
 
     // 데이터 다 저장해서 .,.,.
@@ -101,26 +116,33 @@ const FriendsFindDetail = () => {
     axios
       .post("http://10.20.64.33:8000/FindTaxiMateDetail", findTaxiInfo)
       .then(function (response) {
-        console.log("확인 :", response);
-        const users = response.data.user;
-        if (users.length === 0) {
+        //console.log(response);
+        const userPCs = response.data.userPC;
+        const userSEs = response.data.userSE;
+        if (userPCs.length === 0 && userSEs.length === 0) {
           console.log("해당하는 사용자를 찾을 수 없습니다.");
         } else {
-          console.log("검색된 유저들 전부 보여주게 배열을.", users); // users 배열 모든 값 해당하는애 출력하기.
+          console.log("검색된 유저들 전부 보여주게 배열을.", userPCs, userSEs); // users 배열 모든 값 해당하는애 출력하기.
           // 사용자 정보 배열을 순회하며 작업 수행
-          users.forEach((user) => {
-            const userGId = user._id;
-            const userName = user.name;
+          userPCs.forEach((userPC) => {
+            const userGId = userPC._id;
+            const userName = userPC.name;
             if (userId !== userGId) {
               console.log("사용자 _id:", userGId);
               console.log("사용자 이름:", userName);
             }
-
-            // 추가 정보 출력 또는 다른 작업 수행
+          });
+          userSEs.forEach((userSE) => {
+            const userGId = userSE._id;
+            const userName = userSE.name;
+            if (userId !== userGId) {
+              console.log("사용자 _id:", userGId);
+              console.log("사용자 이름:", userName);
+            }
           });
         }
 
-        navigation.navigate("FriendsFindResult", { users: users });
+        navigation.navigate("FriendsFindResult", { userPCs, userSEs });
       })
       .catch(function (error) {
         // 오류발생시 실행
@@ -135,93 +157,126 @@ const FriendsFindDetail = () => {
   };
 
   return (
-    // <KeyboardAvoidingView
-    //   style={{ flex: 1 }}
-    //   behavior={Platform.OS === "ios" ? "padding" : "height"}
-    //   keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-    // >
     <ScrollView
       keyboardShouldPersistTaps="always"
       listViewDisplayed={false}
       // 위 코드는 스크롤뷰랑 구글오토컴플레이트 같이 쓸때 나오는 오류 없애려고 한거. 뭔지는 모름.
       style={styles.container}
     >
-      <Text> 택시를 이용하는 지역</Text>
-      <Text>도 : {selectedProvince}</Text>
-      <Picker
-        selectedValue={selectedProvince}
-        onValueChange={(itemValue) => onProvinceChange(itemValue)}
-        style={styles.picker}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
       >
-        {Object.keys(locationData).map((province) => (
-          <Picker.Item key={province} label={province} value={province} />
-        ))}
-      </Picker>
-      <Text>시 : {selectedCity}</Text>
-      <Picker
-        selectedValue={selectedCity}
-        onValueChange={(itemValue) => setSelectedCity(itemValue)}
-        style={styles.picker}
-      >
-        {locationData[selectedProvince].map((city) => (
-          <Picker.Item key={city} label={city} value={city} />
-        ))}
-      </Picker>
-      <Text> 즐겨타는 출발지 : </Text>
-      <View style={styles.location}>
-        <GooglePlacesAutocomplete
-          placeholder="자주타는 출발지를 적어주세요!"
-          styles={{
-            container: { flex: 0 },
-            textInput: { paddingLeft: 20, height: 40 },
-          }}
-          onPress={(data) => handleStartLocationChange(data.description)}
-          onFail={(e) => {
-            console.log("GooglePlacesAutocomplete onFail : ", e);
-          }}
-          query={{ key: MAP_KEY, language: "ko", components: "country:kr" }}
-          debounce={400}
-        />
-        <View style={styles.locationIcon}>
-          <MaterialCommunityIcons name="map-marker" size={20} />
-        </View>
-      </View>
-      <Text> 즐겨타는 목적지 : </Text>
-      <View style={styles.location}>
-        <GooglePlacesAutocomplete
-          placeholder="자주타는 목적지를 적어주세요!"
-          styles={{
-            container: { flex: 0 },
-            textInput: { paddingLeft: 20, height: 40 },
-          }}
-          onPress={(data) => handleEndLocationChange(data.description)}
-          onFail={(e) => {
-            console.log("GooglePlacesAutocomplete onFail : ", e);
-          }}
-          query={{ key: MAP_KEY, language: "ko", components: "country:kr" }}
-          debounce={400}
-        />
-        <View style={styles.locationIcon}>
-          <MaterialCommunityIcons name="map-marker" size={20} />
-        </View>
-      </View>
-      {/* 버튼 style 먹이느라 */}
-      <View style={styles.buttonContainer}>
-        <View style={styles.buttonWrapper}>
-          <Button title="초기화" onPress={handleReset} color="#28a745" />
-        </View>
-        <View style={{ width: 20 }} />
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="검색"
-            onPress={handleSaveButtonClick}
-            color="#28a745"
+        <Text> 택시를 이용하는 지역</Text>
+        <Text>도 : {selectedProvince}</Text>
+        <Picker
+          selectedValue={selectedProvince}
+          onValueChange={(itemValue) => onProvinceChange(itemValue)}
+          style={styles.picker}
+        >
+          {Object.keys(locationData).map((province) => (
+            <Picker.Item key={province} label={province} value={province} />
+          ))}
+        </Picker>
+        <Text>시 : {selectedCity}</Text>
+        <Picker
+          selectedValue={selectedCity}
+          onValueChange={(itemValue) => setSelectedCity(itemValue)}
+          style={styles.picker}
+        >
+          {locationData[selectedProvince].map((city) => (
+            <Picker.Item key={city} label={city} value={city} />
+          ))}
+        </Picker>
+
+        <View style={styles.location}>
+          <View style={{ flexDirection: "row" }}>
+            <Text> 주 출발지 : </Text>
+            <MaterialCommunityIcons
+              name="map-marker"
+              size={20}
+              style={{ left: -5, bottom: 3 }}
+            />
+          </View>
+          <GooglePlacesAutocomplete
+            placeholder="주 출발지를 적어주세요!"
+            styles={{
+              container: { flex: 1 },
+              textInput: { paddingLeft: 20, height: 40 },
+            }}
+            onPress={(data, details) => handleStartLocationChange(data)}
+            onFail={(e) => {
+              console.log("GooglePlacesAutocomplete onFail : ", e);
+            }}
+            query={{ key: MAP_KEY, language: "ko", components: "country:kr" }}
+            debounce={400}
           />
+          <MultiSelect
+            items={favoriteStartLocation}
+            uniqueKey="place_id"
+            onSelectedItemsChange={handleStartLocationIChange}
+            selectedItems={favoriteStartLocationI}
+            selectText="위에서 위치를 찾고 이곳을 눌러 검색에 추가하세요!!!"
+            searchInputPlaceholderText="찾기"
+            displayKey="description"
+          />
+          <Text>
+            {favoriteStartLocationI.map((item) => (
+              <Text key={item.place_id}>{item && item.description}</Text>
+            ))}
+          </Text>
+          <View style={{ flexDirection: "row" }}>
+            <Text> 주 목적지 : </Text>
+            <MaterialCommunityIcons
+              name="map-marker"
+              size={20}
+              style={{ left: -5, bottom: 3 }}
+            />
+          </View>
+          <GooglePlacesAutocomplete
+            placeholder="목적지를 적어주세요!"
+            styles={{
+              container: { flex: 0 },
+              textInput: { paddingLeft: 20, height: 40 },
+            }}
+            onPress={(data, details) => handleEndLocationChange(data)}
+            onFail={(e) => {
+              console.log("GooglePlacesAutocomplete onFail : ", e);
+            }}
+            query={{ key: MAP_KEY, language: "ko", components: "country:kr" }}
+            debounce={400}
+          />
+          <MultiSelect
+            items={favoriteEndLocation}
+            uniqueKey="place_id"
+            onSelectedItemsChange={handleEndLocationIChange}
+            selectedItems={favoriteEndLocationI}
+            selectText="위에서 위치를 찾고 이곳을 눌러 검색에 추가하세요!!!"
+            searchInputPlaceholderText="찾기"
+            displayKey="description"
+          />
+          <Text>
+            {favoriteEndLocationI.map((item) => (
+              <Text key={item.place_id}>{item && item.description}</Text>
+            ))}
+          </Text>
         </View>
-      </View>
-      <View />
-      {/* {" "} 이게필요해?? */}
-      {/* 키보드 높이만큼의 여백 생성 */}
+        {/* 버튼 style 먹이느라 */}
+        <View style={styles.buttonContainer}>
+          <View style={styles.buttonWrapper}>
+            <Button title="초기화" onPress={handleReset} color="#28a745" />
+          </View>
+          <View style={{ width: 20 }} />
+          <View style={styles.buttonWrapper}>
+            <Button
+              title="검색"
+              onPress={handleSaveButtonClick}
+              color="#28a745"
+            />
+          </View>
+        </View>
+        <View />
+      </KeyboardAvoidingView>
     </ScrollView>
     // {/* </KeyboardAvoidingView> */}
   );
@@ -247,8 +302,8 @@ const styles = StyleSheet.create({
   },
   locationIcon: {
     position: "absolute",
-    left: 20,
-    top: 16,
+    left: 0,
+    top: 25,
   },
 
   buttonContainer: {
@@ -256,6 +311,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
+    marginBottom: 30,
   },
   buttonWrapper: {
     flex: 1, // each button will take half of the container width
