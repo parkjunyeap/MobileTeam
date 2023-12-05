@@ -127,9 +127,9 @@ export default function GoogleMapsScreen() {
             onDragEnd={(e) => console.log('목적지 드래그 한 좌표: ',{  x: e.nativeEvent.coordinate })}/>
         )}
 
-          {/* 마커 연습 _ 커스텀마커뷰(자동차 이미지) 콜아웃(텍스트) */}
+          {/* 마커 연습 _ 커스텀마커뷰(자동차 이미지) 콜아웃(텍스트) -> 이거 위치를 택시 운전자로 바꾸자!! */}
         <Marker
-          coordinate={{ latitude: 36.800131, longitude: 127.074941 }}>
+          coordinate={{ latitude: 36.800131, longitude: 127.074941 }}>  
           <MyCustomMarkerView />
           <Callout style={{ width: 300, height: 100, backgroundColor: 'white' }}>
             <MyCustomCalloutView />
