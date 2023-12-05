@@ -1,16 +1,20 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Image, Text, StyleSheet , SafeAreaView} from 'react-native';
 import MapView, { Callout, PROVIDER_GOOGLE, Marker, Circle, Polyline, Polygon } from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'; //으악 이거 입력 ㅠㅠ
 import { GOOGLE_MAPS_API_KEY } from '../config/constants';
 import MapViewDirections from 'react-native-maps-directions';
-
+import * as Location from 'expo-location';
+import io from 'socket.io-client';
 
 export default function GoogleMapsScreen() {
   const mapRef = useRef(null);
   const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
   const [markersList, setMarkerList] = useState();
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [friendLocation, setFriendLocation] = useState(null);
 
 
 //  커스텀마커뷰 _ 자동차 이미지!!!!
@@ -52,6 +56,43 @@ export default function GoogleMapsScreen() {
     );
   }
 
+  //현재 나의 위치
+  useEffect(() => {
+    (async () => {
+      
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
+
+  let text = 'Waiting..';
+  if (errorMsg) {
+    text = errorMsg;
+  } else if (location) {
+    text = JSON.stringify(location);
+  }
+
+  // 친구위치
+  useEffect(() => {
+    // Socket.io 클라이언트 연결
+    const socket = io('http://localhost:8000');
+
+    // 클라이언트로부터 실시간 위치 정보를 받음
+    socket.on('friendLocation', (location) => {
+      setFriendLocation(location);
+    });
+
+    return () => {
+      // 컴포넌트 언마운트 시 소켓 연결 해제
+      socket.disconnect();
+    };
+  }, []);
 
 
   // 화면 구성
@@ -107,7 +148,10 @@ export default function GoogleMapsScreen() {
         longitude: 127.074941,
         latitudeDelta: 0.1,
         longitudeDelta: 0.1,
-      }}>
+      }}
+        showsUserLocation={true} // 현재 위치 표시
+        followsUserLocation={true} // 현재 위치로 지도 이동
+      >
 
         {/* 출발지 마커 */}
         {origin !== undefined && (
@@ -146,6 +190,15 @@ export default function GoogleMapsScreen() {
             apikey={GOOGLE_MAPS_API_KEY}
           />
         )}
+      {/* 내 위치 */}
+      <View style={styles.container}>
+        <Text style={styles.paragraph}>{text}</Text>
+      </View>
+  {/* 실시간 위치 */}
+      <View>
+        <Text>친구의 실시간 위치: {friendLocation ? `${friendLocation.latitude}, ${friendLocation.longitude}` : '없음'}</Text>
+      </View>
+
       </MapView>
     </SafeAreaView>
   )

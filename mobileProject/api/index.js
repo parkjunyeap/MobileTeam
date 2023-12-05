@@ -9,6 +9,10 @@ const port = 8000; // 서버가 리스닝할 포트 번호를 정의합니다.
 const cors = require("cors"); // cors 모듈을 가져옵니다. Cross-Origin Resource Sharing(CORS)를 위한 미들웨어입니다.
 app.use(cors()); // 앱에 cors를 미들웨어로 사용하도록 설정합니다. 이를 통해 다른 도메인의 프론트엔드 애플리케이션이 API에 접근할 수 있게 됩니다.
 
+//소켓io 친구위치 불러오는용도
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
 app.use(bodyParser.urlencoded({ extended: false })); // URL 인코딩된 데이터를 파싱하는 bodyParser 미들웨어를 사용하도록 설정합니다.
 app.use(bodyParser.json()); // JSON 데이터를 파싱하는 bodyParser 미들웨어를 사용하도록 설정합니다.
 app.use(passport.initialize()); // 앱에 passport 미들웨어를 초기화하여 사용하도록 설정합니다.
@@ -407,4 +411,26 @@ app.get("/friends/:userId", (req, res) => {
 //     console.error("Error updating user taxi info:", error);
 //     res.status(500).send(error.message);
 //   }
+// });
+
+
+// 클라이언트 연결 시
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  // 클라이언트로부터 위치 정보를 받음
+  socket.on('location', (location) => {
+    // 위치 정보를 저장하고 클라이언트에게 실시간으로 전송
+    io.emit('friendLocation', location);
+  });
+
+  // 클라이언트 연결 종료 시
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+});
+
+// // 서버 실행
+// http.listen(3000, () => {
+//   console.log('Server is running on port 3000');
 // });
