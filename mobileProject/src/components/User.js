@@ -105,6 +105,7 @@ const User = ({ item }) => {
   }, [navigation]);
 
   // console.log(item.infoSetting.province);
+
   return (
     <>
       <Modal
@@ -117,6 +118,18 @@ const User = ({ item }) => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
+            <View style={{ flexDirection: "row" }}>
+              <Image
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 10,
+                  resizeMode: "cover",
+                }}
+                source={{ uri: item?.image }}
+                // ㅇ처음엔 사진
+              />
+            </View>
             <Text style={styles.modalText}> {item.name}</Text>
             <Text> 이메일 : {item.email}</Text>
             {/* <Text>{item.infoSetting.province || "null"}</Text> */}
@@ -224,7 +237,7 @@ const User = ({ item }) => {
                 borderRadius: 25,
                 resizeMode: "cover",
               }}
-              source={{ uri: item.image }}
+              source={{ uri: item?.image }}
             />
           </View>
           <View style={{ marginLeft: 12, flex: 1 }}>

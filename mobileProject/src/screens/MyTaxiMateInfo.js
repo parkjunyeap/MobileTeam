@@ -204,22 +204,21 @@ const MyTaxiMateInfo = () => {
   };
   return (
     <ScrollView>
-      <TouchableOpacity onPress={pickImage}>
-        <View style={styles.imageContainer}>
-          {image ? (
-            <Image source={{ uri: image }} style={styles.image} />
-          ) : (
-            <Text style={styles.placeholderText}>프로필 사진이 없습니다</Text>
-          )}
+      <View style={styles.topContainer}>
+        <TouchableOpacity onPress={pickImage}>
+          <View style={styles.imageContainer}>
+            {image ? (
+              <Image source={{ uri: image }} style={styles.image} />
+            ) : (
+              <Text style={styles.placeholder}>프로필 사진이 없습니다</Text>
+            )}
+          </View>
+        </TouchableOpacity>
+        <View style={styles.infoContainer}>
+          <Text style={styles.nameText}> 이름: {name} </Text>
+          <Text style={styles.regionText}> 택시타는 동네: {selectedCity} </Text>
         </View>
-      </TouchableOpacity>
-      <Text style={{ fontWeight: "bold", fontSize: 23, marginBottom: 10 }}>
-        {" "}
-        이름: {name}{" "}
-      </Text>
-
-      <Text style={{ fontSize: 20, marginBottom: 5 }}> 택시타는 동네 </Text>
-      {/* Province Picker */}
+      </View>
 
       <Picker
         selectedValue={selectedProvince}
@@ -374,6 +373,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
+
+  topContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 20,
+    marginBottom: 20,
+    marginLeft: 10,
+  },
   imageContainer: {
     width: 150,
     height: 150,
@@ -381,8 +388,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#e1e1e1",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 20,
-    marginTop: 20,
+    marginRight: 20,
+  },
+  infoContainer: {
+    flex: 1,
+  },
+  nameText: {
+    fontWeight: "bold",
+    fontSize: 23,
+    marginBottom: 5,
+  },
+  regionText: {
+    fontSize: 20,
   },
 });
 

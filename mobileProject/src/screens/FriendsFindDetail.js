@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import MultiSelect from 'react-native-multiple-select';
+import MultiSelect from "react-native-multiple-select";
 import { MAP_KEY } from "../../env";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 // import TimePicker from "../components/TimePicker";
@@ -71,15 +71,15 @@ const FriendsFindDetail = () => {
     setFavoriteStartLocation([...favoriteStartLocation, start_place]);
   };
   const handleStartLocationIChange = (items) => {
-    setFavoriteStartLocationI(items)
-  }
+    setFavoriteStartLocationI(items);
+  };
 
   const handleEndLocationChange = (end_place) => {
     setFavoriteEndLocation([...favoriteEndLocation, end_place]);
   };
   const handleEndLocationIChange = (items) => {
-    setFavoriteEndLocationI(items)
-  }
+    setFavoriteEndLocationI(items);
+  };
 
   const handleReset = () => {
     setSelectedProvince(Object.keys(locationData)[0]);
@@ -93,15 +93,21 @@ const FriendsFindDetail = () => {
   const handleSaveButtonClick = () => {
     console.log("선택한 도:", selectedProvince);
     console.log("선택한 시:", selectedCity);
-    console.log("즐겨타는 출발지:", favoriteStartLocation.map(item => item.description));
-    console.log("즐겨타는 목적지:", favoriteEndLocation.map(item => item.description));
+    console.log(
+      "즐겨타는 출발지:",
+      favoriteStartLocation.map((item) => item.description)
+    );
+    console.log(
+      "즐겨타는 목적지:",
+      favoriteEndLocation.map((item) => item.description)
+    );
 
     const findTaxiInfo = {
       userId: userId, // 로그인 한 사람 id
       province: selectedProvince, // 도
       city: selectedCity, // 시
-      favoriteStartPoint: favoriteStartLocation.map(item => item.description), // 출발지,
-      favoriteEndPoint: favoriteEndLocation.map(item => item.description),
+      favoriteStartPoint: favoriteStartLocation.map((item) => item.description), // 출발지,
+      favoriteEndPoint: favoriteEndLocation.map((item) => item.description),
     };
 
     // 데이터 다 저장해서 .,.,.
@@ -110,9 +116,9 @@ const FriendsFindDetail = () => {
     axios
       .post("http://10.20.60.52:8000/FindTaxiMateDetail", findTaxiInfo)
       .then(function (response) {
-        //console.log(response); 
+        //console.log(response);
         const userPCs = response.data.userPC;
-        const userSEs = response.data.userSE
+        const userSEs = response.data.userSE;
         if (userPCs.length === 0 && userSEs.length === 0) {
           console.log("해당하는 사용자를 찾을 수 없습니다.");
         } else {
@@ -158,8 +164,9 @@ const FriendsFindDetail = () => {
       style={styles.container}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}>
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+      >
         <Text> 택시를 이용하는 지역</Text>
         <Text>도 : {selectedProvince}</Text>
         <Picker
@@ -182,10 +189,14 @@ const FriendsFindDetail = () => {
           ))}
         </Picker>
 
-        <View style={styles.location} >
-          <View style={{ flexDirection: 'row' }}>
+        <View style={styles.location}>
+          <View style={{ flexDirection: "row" }}>
             <Text> 주 출발지 : </Text>
-            <MaterialCommunityIcons name="map-marker" size={20} style={{ left: -5, bottom: 3 }} />
+            <MaterialCommunityIcons
+              name="map-marker"
+              size={20}
+              style={{ left: -5, bottom: 3 }}
+            />
           </View>
           <GooglePlacesAutocomplete
             placeholder="주 출발지를 적어주세요!"
@@ -214,9 +225,13 @@ const FriendsFindDetail = () => {
               <Text key={item.place_id}>{item && item.description}</Text>
             ))}
           </Text>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: "row" }}>
             <Text> 주 목적지 : </Text>
-            <MaterialCommunityIcons name="map-marker" size={20} style={{ left: -5, bottom: 3 }} />
+            <MaterialCommunityIcons
+              name="map-marker"
+              size={20}
+              style={{ left: -5, bottom: 3 }}
+            />
           </View>
           <GooglePlacesAutocomplete
             placeholder="목적지를 적어주세요!"
@@ -296,7 +311,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
-    marginBottom: 30
+    marginBottom: 30,
   },
   buttonWrapper: {
     flex: 1, // each button will take half of the container width
