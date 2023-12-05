@@ -86,6 +86,7 @@ export default function GoogleMapsScreen() {
           };
           setOrigin(originCordinates);
           // console.log(JSON.stringify(details?.geometry?.location));
+          console.log("Origin 좌표: ", originCordinates);
           moveToLocation(
             originCordinates
             // details?.geometry?.location.lat, 
@@ -109,6 +110,7 @@ export default function GoogleMapsScreen() {
             longitude: details?.geometry?.location.lng,
           }
           setDestination(destinationCordinated);
+          console.log("Destination 좌표:", destinationCordinated);
           moveToLocation(destinationCordinated);
         }}
         query={{
