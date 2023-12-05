@@ -28,7 +28,7 @@ export default function GoogleMapsScreen() {
   ]);
 
 
-
+//  커스텀마커뷰 _ 자동차 이미지!!!!
   const MyCustomMarkerView = () => {
     return (
       <Image
@@ -41,7 +41,7 @@ export default function GoogleMapsScreen() {
     );
   };
 
-
+// 컬아웃 텍스트
   const MyCustomCalloutView = () => {
     return (
       <View>
@@ -53,6 +53,7 @@ export default function GoogleMapsScreen() {
   };
 
 
+  //  moveToLocation
   async function moveToLocation(latitude, longitude) {
     console.log(`Moving to latitude: ${latitude}, longitude: ${longitude}`);
     mapRef.current.animateToRegion(
@@ -68,7 +69,7 @@ export default function GoogleMapsScreen() {
 
 
 
-  //현재 좌표 찍어줌
+  // 화면 구성
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.searchContainer}> 
@@ -109,8 +110,9 @@ export default function GoogleMapsScreen() {
           }}
           onFail={(error) => console.log(error)}
       />
-
     </View>
+
+    {/* 지도 구성 */}
     <MapView
       ref={mapRef}
       provider={PROVIDER_GOOGLE}
@@ -121,6 +123,8 @@ export default function GoogleMapsScreen() {
         latitudeDelta: 0.1,
         longitudeDelta: 0.1,
       }}>
+
+
         {origin !== undefined && (
           <Marker 
             draggable 
@@ -134,14 +138,16 @@ export default function GoogleMapsScreen() {
             onDragEnd={(e) => console.log('목적지 드래그 한 좌표: ',{  x: e.nativeEvent.coordinate })}/>
         )}
 
+          {/* 마커 연습 _ 커스텀마커뷰(자동차 이미지) 콜아웃(텍스트) */}
         <Marker
-          coordinate={{ latitude: 36.7898, longitude: 127.0012 }}>
+          coordinate={{ latitude: 36.800131, longitude: 127.074941 }}>
           <MyCustomMarkerView />
           <Callout style={{ width: 300, height: 100, backgroundColor: 'white' }}>
             <MyCustomCalloutView />
           </Callout>
         </Marker>
-
+ 
+          {/* 드래그 */}
         {markersList.map((marker) => (
           <Marker
             draggable
@@ -153,6 +159,7 @@ export default function GoogleMapsScreen() {
           />
         ))}
 
+          {/* 원형 */}
         <Circle
           center={{ latitude: 36.7898, longitude: 127.0012 }}
           radius={200}
@@ -160,6 +167,7 @@ export default function GoogleMapsScreen() {
           fillColor="red"
         />
 
+        {/* 선긋기 */}
         <Polyline
           strokeWidth={2}
           strokeColor='blue'
@@ -169,6 +177,7 @@ export default function GoogleMapsScreen() {
           ]}
         />
 
+        {/* 선긋기 자유자재 */}
         <Polygon
           strokeWidth={2}
           strokeColor='blue'
@@ -180,6 +189,7 @@ export default function GoogleMapsScreen() {
           ]}
         />
 
+          {/* 경로 선꾸미기 */}
         {origin != undefined && destination != undefined && (
           <MapViewDirections
             origin={origin}
@@ -196,12 +206,15 @@ export default function GoogleMapsScreen() {
   )
 }
 
-
+// 스타일 시트
 
 const styles = StyleSheet.create({
+  // safearea
   container: {
     flex: 1,
   },
+
+  //지도
   map: {
     position: 'absolute',
     top: 0,
@@ -210,6 +223,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 0,
   },
+
+  //출발지, 목적지 검색
   searchContainer: {
     position: 'absolute',
     top: 50,
