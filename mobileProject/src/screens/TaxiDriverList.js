@@ -122,18 +122,6 @@ const TaxiDriverList = () => {
             <Text style={{ color: "black" }}>예약</Text>
           </View>
 
-          <View style={{ alignItems: "center" }}>
-            <Entypo
-              name="clock"
-              size={32}
-              color="black"
-              onPress={() => {
-                setBookingTrue(true);
-              }}
-            />
-            <Text style={{ color: "black" }}>예약</Text>
-          </View>
-
           <View style={{ alignItems: "center", marginRight: 20 }}>
             <Entypo
               name="credit"
