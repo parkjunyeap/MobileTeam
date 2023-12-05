@@ -71,7 +71,9 @@ export default function GoogleMapsScreen() {
   //현재 좌표 찍어줌
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.searchContainer}>
+      <View style={styles.searchContainer}> 
+      
+      {/* 출발지 검색 */}
         <GooglePlacesAutocomplete
           fetchDetails={true}
           placeholder='출발지'
@@ -88,6 +90,8 @@ export default function GoogleMapsScreen() {
           }}
           onFail={(error) => console.log(error)}
         />
+
+        {/* 목적지 검색 */}
         <GooglePlacesAutocomplete
           fetchDetails={true}
           placeholder='목적지'
@@ -118,10 +122,16 @@ export default function GoogleMapsScreen() {
         longitudeDelta: 0.1,
       }}>
         {origin !== undefined && (
-          <Marker coordinate={origin} />
+          <Marker 
+            draggable 
+            coordinate={origin} 
+            onDragEnd={(e) => console.log('출발지 드래그 한 좌표 :',{  x: e.nativeEvent.coordinate })}/>
         )}
         {destination !== undefined && (
-          <Marker coordinate={destination} />
+          <Marker 
+            draggable 
+            coordinate={destination} 
+            onDragEnd={(e) => console.log('목적지 드래그 한 좌표: ',{  x: e.nativeEvent.coordinate })}/>
         )}
 
         <Marker
