@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Image, Text, StyleSheet } from 'react-native';
+import { View, Image, Text, StyleSheet , SafeAreaView} from 'react-native';
 import MapView, { Callout, PROVIDER_GOOGLE, Marker, Circle, Polyline, Polygon } from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'; //으악 이거 입력 ㅠㅠ
 import { GOOGLE_MAPS_API_KEY } from '../config/constants';
@@ -68,64 +68,53 @@ export default function GoogleMapsScreen() {
 
   //현재 좌표 찍어줌
   return (
-    <View style={styles.container}>
-      <View style={{
-        zIndex: 1,
-        flex: 0.5,
-        flexDirection: 'row',
-        marginHorizontal: 10,
-        marginVertical: 5,
+    <SafeAreaView style={styles.container}>
+      <View style={styles.searchContainer}>
+        <GooglePlacesAutocomplete
+          fetchDetails={true}
+          placeholder='출발지'
+          onPress={(data, details = null) => {
+            if (details) {
+              const { lat, lng } = details.geometry.location;
+              setOrigin({ latitude: lat, longitude: lng });
+              moveToLocation(lat, lng);
+            }
+          }}
+          query={{
+            key: GOOGLE_MAPS_API_KEY,
+            language: 'ko',
+          }}
+          onFail={(error) => console.log(error)}
+        />
+        <GooglePlacesAutocomplete
+          fetchDetails={true}
+          placeholder='목적지'
+          onPress={(data, details = null) => {
+            if (details) {
+              const { lat, lng } = details.geometry.location;
+              console.log(`Destination coordinates: Latitude: ${lat}, Longitude: ${lng}`);
+              setDestination({ latitude: lat, longitude: lng });
+              moveToLocation(lat, lng);
+            }
+          }}
+          query={{
+            key: GOOGLE_MAPS_API_KEY,
+            language: 'ko',
+          }}
+          onFail={(error) => console.log(error)}
+      />
+
+    </View>
+    <MapView
+      ref={mapRef}
+      provider={PROVIDER_GOOGLE}
+      style={styles.map}
+      region={{
+        latitude: 36.47,
+        longitude: 127.43,
+        latitudeDelta: 0.1,
+        longitudeDelta: 0.1,
       }}>
-        <View style={{ flex: 0.5 }}>
-          <GooglePlacesAutocomplete
-            fetchDetails={true}
-            placeholder='Origin'
-            onPress={(data, details = null) => {
-              if (details) {
-                const { lat, lng } = details.geometry.location;
-                setOrigin({ latitude: lat, longitude: lng });
-                moveToLocation(lat, lng);
-              }
-            }}
-            query={{
-              key: GOOGLE_MAPS_API_KEY,
-              language: 'en',
-            }}
-            onFail={(error) => console.log(error)}
-          />
-        </View>
-        <View style={{ flex: 0.5, marginLeft: 5 }}>
-          <GooglePlacesAutocomplete
-            fetchDetails={true}
-            placeholder='Destination'
-            onPress={(data, details = null) => {
-              if (details) {
-                const { lat, lng } = details.geometry.location;
-                console.log(`Destination coordinates: Latitude: ${lat}, Longitude: ${lng}`);
-                setDestination({ latitude: lat, longitude: lng });
-                moveToLocation(lat, lng);
-              }
-            }}
-
-
-            query={{
-              key: GOOGLE_MAPS_API_KEY,
-              language: 'en',
-            }}
-            onFail={(error) => console.log(error)}
-          />
-        </View>
-      </View>
-      <MapView
-        ref={mapRef}
-        provider={PROVIDER_GOOGLE}
-        style={styles.map}
-        region={{ //첫 화면 구성
-          latitude: 36.47,
-          longitude: 127.43,
-          latitudeDelta: 0.1,
-          longitudeDelta: 0.1,
-        }}>
         {origin !== undefined && (
           <Marker coordinate={origin} />
         )}
@@ -189,7 +178,9 @@ export default function GoogleMapsScreen() {
           />
         )}
       </MapView>
-    </View>
+      
+   
+    </SafeAreaView>
   )
 }
 
@@ -206,5 +197,11 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     zIndex: 0
   },
-})
-
+  searchContainer: {
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+    padding: 16,
+    backgroundColor: 'white',
+  },
+});
