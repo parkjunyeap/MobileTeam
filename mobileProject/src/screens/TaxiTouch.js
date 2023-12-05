@@ -126,15 +126,19 @@ export default function GoogleMapsScreen() {
         longitudeDelta: 0.1,
       }}>
 
-
+        {/* 출발지 마커 */}
         {origin !== undefined && (
           <Marker 
+            title = {'출발지'}
             draggable 
             coordinate={origin} 
             onDragEnd={(e) => console.log('출발지 드래그 한 좌표 :',{  x: e.nativeEvent.coordinate })}/>
         )}
+
+        {/* 목적지 마커 */}
         {destination !== undefined && (
           <Marker 
+            title = {'목적지'}
             draggable 
             coordinate={destination} 
             onDragEnd={(e) => console.log('목적지 드래그 한 좌표: ',{  x: e.nativeEvent.coordinate })}/>
