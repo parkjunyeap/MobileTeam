@@ -190,20 +190,22 @@ export default function GoogleMapsScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
     flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 0
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 0,
   },
   searchContainer: {
     position: 'absolute',
-    top: 0,
+    top: 50,
     width: '100%',
-    padding: 16,
+    padding: 10,
     backgroundColor: 'white',
+    zIndex: 1,
   },
 });
