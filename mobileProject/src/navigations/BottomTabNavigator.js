@@ -6,6 +6,10 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 // 화면 컴포넌트 임포트
 import TaxiTouch from "../screens/TaxiTouch";
 
+import TaxiTouchTestNaver from "../screens/TaxiTouchTestNaver";
+
+//네이버 아닌데 그냥 테스트하고잇음.
+
 import MyInfoStackNavigator from "./MyInfoStackNavigator"; // StackNavigator import
 
 import DriversListStackNavigator from "./DriversListStackNavigator";
@@ -19,7 +23,7 @@ const BTab = createBottomTabNavigator();
 const BottomTabNavigator = () => {
   return (
     <BTab.Navigator
-      initialRouteName="TaxiTouch"
+      // initialRouteName="TaxiTouch"
       // tabBarOptions={{ activeTintColor: "black", inactiveTintColor: "gray" }}
 
       screenOptions={{
@@ -51,7 +55,7 @@ const BottomTabNavigator = () => {
 
       <BTab.Screen
         name="택시잡기"
-        component={TaxiTouch}
+        component={TaxiTouchTestNaver}
         options={{
           tabBarIcon: ({ size, color }) => (
             <FontAwesome name="taxi" size={24} color="black" />

@@ -288,6 +288,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+
   picker: {
     height: 50,
     width: 250,

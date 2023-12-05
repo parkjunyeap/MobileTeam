@@ -730,15 +730,18 @@ app.get("/reviews/receiver/driver/:userId", async (req, res) => {
 
 app.post("/FindTaxiMateDetail", async (req, res) => {
   try {
-    const { province, city, favoriteStartPoint, favoriteEndPoint } = req.body;
+    const { userId, province, city, favoriteStartPoint, favoriteEndPoint } =
+      req.body;
     // MongoDB에서 사용자 정보를 조회
     console.log("데이터 확인 :", req.body);
 
     const userPC = await User.find({
+      _id: { $ne: userId },
       "infoSetting.province": province,
       "infoSetting.city": city,
     });
     const userSE = await User.find({
+      _id: { $ne: userId },
       "infoSetting.favoriteStartPoint": favoriteStartPoint,
       "infoSetting.favoriteEndPoint": favoriteEndPoint,
     });
