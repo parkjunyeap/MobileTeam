@@ -27,6 +27,8 @@ export default function GoogleMapsScreen() {
     },
   ]);
 
+
+
   const MyCustomMarkerView = () => {
     return (
       <Image
