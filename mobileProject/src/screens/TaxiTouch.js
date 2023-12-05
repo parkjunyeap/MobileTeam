@@ -11,6 +11,8 @@ export default function GoogleMapsScreen() {
   const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
   const [markersList, setMarkerList] = useState([
+    
+    // 마커 찍고 싶은 위치 쭈루루룩 넣어줌 (연습용)
     {
       id: 1,
       latitude: 36.7898,
@@ -53,7 +55,7 @@ export default function GoogleMapsScreen() {
   };
 
 
-  //  moveToLocation
+  //  설정한 화면으로 자동으로 이동함
   async function moveToLocation(latitude, longitude) {
     console.log(`Moving to latitude: ${latitude}, longitude: ${longitude}`);
     mapRef.current.animateToRegion(
