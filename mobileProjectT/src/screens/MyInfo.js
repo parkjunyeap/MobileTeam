@@ -16,9 +16,17 @@ function MyInfo({ navigation }) {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("PayMentScreen")}
+        onPress={() => navigation.navigate("PaymentListDriver")}
       >
-        <Text style={styles.buttonText}>결제 내역(임시)</Text>
+        <Text style={styles.buttonText}>결제 내역</Text>
+      </TouchableOpacity>
+      <View style={styles.separator} />
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("ViewBookingDriver")}
+      >
+        <Text style={styles.buttonText}>예약 내역</Text>
       </TouchableOpacity>
     </View>
   );

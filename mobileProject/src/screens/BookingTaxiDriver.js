@@ -1,15 +1,9 @@
 // 예약 하기 전송하면 택시드라이버 에도 예약 메시지 받음.
 
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  TextInput,
-  Button,
-  StyleSheet,
-  Text,
-  Alert,
-  Platform,
-} from "react-native";
+// 예약 화면 인풋칸 늘어나게 못하겠음.
+
+import React, { useState } from "react";
+import { View, Button, StyleSheet, Text, Alert, Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 
@@ -18,9 +12,8 @@ import { useNavigation, useRoute } from "@react-navigation/native"; // useRoute�
 import { UserType } from "../UserContext"; // 로그인
 import { useContext } from "react";
 
-import DatePicker from "react-native-datepicker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 import { MAP_KEY } from "../../env";
 
 const BookingTaxiDriver = () => {
@@ -82,7 +75,7 @@ const BookingTaxiDriver = () => {
     console.log("현재 들어온 예약데이터 ", bookingData);
 
     axios
-      .post("http://192.168.0.14:8000/bookings", bookingData)
+      .post("http://10.20.64.33:8000/bookings", bookingData)
       .then((response) => {
         console.log(response);
         Alert.alert("예약 성공!!", "성공적으로 예약되었습니다");

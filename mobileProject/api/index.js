@@ -889,6 +889,41 @@ app.get("/payments/boarderId/:userId", async (req, res) => {
   }
 });
 
+//택시기사 결제내역
+
+// 결제내역에는 일단 이정도만?? // 결제내역 , 기사 아이디로 찾기
+app.get("/payments/driverId/:userId", async (req, res) => {
+  const driverId = req.params.userId; // URL 경로에서 userId 추출
+  console.log(driverId);
+  try {
+    const payments = await Payment.find({ driverId: driverId }) // Review.find(리시브아이디가 : 요청받은리시브아이디)랑 일치하는지 ?
+      .populate("boarderId", "name") // senderId를 참조하여 name 필드만 가져옴 senderId 에 name을 가져옴
+      .populate("driverId", "name carNumber", "Driver") // driverId를 참조하여 name 하고 차량번호 가져옴
+
+      // .populate("driverId", "name carNumber" )  원래이건데
+      .lean();
+
+    console.log(payments);
+
+    // JSON 형태로 변환하여 클라이언트에게 보내기 이름으로된거
+    const paymentsWithNameNumber = payments.map((Payment) => ({
+      _id: Payment._id,
+      boarderName: Payment.boarderId.name, // sender의 이름
+      driverName: Payment.driverId.name, // 드라이버 의 이름
+      carNumber: Payment.driverId.carNumber, //  드라이버의 차량번호
+      boardingDate: Payment.boardingDate,
+      startPoint: Payment.startPoint,
+      endPoint: Payment.endPoint,
+      pay: Payment.pay,
+    }));
+
+    console.log(paymentsWithNameNumber);
+    res.json(paymentsWithNameNumber);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "서버 에러 발생" });
+  }
+});
 // 경로 대소문자 구분: Mongoose는 모델 이름을 대소문자를 구분하여 처리합니다.
 //  driverSchema를 'Driver'로 등록했다면, populate 메소드에서도 'Driver'를 사용해야 합니다.
 //   populate("driverId", "name carNumber") 대신 populate("driverId", "name carNumber", "Driver")를 사용해보세요.
@@ -1032,6 +1067,39 @@ app.get("/Booking/boarderId/:userId", async (req, res) => {
       bookingDate: Booking.bookingDate,
       bookingTime: Booking.bookingTime,
       boarderName: Booking.boarderId.name, // sender의 이름
+      driverName: Booking.driverId.name, // 드라이버 의 이름
+      startPoint: Booking.startPoint,
+      endPoint: Booking.endPoint,
+    }));
+    console.log("이게JSON가공", bookingsWithName);
+    res.json(bookingsWithName);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "서버 에러 발생" });
+  }
+});
+
+// 드라이버 아이디로 유저를 찾을때,,
+app.get("/Booking/driverId/:userId", async (req, res) => {
+  const driverId = req.params.userId; // URL 경로에서 userId 추출
+  console.log(driverId);
+  try {
+    const bookings = await Booking.find({ driverId: driverId }) // Review.find(리시브아이디가 : 요청받은리시브아이디)랑 일치하는지 ?
+      .populate("boarderId", "name") // senderId를 참조하여 name 필드만 가져옴 senderId 에 name을 가져옴
+      .populate("driverId", "name", "Driver") // driverId를 참조하여 name 하고 차량번호 가져옴
+      // 이런식으로 써줘야한다고 하더라고?
+
+      // .populate("driverId", "name carNumber" )  원래이건데
+      .lean();
+
+    console.log("이게 db에서 갖고오는거: ", bookings);
+
+    // JSON 형태로 변환하여 클라이언트에게 보내기 이름으로된거
+    const bookingsWithName = bookings.map((Booking) => ({
+      _id: Booking._id,
+      bookingDate: Booking.bookingDate,
+      bookingTime: Booking.bookingTime,
+      boarderName: Booking.boarderId.name, // sender의 이름 // 여기 부킹 한사람의 이름이 null 이다
       driverName: Booking.driverId.name, // 드라이버 의 이름
       startPoint: Booking.startPoint,
       endPoint: Booking.endPoint,

@@ -1,6 +1,8 @@
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 import formatDate from "../../hook/formatDate";
+
+// 근데 리뷰가 다이어져있어서 ,, 여기에서 아이디도 받아서 받는아이디랑
 const ReviewItem = ({ item, onDelete }) => {
   // 삭제도받아서
   const { _id, senderName, receiverName, rating, reviewDate, comment } = item;

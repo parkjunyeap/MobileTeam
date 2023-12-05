@@ -1,32 +1,23 @@
 // 예약내역 flat 리스트로 일단 내역 여러개 보여줄 예정
-
 import React, { useEffect, useState } from "react";
-import {
-  FlatList,
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
-
+import { FlatList, StyleSheet, Alert } from "react-native";
 import { useContext } from "react";
 import { UserType } from "../UserContext";
 import axios from "axios";
-
 import BookingItem from "../components/BookingItem";
 
-const BookingList = () => {
+const ViewBookingDriver = () => {
   const { userId, setUserId } = useContext(UserType);
-  console.log("결제내역을 위한 아이디", userId);
+  console.log("부킹을 위한 아이디", userId);
   const [Booking, setBooking] = useState([]); // 결제내역 데이터 상태
 
   const deleteBooking = async (bookingId) => {
+    // bookingId는 그 선택한 예약의 id를 말함.
     try {
       // 사용자에게 예약 취소를 확인
       Alert.alert(
-        "예약 취소", // 제목
-        "예약을 취소하시겠습니까?", // 메시지
+        "예약 거절", // 제목
+        "예약을 거절하시겠습니까?", // 메시지
         [
           {
             text: "취소",
@@ -57,7 +48,7 @@ const BookingList = () => {
     const bookingRequest = async () => {
       try {
         const response = await axios.get(
-          `http://10.20.64.33:8000/Booking/boarderId/${userId}`
+          `http://10.20.64.33:8000/Booking/driverId/${userId}` // 기사가 로그인했을때도 같음.
         );
         if (response.status === 200) {
           setBooking(response.data); //결제내역 을 로그인한유저기준으로 갖고옴
@@ -83,4 +74,4 @@ const BookingList = () => {
   );
 };
 const styles = StyleSheet.create({});
-export default BookingList;
+export default ViewBookingDriver;
