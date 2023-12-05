@@ -18,7 +18,7 @@
       "supportsTablet": true,
       "bundleIdentifier":"com.mobileProject",
       "config":{
-        "googleMapsApiKey":"AIzaSyCrJ7ZCD73GpdUJG8PT1jyQVjreEG9AlWg"
+        "googleMapsApiKey":"AIzaSyAA6emfz97tVX6r7lsccbwHIpaby8pLMfc"
       }
     },
     "android": {
@@ -32,7 +32,7 @@
       ],
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyCrJ7ZCD73GpdUJG8PT1jyQVjreEG9AlWg"
+          "apiKey": "AIzaSyAA6emfz97tVX6r7lsccbwHIpaby8pLMfc"
         },
 
         "permissions":["ACCESS_COARSE_LOCATION","ACCESS_FINE_LOCATION","FOREGROUND_SERVICE"]

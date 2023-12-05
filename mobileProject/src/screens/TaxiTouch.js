@@ -133,35 +133,37 @@ export default function GoogleMapsScreen() {
           <Marker coordinate={destination} />
         )}
 
-        {/*<Marker
+        {<Marker
           coordinate={{ latitude: 36.7898, longitude: 127.0012 }}>
           <MyCustomMarkerView />
-          <Callout style={{ width: 300, height: 100, backgroundColor: 'white' }}>
+          <Callout style={{ width: 300, height: 100 }}>
             <MyCustomCalloutView />
           </Callout>
         </Marker>
-
-        {markersList.map((marker) => (
-          <Marker
-            draggable
-            key={marker.id}
-            coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
-            title={marker.title}
-            description={marker.description}
-            onDragEnd={(e) => console.log({ x: e.nativeEvent.coordinate })}
-          />
-        ))}
+        }
+        {markersList.map((marker) => {
+          return (
+            <Marker
+              draggable
+              key={marker.id}
+              coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
+              title={marker.title}
+              description={marker.description}
+              onDragEnd={(e) => console.log({ x: e.nativeEvent.coordinate })}
+            />
+          );
+        })}
 
         <Circle
           center={{ latitude: 36.7898, longitude: 127.0012 }}
           radius={200}
           strokeColor="blue"
-          fillColor="red"
+          fillColor="#EBF5SFB"
         />
 
         <Polyline
           strokeWidth={2}
-          strokeColor='blue'
+          strokeColor='red'
           coordinates={[
             { latitude: 36.7898, longitude: 127.0012 },
             { latitude: 36.7898, longitude: 127.0512 }
@@ -171,13 +173,14 @@ export default function GoogleMapsScreen() {
         <Polygon
           strokeWidth={2}
           strokeColor='blue'
+          fillColor='#EBF5SFB'
           coordinates={[
             { latitude: 36.7898, longitude: 127.0012 },
             { latitude: 36.7898, longitude: 127.0012 },
             { latitude: 36.7898, longitude: 127.0012 },
             { latitude: 36.7898, longitude: 127.0012 }
           ]}
-        />*/}
+        />
 
         {origin != undefined && destination != undefined && (
           <MapViewDirections
