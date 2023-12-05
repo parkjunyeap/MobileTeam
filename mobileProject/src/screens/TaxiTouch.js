@@ -10,24 +10,7 @@ export default function GoogleMapsScreen() {
   const mapRef = useRef(null);
   const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
-  const [markersList, setMarkerList] = useState([
-    
-    // 마커 찍고 싶은 위치 쭈루루룩 넣어줌 (연습용)
-    {
-      id: 1,
-      latitude: 36.7898,
-      longitude: 127.0012,
-      title: 'team1',
-      description: 'ddd'
-    },
-    {
-      id: 2,
-      latitude: 37.28825,
-      longitude: 127.1012,
-      title: 'team2',
-      description: 'ddd'
-    },
-  ]);
+  const [markersList, setMarkerList] = useState();
 
 
 //  커스텀마커뷰 _ 자동차 이미지!!!!
@@ -48,7 +31,7 @@ export default function GoogleMapsScreen() {
     return (
       <View>
         <Text>
-          MyCustomCalloutVieww22
+          택시 택시
         </Text>
       </View>
     );
@@ -119,9 +102,9 @@ export default function GoogleMapsScreen() {
       ref={mapRef}
       provider={PROVIDER_GOOGLE}
       style={styles.map}
-      region={{
-        latitude: 36.47,
-        longitude: 127.43,
+      region={{   
+        latitude: 36.800131,
+        longitude: 127.074941,
         latitudeDelta: 0.1,
         longitudeDelta: 0.1,
       }}>
@@ -153,48 +136,6 @@ export default function GoogleMapsScreen() {
           </Callout>
         </Marker>
  
-          {/* 드래그 */}
-        {markersList.map((marker) => (
-          <Marker
-            draggable
-            key={marker.id}
-            coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
-            title={marker.title}
-            description={marker.description}
-            onDragEnd={(e) => console.log({ x: e.nativeEvent.coordinate })}
-          />
-        ))}
-
-          {/* 원형 */}
-        <Circle
-          center={{ latitude: 36.7898, longitude: 127.0012 }}
-          radius={200}
-          strokeColor="blue"
-          fillColor="red"
-        />
-
-        {/* 선긋기 */}
-        <Polyline
-          strokeWidth={2}
-          strokeColor='blue'
-          coordinates={[
-            { latitude: 36.7898, longitude: 127.0012 },
-            { latitude: 36.7898, longitude: 127.0512 }
-          ]}
-        />
-
-        {/* 선긋기 자유자재 */}
-        <Polygon
-          strokeWidth={2}
-          strokeColor='blue'
-          coordinates={[
-            { latitude: 36.7898, longitude: 127.0012 },
-            { latitude: 36.7898, longitude: 127.0012 },
-            { latitude: 36.7898, longitude: 127.0012 },
-            { latitude: 36.7898, longitude: 127.0012 }
-          ]}
-        />
-
           {/* 경로 선꾸미기 */}
         {origin != undefined && destination != undefined && (
           <MapViewDirections
@@ -206,8 +147,6 @@ export default function GoogleMapsScreen() {
           />
         )}
       </MapView>
-      
-   
     </SafeAreaView>
   )
 }
