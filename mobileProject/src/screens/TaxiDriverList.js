@@ -38,7 +38,7 @@ const TaxiDriverList = () => {
     // 이게 결제한 택시기사 //
     try {
       const response = await axios.get(
-        `http://10.20.61.21:8000/driverList/payment/${userId}`
+        `http://10.20.60.52:8000/driverList/payment/${userId}`
       );
       setPaydrivers(response.data); // 새로운 데이터로 상태 업데이트
       console.log("결제한 택시기사 ", response.data);
@@ -94,7 +94,7 @@ const TaxiDriverList = () => {
   useEffect(() => {
     const fetchDrivers = async () => {
       axios
-        .get("http://10.20.61.21:8000/driverList/") // 드라이버 아이디 전부 넘김.
+        .get("http://10.20.60.52:8000/driverList/") // 드라이버 아이디 전부 넘김.
         .then((response) => {
           console.log("Response data:", response.data); // 전부 찍힘.
           setDrivers(response.data); // 드라이버를 배열에 다 넣는게 끝

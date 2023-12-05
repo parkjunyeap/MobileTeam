@@ -36,6 +36,7 @@ const Driver = require("./models/driver"); // 드라이버가 왜 자꾸 누락�
 const Review = require("./models/review");
 const ReviewT = require("./models/reviewT"); // 택시기사 리뷰 db 따로뺏쥬
 const Payment = require("./models/payment");
+const Request = require("./models/requestT")
 
 // // 임시; // 나중에바꿔야함    // 여기가 유저에게 리뷰 보내줌
 // app.post("/write/reviews", (req, res) => {
@@ -743,8 +744,7 @@ app.post("/FindTaxiMateDetail", async (req, res) => {
       "infoSetting.favoriteEndPoint": favoriteEndPoint,
     })
 
-    //   // 지역별로 검색할 수 잇게 바꿈일단
-    // });
+    //지역별로 검색할 수 잇게 바꿈일단
     console.log("Searched by 도/시", userPC);
     console.log("Searched by 주 이용 위치", userSE);
     if ((!userPC || userPC.length === 0) &&
@@ -754,7 +754,7 @@ app.post("/FindTaxiMateDetail", async (req, res) => {
     }
 
     // 사용자 정보를 클라이언트에 응답
-    res.status(200).json({ userPC,userSE });
+    res.status(200).json({ userPC, userSE });
   } catch (error) {
     console.error("오류:", error.message);
     res.status(500).json({ message: "서버 오류가 발생했습니다." });
@@ -861,7 +861,7 @@ const insertDummyData = async () => {
 
 // insertDummyData();
 
-//`http://10.20.61.21:8000/payments/boarderId/${userId}`
+//`http://10.20.60.52:8000/payments/boarderId/${userId}`
 // 날짜 , 출발지 목적지 , 호출시간 , 차량번호 , 기사이름 , 결제금액 줘야함.
 
 // myInfo 에서 이름뜨게 어떻게 했더라?이름까지 받아왔었구나 ok 이름까지주자
@@ -941,6 +941,50 @@ app.get("/driverList/payment/:userId", async (req, res) => {
     res.status(500).json({ message: "서버 오류 발생", error: error });
   }
 });
+
+app.post("/UpDriveState", async (req, res) => {
+  const userId = req.body.userId;
+  const upDS = await Driver.findOneAndUpdate(
+    { _id: userId },
+    { $set: { driverState: req.body.driverState } },
+    { new: true }
+  );
+  // 데이터베이스에 새로운 사용자 저장 시도
+  upDS
+    .save()
+    .then(() => {
+      // 저장 성공 시 200 상태 코드와 함께 성공 메시지 응답
+      res.status(200).json({ message: "운행상태 변경완료." });
+    })
+    .catch((err) => {
+      // 저장 실패 시 콘솔에 에러 로깅하고 500 상태 코드로 클라이언트에게 오류 메시지 응답
+      console.log("에러발생 변경못함", err);
+      res.status(500).json({ message: "에러발생 변경못함" });
+    });
+})
+
+
+//기사 요청 받는 부분
+app.get("/confirmRequest/:driverId", async (req, res) => {
+  try {
+    const driverId = req.params.driverId;
+
+    // 요청 ID를 사용하여 요청 정보를 조회
+    const request = await Request.findById({ driverId: driverId });
+
+    if (!request) {
+      return res.status(404).json({ message: "요청을 찾을 수 없습니다." });
+    }
+
+    // 여기에서 운전사의 확인 로직을 수행하고 필요한 응답을 반환
+
+    res.status(200).json({ request });
+  } catch (error) {
+    console.error("오류:", error.message);
+    res.status(500).json({ message: "서버 오류가 발생했습니다." });
+  }
+});
+
 
 // app.get("/users/:userId", (req, res) => {
 //   const loggedInUserId = req.params.userId;

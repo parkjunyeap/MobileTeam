@@ -1,4 +1,4 @@
-import React, { useEffect, useState ,useContext} from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { StyleSheet, Text, View, Switch, TouchableOpacity } from 'react-native';
 import { UserType } from '../UserContext';
 import jwt_decode from "jwt-decode";
@@ -13,19 +13,9 @@ const TaxiTouch = () => {
   // 운행 스위치 상태가 바뀔 때마다 실행되는 useEffect
   useEffect(() => {
     const fetchUsers = async () => {
-      // console.log("함수가 잘임폴트됐는지", MaterialIcons);
-      // console.log("jwtDecode 이거임폴트가안되네", jwt_decode);
-      // // 잘되는지
-      // console.log(AsyncStorage, "그냥함수자체가 import 잘됐는지?");
 
       const token = await AsyncStorage.getItem("authToken");
-      // console.log("홈에선 토큰이있는데 Token:", token);
-      // console.log("decoded 토큰 접근");
       const decodedToken = jwt_decode(token);
-      // console.log(
-      //   "여기에서 디코드 토큰이 만들어졌어야하는건데 안됐으면 jwt_decode가 안돌아가는거네"
-      // );
-      //console.log("Decoded Token:", decodedToken);
       const userId = decodedToken.userId;
       console.log("UserId:", userId);
       setUserId(userId);
@@ -45,8 +35,20 @@ const TaxiTouch = () => {
   }, [isDriving]); // 의존성 배열에 isDriving을 넣어 상태 변경을 감지합니다.
 
   // 운행 스위치를 토글할 때 호출될 함수
-  const toggleSwitch = () => {
-    setIsDriving(previousState => !previousState);
+  const toggleSwitch = async (newValue) => {
+    try {
+      const newDriveState = {
+        userId: userId,
+        isDriving: newValue
+      }
+      console.log(newDriveState)
+      // 서버에 운전 상태 업데이트를 요청하고, 요청이 성공하면 클라이언트 상태 업데이트
+      await axios
+        .post("http://10.20.60.52:8000/UpDriveState", newDriveState)
+      setIsDriving(newValue); // 클라이언트 상태 업데이트
+    } catch (error) {
+      console.error('운전 상태 업데이트 오류:', error);
+    }
   };
 
   const acceptRequest = () => {
