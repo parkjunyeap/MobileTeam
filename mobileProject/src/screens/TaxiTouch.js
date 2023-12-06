@@ -1,61 +1,38 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Image, Text, StyleSheet, SafeAreaView } from 'react-native';
-import MapView, { Callout, PROVIDER_GOOGLE,Marker } from 'react-native-maps';
+import { View, Image, StyleSheet, SafeAreaView, Platform, StatusBar } from 'react-native';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { GOOGLE_MAPS_API_KEY } from '../config/constants';
 import MapViewDirections from 'react-native-maps-directions';
 
-
 export default function GoogleMapsScreen() {
   const mapRef = useRef(null);
-  // 초기 상태를 null에서 명시적으로 설정합니다.
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
-  const [movingMarkerPosition, setMovingMarkerPosition] = useState(null);
-
-  useEffect(() => {
-    if (origin) {
-      setMovingMarkerPosition(origin);
-    }
-  }, [origin]);
-
-  const MyCustomMarkerView = () => {
-    return (
-      <Image
-        style={{ width: 30, height: 30 }}
-        source={require('../../assets/carMarker.png')}
-      />
-    );
-  };
-
-  const MyCustomCalloutView = () => {
-    return (
-      <View>
-        <Text>MyCustomCalloutVieww22</Text>
-      </View>
-    );
-  };
+  const [carMarkerPosition, setCarMarkerPosition] = useState(null);
 
   async function moveToLocation(latitude, longitude) {
-    mapRef.current.animateToRegion(
-      {
-        latitude,
-        longitude,
-        latitudeDelta: 0.015,
-        longitudeDelta: 0.0121,
-      },
-      2000,
-    );
+    mapRef.current.animateToRegion({
+      latitude,
+      longitude,
+      latitudeDelta: 0.015,
+      longitudeDelta: 0.0121,
+    }, 2000);
   }
 
-  const animateMarker = () => {
+  useEffect(() => {
+    if (origin && destination && routeCoordinates.length) {
+      animateMarker(routeCoordinates);
+    }
+  }, [origin, destination, routeCoordinates]);
+
+  const animateMarker = (coordinates) => {
     let step = 0;
-    const numSteps = routeCoordinates.length - 1;
+    const numSteps = coordinates.length - 1;
     const interval = setInterval(() => {
-      // 마커 위치를 업데이트합니다.
       if (step <= numSteps) {
-        setMovingMarkerPosition(routeCoordinates[step]);
+        setCarMarkerPosition(coordinates[step]);
         step++;
       } else {
         clearInterval(interval);
@@ -64,107 +41,106 @@ export default function GoogleMapsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.searchContainer}>
-        <GooglePlacesAutocomplete
-          fetchDetails={true}
-          placeholder='출발지'
-          onPress={(data, details = null) => {
-            if (details) {
-              const { lat, lng } = details.geometry.location;
-              setOrigin({ latitude: lat, longitude: lng });
-              moveToLocation(lat, lng);
-            }
-          }}
-          query={{
-            key: GOOGLE_MAPS_API_KEY,
-            language: 'ko',
-          }}
-          onFail={(error) => console.error(error)}
-        />
-        <GooglePlacesAutocomplete
-          fetchDetails={true}
-          placeholder='목적지'
-          onPress={(data, details = null) => {
-            if (details) {
-              const { lat, lng } = details.geometry.location;
-              setDestination({ latitude: lat, longitude: lng });
-              moveToLocation(lat, lng);
-            }
-          }}
-          query={{
-            key: GOOGLE_MAPS_API_KEY,
-            language: 'ko',
-          }}
-          onFail={(error) => console.error(error)}
-        />
-      </View>
-      <MapView
-        ref={mapRef}
-        provider={PROVIDER_GOOGLE}
-        style={styles.map}
-        region={{
-          latitude: 36.47,
-          longitude: 127.43,
-          latitudeDelta: 0.1,
-          longitudeDelta: 0.1,
-        }}>
-        {origin && (
-          <Marker
-            draggable
-            coordinate={origin}
-            onDragEnd={(e) => console.log('출발지 드래그 좌표: ', e.nativeEvent.coordinate)}
-          />
-        )}
-        {destination && (
-          <Marker
-            draggable
-            coordinate={destination}
-            onDragEnd={(e) => console.log('목적지 드래그 좌표: ', e.nativeEvent.coordinate)}
-          />
-        )}
-        {movingMarkerPosition && (
-          <Marker coordinate={movingMarkerPosition}>
-            <MyCustomMarkerView />
-          </Marker>
-        )}
-        {origin && destination && (
-          <MapViewDirections
-            origin={origin}
-            destination={destination}
-            apikey={GOOGLE_MAPS_API_KEY}
-            strokeColor='blue'
-            strokeWidth={2}
-            onReady={(result) => {
-              console.log(result.coordinates);
-              setRouteCoordinates(result.coordinates);
-              animateMarker();
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <View style={styles.searchContainer}>
+          <GooglePlacesAutocomplete
+            placeholder='출발지'
+            fetchDetails={true}
+            onPress={(data, details = null) => {
+              if (details && details.geometry && details.geometry.location) {
+                const { lat, lng } = details.geometry.location;
+                setOrigin({ latitude: lat, longitude: lng });
+                moveToLocation(lat, lng);
+              } else {
+                console.error('No location details available');
+              }
+            }}
+            query={{
+              key: GOOGLE_MAPS_API_KEY,
+              language: 'ko',
             }}
           />
-        )}
-      </MapView>
+          <GooglePlacesAutocomplete
+            placeholder='목적지'
+            fetchDetails={true}
+            onPress={(data, details = null) => {
+              if (details && details.geometry && details.geometry.location) {
+                const { lat, lng } = details.geometry.location;
+                setDestination({ latitude: lat, longitude: lng });
+                moveToLocation(lat, lng);
+              } else {
+                console.error('No location details available');
+              }
+            }}
+            query={{
+              key: GOOGLE_MAPS_API_KEY,
+              language: 'ko',
+            }}
+          />
+        </View>
+        <MapView
+          ref={mapRef}
+          provider={PROVIDER_GOOGLE}
+          style={styles.map}
+          initialRegion={{
+            latitude: 36.47,
+            longitude: 127.43,
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.1,
+          }}
+        >
+          {origin && <Marker coordinate={origin} />}
+          {destination && <Marker coordinate={destination} />}
+          {carMarkerPosition && (
+            <Marker coordinate={carMarkerPosition}>
+              <Image
+                style={styles.carMarker}
+                source={require('../../assets/carMarker.png')}
+              />
+            </Marker>
+          )}
+          {origin && destination && (
+            <MapViewDirections
+              origin={origin}
+              destination={destination}
+              apikey={GOOGLE_MAPS_API_KEY}
+              strokeWidth={3}
+              strokeColor='hotpink'
+              onReady={(result) => {
+                setRouteCoordinates(result.coordinates);
+                if (result.coordinates.length) {
+                  animateMarker(result.coordinates);
+                }
+              }}
+            />
+          )}
+        </MapView>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
+    backgroundColor: 'white',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 // Android의 상태 바 높이를 추가합니다.
+  },
+  container: {
+    ...StyleSheet.absoluteFillObject,
   },
   map: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 0,
+    ...StyleSheet.absoluteFillObject,
   },
   searchContainer: {
     position: 'absolute',
-    top: 50,
+    top: Platform.OS === 'ios' ? 60 : 80, // iOS와 Android에서의 상단 바로부터의 거리를 조정합니다.
     width: '100%',
-    padding: 10,
-    backgroundColor: 'white',
-    zIndex: 1,
+    zIndex: 10,
+  },
+  carMarker: {
+    width: 32,
+    height: 32,
   },
 });
