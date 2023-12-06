@@ -1,49 +1,29 @@
-import React, { useState, useRef } from "react";
-import { View, Image, Text, Dimensions, StyleSheet } from "react-native";
-import MapView, {
-  Callout,
-  PROVIDER_GOOGLE,
-  Marker,
-  Circle,
-  Polyline,
-  Polygon,
-} from "react-native-maps";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete"; //으악 이거 입력 ㅠㅠ
-import MapViewDirections from "react-native-maps-directions";
-
+import React, { useState, useEffect, useRef } from "react";
+import { View, Image, Text, StyleSheet, SafeAreaView } from "react-native";
+import MapView, { Callout, PROVIDER_GOOGLE, Marker } from "react-native-maps";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_MAPS_API_KEY } from "../config/constants";
-
-// 구글맵스크린?
+import MapViewDirections from "react-native-maps-directions";
 
 export default function GoogleMapsScreen() {
   const mapRef = useRef(null);
-  const [origin, setOrigin] = useState();
-  const [destination, setDestination] = useState();
-  const [markersList, setMarkerList] = useState([
-    {
-      id: 1,
-      latitude: 37.98825,
-      longitude: -122.9862,
-      title: "team1",
-      description: "ddd",
-    },
-    {
-      id: 2,
-      latitude: 37.28825,
-      longitude: -122.2862,
-      title: "team2",
-      description: "ddd",
-    },
-  ]);
+  // 초기 상태를 null에서 명시적으로 설정합니다.
+  const [origin, setOrigin] = useState(null);
+  const [destination, setDestination] = useState(null);
+  const [routeCoordinates, setRouteCoordinates] = useState([]);
+  const [movingMarkerPosition, setMovingMarkerPosition] = useState(null);
+
+  useEffect(() => {
+    if (origin) {
+      setMovingMarkerPosition(origin);
+    }
+  }, [origin]);
 
   const MyCustomMarkerView = () => {
     return (
       <Image
-        style={{
-          width: 30,
-          height: 30,
-        }}
-        source={require("../assets/car.png")}
+        style={{ width: 30, height: 30 }}
+        source={require("../../assets/carMarker.png")}
       />
     );
   };
@@ -68,166 +48,127 @@ export default function GoogleMapsScreen() {
     );
   }
 
-  //현재 좌표 찍어줌
+  const animateMarker = () => {
+    let step = 0;
+    const numSteps = routeCoordinates.length - 1;
+    const interval = setInterval(() => {
+      // 마커 위치를 업데이트합니다.
+      if (step <= numSteps) {
+        setMovingMarkerPosition(routeCoordinates[step]);
+        step++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 1000);
+  };
+
   return (
-    <View style={styles.container}>
-      <View
-        style={{
-          zIndex: 1,
-          flex: 0.5,
-          flexDirection: "row",
-          marginHorizontal: 10,
-          marginVertical: 5,
-        }}
-      >
-        <View style={{ flex: 0.5 }}>
-          <GooglePlacesAutocomplete
-            fetchDetails={true}
-            placeholder=""
-            onPress={(data, details = null) => {
-              let originCordinates = {
-                latitude: details?.geometry?.location.lat,
-                longitude: details?.geometry?.location.lng,
-              };
-              setOrigin(originCordinates);
-              // console.log(JSON.stringify(details?.geometry?.location));
-              console.log("Origin 좌표: ", originCordinates);
-              moveToLocation(
-                originCordinates
-                // details?.geometry?.location.lat,
-                // details?.geometry?.location.lng
-              );
-            }}
-            query={{
-              key: GOOGLE_MAPS_API_KEY,
-              language: "en",
-            }}
-            onFail={(error) => console.log(error)}
-          />
-        </View>
-        <View style={{ flex: 0.5, marginLeft: 5 }}>
-          <GooglePlacesAutocomplete
-            fetchDetails={true}
-            placeholder="Destination"
-            onPress={(data, details = null) => {
-              let destinationCordinated = {
-                latitude: details?.geometry?.location.lat,
-                longitude: details?.geometry?.location.lng,
-              };
-              setDestination(destinationCordinated);
-              console.log("Destination 좌표:", destinationCordinated);
-              moveToLocation(destinationCordinated);
-            }}
-            query={{
-              key: GOOGLE_MAPS_API_KEY,
-              language: "en",
-            }}
-            onFail={(error) => console.log(error)}
-          />
-        </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.searchContainer}>
+        <GooglePlacesAutocomplete
+          fetchDetails={true}
+          placeholder="출발지"
+          onPress={(data, details = null) => {
+            if (details) {
+              const { lat, lng } = details.geometry.location;
+              setOrigin({ latitude: lat, longitude: lng });
+              moveToLocation(lat, lng);
+            }
+          }}
+          query={{
+            key: GOOGLE_MAPS_API_KEY,
+            language: "ko",
+          }}
+          onFail={(error) => console.error(error)}
+        />
+        <GooglePlacesAutocomplete
+          fetchDetails={true}
+          placeholder="목적지"
+          onPress={(data, details = null) => {
+            if (details) {
+              const { lat, lng } = details.geometry.location;
+              setDestination({ latitude: lat, longitude: lng });
+              moveToLocation(lat, lng);
+            }
+          }}
+          query={{
+            key: GOOGLE_MAPS_API_KEY,
+            language: "ko",
+          }}
+          onFail={(error) => console.error(error)}
+        />
       </View>
       <MapView
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         region={{
-          //첫 화면 구성
-          latitude: 36.7989,
-          longitude: 127.075214,
+          latitude: 36.47,
+          longitude: 127.43,
           latitudeDelta: 0.1,
           longitudeDelta: 0.1,
         }}
       >
-        {origin !== undefined ? <Marker coordinate={origin}></Marker> : null}
-        {destination !== undefined ? (
-          <Marker coordinate={destination}></Marker>
-        ) : null}
-
-        {/* // 마커 꾸미기
-        <Marker 
-          coordinate={{
-            latitude:37.98825,
-            longitude:-122.0862,
-          }}>
-          <MyCustomMarkerView />
-          <Callout style={{width:300, height:100, backgroundColor:'white'}}>
-            <MyCustomCalloutView/>
-          </Callout>
-        </Marker>
-          
-        {markersList.map((marker) => {
-            return(
-              <Marker
-              draggable // 드래그 기능
-              key={marker.id}
-                coordinate={{
-                  latitude:marker.latitude,
-                  longitude:marker.longitude,
-                }}
-                title={marker.title}
-                description={marker.description}
-                onDragEnd={(e) => console.log ({ x:e.nativeEvent.coordinate})}  //드래그한 위치 좌표 찍어줌
-              />
-            )
-          })
-          }
-
-          <Circle center={{
-            latitude:37.78825,
-            longitude:-122.7862,
-          }}
-          radius={200}
-          strokeColor="blue"
-          fillColor="red"
+        {origin && (
+          <Marker
+            draggable
+            coordinate={origin}
+            onDragEnd={(e) =>
+              console.log("출발지 드래그 좌표: ", e.nativeEvent.coordinate)
+            }
           />
-
-          <Polyline 
-          strokeWidth={2}
-          strokeColor='blue'
-          coordinates={[{
-            latitude:37.48825,
-            longitude:-122.3862,
-          },{
-            latitude:37.48825,
-            longitude:-122.7862,
-          }]}/>
-          <Polygon 
-          strokeWidth={2}
-          strokeColor='blue'
-          coordinates={[{
-            latitude:37.48825,
-            longitude:-122.3862,
-          },{
-            latitude:37.48825,
-            longitude:-122.7862,
-          },{
-            latitude:37.38825,
-            longitude:-122.7862,
-          },{
-            latitude:37.48825,
-            longitude:-122.6862,
-          }]}/> */}
-        {/* {origin != undefined && destination != undefined ? (
+        )}
+        {destination && (
+          <Marker
+            draggable
+            coordinate={destination}
+            onDragEnd={(e) =>
+              console.log("목적지 드래그 좌표: ", e.nativeEvent.coordinate)
+            }
+          />
+        )}
+        {movingMarkerPosition && (
+          <Marker coordinate={movingMarkerPosition}>
+            <MyCustomMarkerView />
+          </Marker>
+        )}
+        {origin && destination && (
           <MapViewDirections
             origin={origin}
             destination={destination}
             apikey={GOOGLE_MAPS_API_KEY}
+            strokeColor="blue"
+            strokeWidth={2}
+            onReady={(result) => {
+              console.log(result.coordinates);
+              setRouteCoordinates(result.coordinates);
+              animateMarker();
+            }}
           />
-        ) : null} */}
+        )}
       </MapView>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
     flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "center",
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     zIndex: 0,
+  },
+  searchContainer: {
+    position: "absolute",
+    top: 50,
+    width: "100%",
+    padding: 10,
+    backgroundColor: "white",
+    zIndex: 1,
   },
 });
