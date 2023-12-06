@@ -2,13 +2,14 @@ import { StyleSheet, Text, View, TouchableOpacity,Alert } from "react-native";
 import { UserType } from "../UserContext";
 import { useContext, useEffect } from "react";
 import io from 'socket.io-client';
+import { WebView } from 'react-native-webview';
 
 // import { MapView } from "react-native-maps";
 const TaxiTouch = () => {
   const { userId, setUserId } = useContext(UserType);
   console.log(userId)
   const passengerId = userId
-  const socket = io("http://192.168.219.104:8001");
+  const socket = io("http://localhost:8001");
 
   useEffect(() => {
     // 컴포넌트가 마운트될 때 Socket.io 서버에 연결합니다.
@@ -54,9 +55,12 @@ const TaxiTouch = () => {
     <View style={styles.container}>
       {/* <MapView style={styles.maps} /> */}
       <Text> 택시맵 </Text>
+      <WebView
+        source={{ uri: 'https://localhost:8000/your-map-page.html' }} // 카카오 맵 웹 페이지 URL
+        style={styles.maps}
+      />
       <TouchableOpacity
-        onPress={requestDtoS}
-      >
+        onPress={requestDtoS}>
         <Text>요청</Text>
       </TouchableOpacity>
     </View>

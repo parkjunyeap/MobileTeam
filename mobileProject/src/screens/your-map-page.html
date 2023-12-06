@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>카카오 맵</title>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a9ce5a2795922c8b2e5082e43f18deb2"></script>
+</head>
+<body>
+    <div id="map" style="width:100%;height:100%;"></div>
+    <script>
+        var container = document.getElementById('map');
+        var options = {
+            center: new kakao.maps.LatLng(37.566826, 126.9786567),
+            level: 3
+        };
+
+        var map = new kakao.maps.Map(container, options);
+        // 추가 지도 설정 및 기능 구현
+    </script>
+</body>
+</html>

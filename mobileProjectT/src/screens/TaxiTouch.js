@@ -11,7 +11,7 @@ const TaxiTouch = () => {
   const [isDriving, setIsDriving] = useState(false);//일단 socket.io하기 전에 일단true
   const [taxiRequest, setTaxiRequest] = useState(null);
   const driverId = userId;
-  const socket = io("http://192.168.219.104:8001");
+  const socket = io("http://localhost:8001");
 
   const [taxiRequests, setTaxiRequests] = useState([]);
 
@@ -70,7 +70,7 @@ const TaxiTouch = () => {
       console.log(newDriveState)
       // 서버에 운전 상태 업데이트를 요청하고, 요청이 성공하면 클라이언트 상태 업데이트
       await axios
-        .post("http://192.168.219.104:8000/UpDriveState", newDriveState)
+        .post("http://localhost:8000/UpDriveState", newDriveState)
       setIsDriving(newValue); // 클라이언트 상태 업데이트
     } catch (error) {
       console.error('운전 상태 업데이트 오류:', error);
