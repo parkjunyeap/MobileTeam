@@ -83,7 +83,7 @@ android {
 
     namespace 'com.loltuber.mobileProject'
     defaultConfig {
-        applicationId 'com.loltuber.mobileProject'
+        applicationId 'com.mobileProject'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

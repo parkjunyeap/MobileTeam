@@ -20,6 +20,7 @@ import jwt_decode from "jwt-decode"; // 유튜브에선 이렇게 import 하네
 // import jwtDecode from "jwt-decode"; // ES6 모듈 문법
 // import * as jwtDecode from "jwt-decode"; // 다안되면 이렇게
 import axios from "axios";
+
 import User from "../components/User";
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -90,7 +91,7 @@ const HomeScreen = () => {
       setUserId(userId);
 
       axios
-        .get(`http://10.20.34.124:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
+        .get(`http://10.20.64.52:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
         .then((response) => {
           console.log("Response data:", response.data); // 전부 찍힘.
           setUsers(response.data);

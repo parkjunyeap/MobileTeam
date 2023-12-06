@@ -55,7 +55,7 @@ const BottomTabNavigator = () => {
 
       <BTab.Screen
         name="택시잡기"
-        component={TaxiTouchTestNaver}
+        component={TaxiTouch}
         options={{
           tabBarIcon: ({ size, color }) => (
             <FontAwesome name="taxi" size={24} color="black" />

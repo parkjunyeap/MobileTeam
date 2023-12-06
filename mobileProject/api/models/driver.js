@@ -67,6 +67,18 @@ const driverSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+
+  latitude: {
+    type: String,
+    required: false,
+  },
+
+  longitude: {
+    type: String,
+    required: false,
+  },
+
+  // 소켓io 안씀~!~!
 });
 
 const Driver = mongoose.model("Driver", driverSchema); // 'User' 모델로 스키마 컴파일

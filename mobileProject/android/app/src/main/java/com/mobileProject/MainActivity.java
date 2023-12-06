@@ -1,4 +1,4 @@
-package com.loltuber.mobileProject;
+package com.mobileProject;
 
 import android.os.Build;
 import android.os.Bundle;
