@@ -34,18 +34,6 @@ const paymentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-
-  //   carNumber: {
-  //     //차량번호   ---> 기사아이디로 대체가능  기사아이디에서 기사이름 참조 , 차량번호 참조
-  //     type: String,
-  //     required: false,
-  //   },
-  //   carName: {
-  //     // 기사이름 ....> 기사아이디로 대체가능  기사아이디에서 기사이름 참조 , 차량번호 참조
-  //     type: String,
-  //     require: false,
-  //   },
-
   pay: {
     // 결제금액
     type: String,

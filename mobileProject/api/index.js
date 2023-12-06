@@ -13,6 +13,12 @@ app.use(bodyParser.urlencoded({ extended: false })); // URL 인코딩된 데이�
 app.use(bodyParser.json()); // JSON 데이터를 파싱하는 bodyParser 미들웨어를 사용하도록 설정합니다.
 app.use(passport.initialize()); // 앱에 passport 미들웨어를 초기화하여 사용하도록 설정합니다.
 const jwt = require("jsonwebtoken"); // jsonwebtoken 모듈을 가져옵니다. JWT(JSON Web Tokens)를 생성하고 검증하는 데 사용됩니다.
+
+const http = require('http')
+const socketIo = require('socket.io');
+const server = http.createServer(app);
+const io = socketIo(server);
+
 mongoose
   .connect("mongodb+srv://bab0234:bab0234@cluster0.gp66aaf.mongodb.net/", {
     useNewUrlParser: true,
@@ -1193,4 +1199,86 @@ app.delete("/Review/del/:writeId", async (req, res) => {
   } catch (error) {
     res.status(500).send(error);
   }
+});
+
+app.post("/UpDriveState", async (req, res) => {
+  const userId = req.body.userId;
+  const upDS = await Driver.findOneAndUpdate(
+    { _id: userId },
+    { $set: { driverState: req.body.driverState } },
+    { new: true }
+  );
+  // 데이터베이스에 새로운 사용자 저장 시도
+  upDS
+    .save()
+    .then(() => {
+      // 저장 성공 시 200 상태 코드와 함께 성공 메시지 응답
+      res.status(200).json({ message: "운행상태 변경완료." });
+    })
+    .catch((err) => {
+      // 저장 실패 시 콘솔에 에러 로깅하고 500 상태 코드로 클라이언트에게 오류 메시지 응답
+      console.log("에러발생 변경못함", err);
+      res.status(500).json({ message: "에러발생 변경못함" });
+    });
+})
+
+//socket.io
+const portR = 8001
+// 연결된 클라이언트를 저장하기 위한 맵 (MongoDB ID와 Socket ID 매핑)
+const clientSocketIdMap = new Map();
+
+server.listen(portR, () => {
+  console.log(`io 서버 실행 중, 포트 ${portR}`);
+});
+io.on('connection', (socket) => {
+  socket.on('passengerConnect', (passengerId) => {
+    console.log(`탑승자가 연결되었습니다. Passenger ID: ${passengerId}`);
+    clientSocketIdMap.set(passengerId, socket.id);
+  });
+
+  // 운전사 연결 이벤트
+  socket.on('driverConnect', (driverId) => {
+    console.log(`운전사가 연결되었습니다. Driver ID: ${driverId}`);
+    clientSocketIdMap.set(driverId, socket.id);
+  });
+
+  // 탑승자의 요청을 운전사에게 전송
+  socket.on('passengerRequest', (request) => {
+    console.log('탑승자의 요청이 수신되었습니다.', request);
+    const driverSocketId = clientSocketIdMap.get(request.driverId);
+
+    if (driverSocketId) {
+      // 해당 운전사에게 요청 전송
+      io.to(driverSocketId).emit('passengerRequestToDriver', request);
+      console.log(`요청을 운전사에게 전송했습니다. Driver ID: ${request.driverId}`);
+    } else {
+      console.log(`운전사를 찾을 수 없습니다. Driver ID: ${request.driverId}`);
+    }
+  });
+
+  // 운전사의 응답을 탑승자에게 전송
+  socket.on('acceptRejectRequest', (request) => {
+    console.log('서버가 받은 운전사의 응답 :', request);
+
+    // requestId를 사용하여 해당 탑승자의 소켓 ID를 가져옵니다.
+    const passengerSocketId = clientSocketIdMap.get(request.requestId);
+    if (passengerSocketId) {
+      // 해당 탑승자에게 운전사의 응답 전송
+      io.to(passengerSocketId).emit('acceptRejectRequestToPassenger', request);
+      console.log(`운전사의 응답을 탑승자에게 전송했습니다. Request ID: ${request.requestId}`);
+    } else {
+      console.log(`탑승자를 찾을 수 없습니다. Request ID: ${request.requestId}`);
+    }
+  });
+
+  // 연결 해제 시 매핑 정보 제거
+  socket.on('disconnect', () => {
+    for (const [id, socketId] of clientSocketIdMap.entries()) {
+      if (socketId === socket.id) {
+        clientSocketIdMap.delete(id);
+        console.log(`클라이언트가 연결을 해제했습니다. ID: ${id}`);
+        break;
+      }
+    }
+  });
 });

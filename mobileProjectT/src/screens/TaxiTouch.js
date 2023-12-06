@@ -1,30 +1,52 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { StyleSheet, Text, View, Switch, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Switch, TouchableOpacity, ScrollView } from 'react-native';
 import { UserType } from '../UserContext';
 import jwt_decode from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import io from 'socket.io-client';
 
 const TaxiTouch = () => {
   const { userId, setUserId } = useContext(UserType);
-  const [isDriving, setIsDriving] = useState(false);
+  const [isDriving, setIsDriving] = useState(false);//일단 socket.io하기 전에 일단true
   const [taxiRequest, setTaxiRequest] = useState(null);
+  const driverId = userId;
+  const socket = io("http://10.20.32.28:8001");
+
+  const [taxiRequests, setTaxiRequests] = useState([]);
+
+  const fetchUsers = async () => {
+    const token = await AsyncStorage.getItem("authToken");
+    const decodedToken = jwt_decode(token);
+    const userId = decodedToken.userId;
+    console.log("UserId:", userId);
+    setUserId(userId);
+
+  };
 
   // 운행 스위치 상태가 바뀔 때마다 실행되는 useEffect
   useEffect(() => {
-    const fetchUsers = async () => {
+    socket.connect();
+    socket.emit('driverConnect', driverId);
 
-      const token = await AsyncStorage.getItem("authToken");
-      const decodedToken = jwt_decode(token);
-      const userId = decodedToken.userId;
-      console.log("UserId:", userId);
-      setUserId(userId);
-    };
+    //요청 받음
+    socket.on('passengerRequestToDriver', (requestD) => {
+      console.log('택시 요청이 도착했습니다.', requestD);
+      setTaxiRequests((prevTaxiRequests) => [...prevTaxiRequests, requestD]);
+      console.log(taxiRequests)
+    })
+    // 탑승자로부터의 요청을 처리하는 예시
+    socket.on('passengerRequest', (request) => {
+      console.log('탑승자로부터 요청을 받았습니다.', request);
+
+      // 요청을 처리하고 응답을 보내는 코드 작성
+    });
+
+
     if (isDriving) {
       // 백엔드에서 데이터를 가져오는 것으로 가정
       setTaxiRequest({
         distance: '6.5KM',
-        duration: '11분',
         pickup: '백화점',
         dropoff: '시민공원',
       });
@@ -32,7 +54,11 @@ const TaxiTouch = () => {
       setTaxiRequest(null);
     }
     fetchUsers();
-  }, [isDriving]); // 의존성 배열에 isDriving을 넣어 상태 변경을 감지합니다.
+
+    return () => {
+      socket.disconnect();
+    }
+  }, [isDriving],[taxiRequests]); // 의존성 배열에 isDriving을 넣어 상태 변경을 감지합니다.
 
   // 운행 스위치를 토글할 때 호출될 함수
   const toggleSwitch = async (newValue) => {
@@ -44,19 +70,30 @@ const TaxiTouch = () => {
       console.log(newDriveState)
       // 서버에 운전 상태 업데이트를 요청하고, 요청이 성공하면 클라이언트 상태 업데이트
       await axios
-        .post("http://10.20.60.52:8000/UpDriveState", newDriveState)
+        .post("http://10.20.32.28:8000/UpDriveState", newDriveState)
       setIsDriving(newValue); // 클라이언트 상태 업데이트
     } catch (error) {
       console.error('운전 상태 업데이트 오류:', error);
     }
   };
 
-  const acceptRequest = () => {
-    console.log('택시 요청 수락');
+  const acceptRequest = (request) => {
+    console.log('택시 요청 수락',request);
+    //setIsDriving(false);
+    sendResponseToPassenger(request.userId, 'accepted');
   };
 
-  const rejectRequest = () => {
+  const rejectRequest = (request) => {
     console.log('택시 요청 거절');
+    const updatedRequests = taxiRequests.filter((item) => item.id !== request.id);
+    setTaxiRequests(updatedRequests);
+    sendResponseToPassenger(request.userId, 'rejected');
+  };
+
+  const sendResponseToPassenger = (requestId, response) => {
+    // 서버로 요청 ID와 응답 상태를 보냅니다.
+    console.log(requestId,response)
+    socket.emit('acceptRejectRequest', { requestId, status: response });
   };
 
   return (
@@ -66,7 +103,7 @@ const TaxiTouch = () => {
 
       {/* 택시 운행중 스위치와 레이블 */}
       <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>택시 운행중</Text>
+        <Text style={styles.switchLabel}>택시 Call      Off</Text>
         <Switch
           trackColor={{ false: '#767577', true: '#81b0ff' }}
           thumbColor={isDriving ? '#f5dd4b' : '#f4f3f4'}
@@ -74,23 +111,27 @@ const TaxiTouch = () => {
           onValueChange={toggleSwitch}
           value={isDriving}
         />
+        <Text style={styles.switchLabel}>     On</Text>
       </View>
-
-      {/* 택시 요청 정보 카드 */}
-      {isDriving && taxiRequest && (
-        <View style={styles.infoCard}>
-          <Text style={styles.distance}>{`${taxiRequest.distance} ${taxiRequest.duration}`}</Text>
-          <Text style={styles.route}>{`${taxiRequest.pickup}  ${taxiRequest.dropoff}`}</Text>
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={acceptRequest}>
-              <Text style={styles.buttonText}>수락</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.rejectButton]} onPress={rejectRequest}>
-              <Text style={styles.buttonText}>거절</Text>
-            </TouchableOpacity>
+      <ScrollView style={{ width: '90%' }}>
+        {/* 택시 요청 정보 카드 */}
+        {isDriving && taxiRequests.map((request) => (
+          <View key={request.id} style={styles.infoCard}>
+            <Text style={styles.distance}>{`${request.distance}`} Km</Text>
+            <Text style={styles.route}>{`${request.startPoint}`}</Text>
+            <Text style={styles.route}> ↓ </Text>
+            <Text style={styles.route}>{`${request.endPoint}`}</Text>
+            <View style={styles.buttonsContainer}>
+              <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={() => acceptRequest(request)}>
+                <Text style={styles.buttonText}>수락</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.button, styles.rejectButton]} onPress={() => rejectRequest(request)}>
+                <Text style={styles.buttonText}>거절</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      )}
+        ))}
+      </ScrollView>
     </View>
   );
 };
@@ -120,7 +161,6 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   infoCard: {
-    width: '90%', // 카드 너비
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,
@@ -161,6 +201,19 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 14,
+    color: '#fff',
+    textAlign: 'center',
+  },
+  // 새로고침 버튼 스타일
+  refreshButton: {
+    backgroundColor: '#007bff',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginTop: 20, // 버튼과 스위치 사이 간격 조절
+  },
+  refreshButtonText: {
+    fontSize: 16,
     color: '#fff',
     textAlign: 'center',
   },
