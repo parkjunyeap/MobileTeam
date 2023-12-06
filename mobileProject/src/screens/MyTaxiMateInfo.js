@@ -26,6 +26,10 @@ import { UserType } from "../UserContext";
 import { useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "../firebaseConfig";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 import locationData from "../locationData";
 
 // 지역 2차원배열 로된거 갖고옴
@@ -34,8 +38,11 @@ const MyTaxiMateInfo = () => {
   // 이렇게하면 로그인한유저 갖고올 수 있음.
   const { userId, setUserId } = useContext(UserType);
 
-  // friendId, friendName 주고싶은데;;
-  // 이렇게 하는건 props 만 줘
+  // Firebase 앱 초기화
+  const app = initializeApp(firebaseConfig);
+
+  // Firebase Storage 인스턴스 얻기
+  const storage = getStorage(app);
 
   console.log("여기에 로그인한사람 떠야함. 마이택시인포 ", userId);
   // 이렇게 하면 !!!!!!!!!!
@@ -61,18 +68,35 @@ const MyTaxiMateInfo = () => {
     minute: "00",
   });
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+  const pickImage = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        const asset = result.assets[0];
+        const imageName = asset.uri.substring(asset.uri.lastIndexOf("/") + 1);
+
+        const response = await fetch(asset.uri);
+        const blob = await response.blob();
+
+        //const storage = getStorage(); // Firebase Storage 인스턴스를 얻어옵니다.
+        const storageRef = ref(storage, `rn-photo/${imageName}`); // storageRef 생성
+        await uploadBytes(storageRef, blob); // 파일 업로드
+
+        const downloadURL = await getDownloadURL(storageRef); // 업로드한 파일의 다운로드 URL 얻기
+        setImage(downloadURL);
+      }
+    } catch (error) {
+      console.error("오류 발생:", error);
     }
   };
+
 
   const onProvinceChange = (province) => {
     setSelectedProvince(province);
@@ -84,7 +108,7 @@ const MyTaxiMateInfo = () => {
   const viewTaxiMateInfo = async () => {
     try {
       const response = await fetch(
-        `http://10.20.32.28:8000/ViewTaxiMateInfo/${userId}`
+        `http://192.168.219.104:8000/ViewTaxiMateInfo/${userId}`
       );
 
       const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
@@ -140,7 +164,7 @@ const MyTaxiMateInfo = () => {
     const viewTaxiMateInfo = async () => {
       try {
         const response = await fetch(
-          `http://10.20.32.28:8000/ViewTaxiMateInfo/${userId}`
+          `http://192.168.219.104:8000/ViewTaxiMateInfo/${userId}`
         );
 
         const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
@@ -188,10 +212,11 @@ const MyTaxiMateInfo = () => {
 
     // 유저택시정보저장
     axios
-      .post("http://10.20.32.28:8000/setTaxiMateInfo", userTaxiInfo)
+      .post("http://192.168.219.104:8000/setTaxiMateInfo", userTaxiInfo)
       .then(function (response) {
-        console.log(response);
+        //console.log(response);
         Alert.alert(
+          
           "사용자 택시 정보 저장 성공!!",
           "성공적으로 저장되었습니다"
         );

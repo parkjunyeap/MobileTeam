@@ -13,15 +13,9 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true,
-      "config": {
-        "nMapsApiKey": "XspmZu7GocrhQW2s1pYVsITWEvEVUX8GoCInfiKY"
-      }
+      "supportsTablet": true
     },
     "android": {
-      "config": {
-        "nMapsApiKey": "XspmZu7GocrhQW2s1pYVsITWEvEVUX8GoCInfiKY"
-      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"

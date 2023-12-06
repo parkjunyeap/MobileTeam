@@ -16,23 +16,49 @@ import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "../firebaseConfig";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [image, setImage] = useState("");
   const navigation = useNavigation();
+
+  // Firebase 앱 초기화
+  const app = initializeApp(firebaseConfig);
+
+  // Firebase Storage 인스턴스 얻기
+  const storage = getStorage(app);
+
   // 이거 그냥 네비게이션 써서 화면이동해준다는 뜻
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      if (!result.canceled) {
+        const asset = result.assets[0];
+        const imageName = asset.uri.substring(asset.uri.lastIndexOf("/") + 1);
+
+        const response = await fetch(asset.uri);
+        const blob = await response.blob();
+
+        //const storage = getStorage(); // Firebase Storage 인스턴스를 얻어옵니다.
+        const storageRef = ref(storage, `rn-photo/${imageName}`); // storageRef 생성
+        await uploadBytes(storageRef, blob); // 파일 업로드
+
+        const downloadURL = await getDownloadURL(storageRef); // 업로드한 파일의 다운로드 URL 얻기
+        setImage(downloadURL);
+      }
+    } catch (error) {
+      console.error("오류 발생:", error);
     }
   };
 
@@ -48,7 +74,7 @@ const RegisterScreen = () => {
 
     // send a POST  request to the backend API to register the user
     axios
-      .post("http://10.20.32.28:8000/register", user) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
+      .post("http://192.168.219.104:8000/register", user) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
       .then((response) => {
         // 그러면. res 로 잘됏나 안됏나 받음. 그리고 메시지띄움. 그리고 set으로 다른거 다 빈칸으로만듬
         console.log(response);
