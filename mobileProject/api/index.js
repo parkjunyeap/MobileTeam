@@ -1172,7 +1172,7 @@ app.get("/taxiLocationFind", async (req, res) => {
       longitude: { $exists: true, $ne: null }, //
     });
 
-    console.log(driversWithLocation);
+    console.log("주소가 존재하는 택시드라이버 ", driversWithLocation);
 
     // 찾은 드라이버들을 JSON 형태로 응답
     res.status(200).json(driversWithLocation);

@@ -6,12 +6,18 @@ import {
   StyleSheet,
   SafeAreaView,
   Button,
+  Modal,
 } from "react-native";
 import MapView, { Callout, PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_MAPS_API_KEY } from "../config/constants";
 import MapViewDirections from "react-native-maps-directions";
 import axios from "axios";
+
+import Driver from "../components/Driver";
+
+// 드라이버 객체 모달창 나오게 하기 위해서
+//
 
 // import { PermissionsAndroid, Platform } from "react-native";
 // import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions";
@@ -52,6 +58,13 @@ function getLocation() {
 }
 
 export default function GoogleMapsScreen() {
+  const [drivers, setDrivers] = useState([]);
+  // 택시 드라이버 배열
+  //
+
+  const [selectedDriver, setSelectedDriver] = useState(null); // 선택한 드라이버
+  const [isModalVisible, setIsModalVisible] = useState(false); // 모달창 뜨는지 안뜨는지? 설정
+
   const [origin, setOrigin] = useState(null); // 좌표값
   const [destination, setDestination] = useState(null); // 좌표값 설정
   const [routeCoordinates, setRouteCoordinates] = useState([]);
@@ -71,32 +84,40 @@ export default function GoogleMapsScreen() {
   const [taxiLocations, setTaxiLocations] = useState([]); // 택시 기사들의 위치를 받아와서 여기에 적재
 
   // 택시 위치 정보들 갖고오는 함수요
-  function taxiDriversMarker() {
-    // 드라이버 위치정보 모두 갖고와서 locations 배열에 담아주기.
-    axios
-      .get("http://10.20.64.131:8000/taxiLocationFind/") // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
-      .then((response) => {
-        console.log("현재 갖고온 택시기사들 정보:", response.data); // 전부 찍힘.
+  // 그냥 setDrivers 로 다 넣을겁니다.
 
-        const locations = response.data.map((driver) => ({
-          latitude: driver.latitude,
-          longitude: driver.longitude,
-        }));
+  async function taxiDriversMarker() {
+    try {
+      // axios.get 호출을 await으로 기다립니다
+      const response = await axios.get(
+        "http://localhost:8000/taxiLocationFind/"
+      );
 
-        console.log(locations);
-        // 이거는 이제 지도에 마커만 찍으려고 하는거 ...
-        setTaxiLocations(locations);
+      console.log("현재 갖고온 택시기사들 정보:", response.data);
 
-        console.log("여기에 택시위치들 잘 들어왔음 ", taxiLocations);
+      // 드라이버 정보를 상태에 저장
+      setDrivers(response.data);
 
-        // setUsers(response.data);
-      })
-      .catch((error) => {
-        console.log("error retrieving users", error);
-      });
+      // // 위치 정보를 추출하여 상태에 저장
+      // const locations = response.data.map((driver) => ({
+      //   latitude: parseFloat(driver.latitude),
+      //   longitude: parseFloat(driver.longitude),
+      // }));
 
-    // 마커에 찍혀아함니다.
+      const locations = response.data.map((driver) => ({
+        latitude: parseFloat(driver.latitude),
+        longitude: parseFloat(driver.longitude),
+      }));
+
+      // setTaxiLocations(locations);
+
+      // console.log("여기에 택시위치들 잘 들어왔음 ", locations);
+    } catch (error) {
+      console.log("error retrieving users", error);
+    }
   }
+
+  console.log("여기 드라이버들도 잘 들어왔음 ", drivers);
 
   const handleStartLocationChange = (value) => {
     console.log("설정될 출발지:", value);
@@ -179,6 +200,13 @@ export default function GoogleMapsScreen() {
     }, 1000);
   };
 
+  // 마커 클릭 시 이벤트 핸들러
+  const handleMarkerPress = (driver) => {
+    //
+    setSelectedDriver(driver);
+    setIsModalVisible(true);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <MapView
@@ -192,6 +220,7 @@ export default function GoogleMapsScreen() {
           longitudeDelta: 0.1,
         }}
         showsUserLocation={true} // 사용자 위치 표시 활성화
+        // 기본위치 바뀌는건데 잘못 했음. 연호가할거
       >
         {origin && (
           <Marker
@@ -232,15 +261,18 @@ export default function GoogleMapsScreen() {
         )}
 
         {/* 택시 위치 마커들 */}
-        {taxiLocations.map((location, index) => (
+
+        {drivers.map((driver, index) => (
           <Marker
             key={index}
             coordinate={{
-              latitude: parseFloat(location.latitude),
-              longitude: parseFloat(location.longitude),
+              latitude: parseFloat(driver.latitude),
+              longitude: parseFloat(driver.longitude),
             }}
-            // 추가적으로 필요한 Marker 속성들
-          />
+            onPress={() => handleMarkerPress(driver)} // 여기에서 driver 객체 전달
+          >
+            <MyCustomMarkerView />
+          </Marker>
         ))}
       </MapView>
       <View style={styles.searchContainer}>
@@ -307,6 +339,18 @@ export default function GoogleMapsScreen() {
         {/* 출발지 도착지 입력하고 택시부르기 누르면 그냥 드라이버 한명 정해서 출발지, 목적지 보내줌  */}
         {/* 그리고 기달려야함? */}
       </View>
+
+      {/* 모달 컴포넌트 */}
+      {selectedDriver && (
+        <Modal
+          animationType="slide" // 슬라이드로나옴
+          transparent={true} //
+          visible={isModalVisible}
+          onRequestClose={() => setIsModalVisible(false)}
+        >
+          <Driver item={selectedDriver} />
+        </Modal>
+      )}
     </SafeAreaView>
   );
 }
