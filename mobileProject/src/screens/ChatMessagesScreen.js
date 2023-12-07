@@ -27,6 +27,10 @@ import { UserType } from "../UserContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "../firebaseConfig";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 const ChatMessagesScreen = () => {
   const [showEmojiSelector, setShowEmojiSelector] = useState(false);
   const [selectedMessages, setSelectedMessages] = useState([]);
@@ -40,6 +44,12 @@ const ChatMessagesScreen = () => {
   const { userId, setUserId } = useContext(UserType);
 
   const scrollViewRef = useRef(null);
+
+  // Firebase 앱 초기화
+  const app = initializeApp(firebaseConfig);
+
+  // Firebase Storage 인스턴스 얻기
+  const storage = getStorage(app);
 
   useEffect(() => {
     scrollToBottom();
@@ -214,16 +224,30 @@ const ChatMessagesScreen = () => {
     return new Date(time).toLocaleString("en-US", options);
   };
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
 
-    console.log(result);
-    if (!result.canceled) {
-      handleSend("image", result.uri);
+      if (!result.canceled) {
+        const asset = result.assets[0];
+        const imageName = asset.uri.substring(asset.uri.lastIndexOf("/") + 1);
+
+        const response = await fetch(asset.uri);
+        const blob = await response.blob();
+
+        //const storage = getStorage(); // Firebase Storage 인스턴스를 얻어옵니다.
+        const storageRef = ref(storage, `rn-photo/${imageName}`); // storageRef 생성
+        await uploadBytes(storageRef, blob); // 파일 업로드
+
+        const downloadURL = await getDownloadURL(storageRef); // 업로드한 파일의 다운로드 URL 얻기
+        setImage(downloadURL);
+      }
+    } catch (error) {
+      console.error("오류 발생:", error);
     }
   };
   const handleSelectMessage = (message) => {
@@ -258,21 +282,21 @@ const ChatMessagesScreen = () => {
                 style={[
                   item?.senderId?._id === userId
                     ? {
-                        alignSelf: "flex-end",
-                        backgroundColor: "#DCF8C6",
-                        padding: 8,
-                        maxWidth: "60%",
-                        borderRadius: 7,
-                        margin: 10,
-                      }
+                      alignSelf: "flex-end",
+                      backgroundColor: "#DCF8C6",
+                      padding: 8,
+                      maxWidth: "60%",
+                      borderRadius: 7,
+                      margin: 10,
+                    }
                     : {
-                        alignSelf: "flex-start",
-                        backgroundColor: "white",
-                        padding: 8,
-                        margin: 10,
-                        borderRadius: 7,
-                        maxWidth: "60%",
-                      },
+                      alignSelf: "flex-start",
+                      backgroundColor: "white",
+                      padding: 8,
+                      margin: 10,
+                      borderRadius: 7,
+                      maxWidth: "60%",
+                    },
 
                   isSelected && { width: "100%", backgroundColor: "#F0FFFF" },
                 ]}
@@ -311,21 +335,21 @@ const ChatMessagesScreen = () => {
                 style={[
                   item?.senderId?._id === userId
                     ? {
-                        alignSelf: "flex-end",
-                        backgroundColor: "#DCF8C6",
-                        padding: 8,
-                        maxWidth: "60%",
-                        borderRadius: 7,
-                        margin: 10,
-                      }
+                      alignSelf: "flex-end",
+                      backgroundColor: "#DCF8C6",
+                      padding: 8,
+                      maxWidth: "60%",
+                      borderRadius: 7,
+                      margin: 10,
+                    }
                     : {
-                        alignSelf: "flex-start",
-                        backgroundColor: "white",
-                        padding: 8,
-                        margin: 10,
-                        borderRadius: 7,
-                        maxWidth: "60%",
-                      },
+                      alignSelf: "flex-start",
+                      backgroundColor: "white",
+                      padding: 8,
+                      margin: 10,
+                      borderRadius: 7,
+                      maxWidth: "60%",
+                    },
                 ]}
               >
                 <View>
