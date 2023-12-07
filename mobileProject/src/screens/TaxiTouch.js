@@ -4,7 +4,7 @@ import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { GOOGLE_MAPS_API_KEY } from '../config/constants';
 import MapViewDirections from 'react-native-maps-directions';
-import { mapStyle } from '../global/mapStyle'; // mapStyle 가져오기
+import * as Location from 'expo-location';
 
 export default function GoogleMapsScreen() {
   const mapRef = useRef(null);
@@ -12,6 +12,23 @@ export default function GoogleMapsScreen() {
   const [destination, setDestination] = useState(null);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const [carMarkerPosition, setCarMarkerPosition] = useState(null);
+
+  async function getCurrentLocation() {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.error('Location permission denied');
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      setOrigin({ latitude, longitude });
+      moveToLocation(latitude, longitude);
+    } catch (error) {
+      console.error('Error getting current location', error);
+    }
+  }
 
   async function moveToLocation(latitude, longitude) {
     mapRef.current.animateToRegion({
@@ -23,6 +40,8 @@ export default function GoogleMapsScreen() {
   }
 
   useEffect(() => {
+    getCurrentLocation();
+
     if (origin && destination && routeCoordinates.length) {
       animateMarker(routeCoordinates);
     }
@@ -45,6 +64,7 @@ export default function GoogleMapsScreen() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.searchContainer}>
+          {/* 출발지 검색 */}
           <GooglePlacesAutocomplete
             placeholder='출발지'
             fetchDetails={true}
@@ -62,6 +82,7 @@ export default function GoogleMapsScreen() {
               language: 'ko',
             }}
           />
+          {/* 목적지 검색 */}
           <GooglePlacesAutocomplete
             placeholder='목적지'
             fetchDetails={true}
@@ -85,13 +106,11 @@ export default function GoogleMapsScreen() {
           provider={PROVIDER_GOOGLE}
           style={styles.map}
           initialRegion={{
-            latitude: 36.47,
-            longitude: 127.43,
+            latitude: origin?.latitude || 0,
+            longitude: origin?.longitude || 0,
             latitudeDelta: 0.1,
             longitudeDelta: 0.1,
           }}
-          customMapStyle={mapStyle} /* mapStyle 적용 */
-          showsUserLocation={true} // 사용자 위치 표시 활성화
         >
           {origin && <Marker coordinate={origin} />}
           {destination && <Marker coordinate={destination} />}
@@ -128,7 +147,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: 'white',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 // Android의 상태 바 높이를 추가합니다.
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   container: {
     ...StyleSheet.absoluteFillObject,
@@ -138,7 +157,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 80, // iOS와 Android에서의 상단 바로부터의 거리를 조정합니다.
+    top: Platform.OS === 'ios' ? 60 : 80,
     width: '100%',
     zIndex: 10,
   },
