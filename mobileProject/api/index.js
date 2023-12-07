@@ -588,30 +588,6 @@ app.post("/setTaxiMateInfo", async (req, res) => {
   }
 });
 
-// app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
-//   try {
-//     // URL 파라미터에서 userId 추출
-//     const { userId } = req.params; // 프론트엔드에서 userId 만 보냄
-
-//     // 데이터베이스에서 userId를 기준으로 사용자의 infoSetting 정보만 조회
-//     const userInfo = await User.findById(userId).select("infoSetting -_id"); //_id 로 조회
-//     console.log("데이터베이스에서 잘받아오나요?", userInfo);
-//     // 잘받아오네요
-//     // userInfo가 존재하면 infoSetting 필드만 클라이언트에게 JSON 형태로 전송
-
-//     if (userInfo) {
-//       res.json(userInfo);
-//     } else {
-//       // 사용자를 찾을 수 없는 경우 404 에러 전송
-//       res.status(404).send("User not found");
-//     }
-//   } catch (error) {
-//     // 에러 처리
-//     console.error("Server error:", error);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
-
 app.get("/ViewTaxiMateInfo/:userId", async (req, res) => {
   try {
     const { userId } = req.params; // 프론트엔드에서 userId 만 보냄
@@ -1151,5 +1127,57 @@ app.delete("/Review/del/:writeId", async (req, res) => {
     res.status(200).send("Review deleted successfully");
   } catch (error) {
     res.status(500).send(error);
+  }
+});
+
+/// ? 지도를 불러옴 택시유저의
+
+app.post("/taxiLocation", async (req, res) => {
+  // 택시 위치 켰을 때 업데이트
+
+  // 여기서 userId는 택시기사 id요
+  // 클라이언트로부터 userId, latitude, longitude를 받아서 처리
+
+  try {
+    const { userId, latitude, longitude } = req.body;
+
+    console.log("이게 왜 서버에 안불러와?", userId, latitude, longitude);
+
+    const driver = await Driver.findOneAndUpdate(
+      { _id: userId },
+      {
+        latitude: req.body.latitude,
+        longitude: req.body.longitude,
+      },
+      { new: true, upsert: true }
+    );
+
+    if (!driver) {
+      return res.status(404).json({ message: "드라이버를 찾을 수 없습니다." });
+    }
+
+    // 응답 보내기
+    res.status(200).json({ message: "위치 데이터 업데이트 완료" });
+  } catch (error) {
+    console.error("위치 업데이트 오류:", error);
+    res.status(500).json({ message: "위치 업데이트 중 오류 발생" });
+  }
+});
+
+app.get("/taxiLocationFind", async (req, res) => {
+  try {
+    // latitude와 longitude가 있는 드라이버 찾기
+    const driversWithLocation = await Driver.find({
+      latitude: { $exists: true, $ne: null }, // 존재하고 null 이 아니냐
+      longitude: { $exists: true, $ne: null }, //
+    });
+
+    console.log(driversWithLocation);
+
+    // 찾은 드라이버들을 JSON 형태로 응답
+    res.status(200).json(driversWithLocation);
+  } catch (error) {
+    console.error("택시 위치 검색 오류:", error);
+    res.status(500).json({ error: "서버 오류 발생" });
   }
 });

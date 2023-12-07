@@ -68,16 +68,20 @@ const driverSchema = new mongoose.Schema({
     required: false,
   },
 
+  // latitude
   latitude: {
     type: String,
     required: false,
   },
+
+  // longitude
 
   longitude: {
     type: String,
     required: false,
   },
 
+  // 위도 , 경도 추가했음.
   // 소켓io 안씀~!~!
 });
 
