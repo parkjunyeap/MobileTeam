@@ -72,7 +72,7 @@ const ChatMessagesScreen = () => {
   const fetchMessages = async () => {
     try {
       const response = await fetch(
-        `http://10.20.60.238:8000/messages/${userId}/${recepientId}`
+        `http://localhost:8000/messages/${userId}/${recepientId}`
       );
       const data = await response.json();
 
@@ -94,7 +94,7 @@ const ChatMessagesScreen = () => {
     const fetchRecepientData = async () => {
       try {
         const response = await fetch(
-          `http://10.20.60.238:8000/user/${recepientId}`
+          `http://localhost:8000/user/${recepientId}`
         );
 
         const data = await response.json();
@@ -125,7 +125,7 @@ const ChatMessagesScreen = () => {
         formData.append("messageText", message);
       }
 
-      const response = await fetch("http://10.20.60.238:8000/messages", {
+      const response = await fetch("http://localhost:8000/messages", {
         method: "POST",
         body: formData,
       });
@@ -198,7 +198,7 @@ const ChatMessagesScreen = () => {
 
   const deleteMessages = async (messageIds) => {
     try {
-      const response = await fetch("http://10.20.60.238:8000/deleteMessages", {
+      const response = await fetch("http://localhost:8000/deleteMessages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
