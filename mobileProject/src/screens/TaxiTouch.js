@@ -4,6 +4,7 @@ import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { GOOGLE_MAPS_API_KEY } from '../config/constants';
 import MapViewDirections from 'react-native-maps-directions';
+import { mapStyle } from '../global/mapStyle'; // mapStyle 가져오기
 
 export default function GoogleMapsScreen() {
   const mapRef = useRef(null);
@@ -89,6 +90,8 @@ export default function GoogleMapsScreen() {
             latitudeDelta: 0.1,
             longitudeDelta: 0.1,
           }}
+          customMapStyle={mapStyle} /* mapStyle 적용 */
+          showsUserLocation={true} // 사용자 위치 표시 활성화
         >
           {origin && <Marker coordinate={origin} />}
           {destination && <Marker coordinate={destination} />}
