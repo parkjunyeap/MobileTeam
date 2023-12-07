@@ -5,6 +5,7 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import { GOOGLE_MAPS_API_KEY } from '../config/constants';
 import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
+import { mapStyle } from '../global/mapStyle';
 
 export default function GoogleMapsScreen() {
   const mapRef = useRef(null);
@@ -111,6 +112,7 @@ export default function GoogleMapsScreen() {
             latitudeDelta: 0.1,
             longitudeDelta: 0.1,
           }}
+          customMapStyle={mapStyle}
         >
           {origin && <Marker coordinate={origin} />}
           {destination && <Marker coordinate={destination} />}
