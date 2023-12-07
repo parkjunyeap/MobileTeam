@@ -11,7 +11,7 @@ const TaxiTouch = () => {
   const [isDriving, setIsDriving] = useState(false);//일단 socket.io하기 전에 일단true
   const [taxiRequest, setTaxiRequest] = useState(null);
   const driverId = userId;
-  const socket = io("http://192.168.219.104:8001");
+  const socket = io("http://10.20.60.238:8001");
 
   const [taxiRequests, setTaxiRequests] = useState([]);
 
@@ -63,15 +63,15 @@ const TaxiTouch = () => {
   // 운행 스위치를 토글할 때 호출될 함수
   const toggleSwitch = async (newValue) => {
     try {
+      setIsDriving(newValue); // 클라이언트 상태 업데이트
       const newDriveState = {
         userId: userId,
-        isDriving: newValue
+        driveState: newValue
       }
       console.log(newDriveState)
       // 서버에 운전 상태 업데이트를 요청하고, 요청이 성공하면 클라이언트 상태 업데이트
       await axios
-        .post("http://192.168.219.104:8000/UpDriveState", newDriveState)
-      setIsDriving(newValue); // 클라이언트 상태 업데이트
+        .post("http://10.20.60.238:8000/UpDriveState", newDriveState)
     } catch (error) {
       console.error('운전 상태 업데이트 오류:', error);
     }
@@ -79,7 +79,6 @@ const TaxiTouch = () => {
 
   const acceptRequest = (request) => {
     console.log('택시 요청 수락',request);
-    //setIsDriving(false);
     sendResponseToPassenger(request.userId, 'accepted');
   };
 
@@ -117,7 +116,7 @@ const TaxiTouch = () => {
         {/* 택시 요청 정보 카드 */}
         {isDriving && taxiRequests.map((request) => (
           <View key={request.id} style={styles.infoCard}>
-            <Text style={styles.distance}>{`${request.distance}`} Km</Text>
+            <Text style={styles.distance}>탑승자와의 거리 : {`${request.distance}`} Km</Text>
             <Text style={styles.route}>{`${request.startPoint}`}</Text>
             <Text style={styles.route}> ↓ </Text>
             <Text style={styles.route}>{`${request.endPoint}`}</Text>

@@ -8,7 +8,7 @@ const TaxiTouch = () => {
   const { userId, setUserId } = useContext(UserType);
   console.log(userId)
   const passengerId = userId
-  const socket = io("http://192.168.219.104:8001");
+  const socket = io("http://10.20.60.238:8001");
 
   useEffect(() => {
     // 컴포넌트가 마운트될 때 Socket.io 서버에 연결합니다.
@@ -42,7 +42,7 @@ const TaxiTouch = () => {
     endPoint: "선문대학교",
     requestDate: new Date(),
     pay: "10000",
-    distance: "5"
+    distance: "0.5"
   }
   //서버로 전달
   const requestDtoS = () => {

@@ -978,25 +978,29 @@ app.get("/driverList/payment/:userId", async (req, res) => {
 });
 
 app.post("/UpDriveState", async (req, res) => {
-  const userId = req.body.userId;
-  const upDS = await Driver.findOneAndUpdate(
-    { _id: userId },
-    { $set: { driverState: req.body.driverState } },
-    { new: true }
-  );
-  // 데이터베이스에 새로운 사용자 저장 시도
-  upDS
-    .save()
-    .then(() => {
-      // 저장 성공 시 200 상태 코드와 함께 성공 메시지 응답
-      res.status(200).json({ message: "운행상태 변경완료." });
-    })
-    .catch((err) => {
-      // 저장 실패 시 콘솔에 에러 로깅하고 500 상태 코드로 클라이언트에게 오류 메시지 응답
-      console.log("에러발생 변경못함", err);
-      res.status(500).json({ message: "에러발생 변경못함" });
-    });
-})
+  try {
+    const userId = req.body.userId;
+    console.log(req.body.driveState)
+    const updatedDriver = await Driver.findOneAndUpdate(
+      { _id: userId },
+      { $set: { driveState: req.body.driveState } }, // 부울 값 그대로 설정
+      { new: true }
+    );
+    console.log(updatedDriver)
+    if (!updatedDriver) {
+      return res.status(404).json({ message: "운전사를 찾을 수 없습니다." });
+    }
+
+    // 업데이트된 운전사 정보가 이미 반환됨
+    res.status(200).json({ message: "운행상태 변경 완료.", updatedDriver });
+  } catch (err) {
+    console.error("운행상태 변경 실패", err);
+    res.status(500).json({ message: "에러 발생 변경 못함" });
+  }
+});
+
+
+
 
 
 //기사 요청 받는 부분
@@ -1243,23 +1247,42 @@ io.on('connection', (socket) => {
   });
 
   // 탑승자의 요청을 운전사에게 전송
-  socket.on('passengerRequest', (request) => {
+  socket.on('passengerRequest', async (request) => {
     console.log('탑승자의 요청이 수신되었습니다.', request);
     const driverSocketId = clientSocketIdMap.get(request.driverId);
-
+    const driver = await Driver.findOne({ _id: request.driverId});
+    console.log(driver)
+  
     if (driverSocketId) {
-      // 해당 운전사에게 요청 전송
-      io.to(driverSocketId).emit('passengerRequestToDriver', request);
-      console.log(`요청을 운전사에게 전송했습니다. Driver ID: ${request.driverId}`);
+      // Mongoose 모델을 사용하여 운전사를 찾음
+      try {
+        if (driver) {
+          if (driver.driveState === false) {
+            // 운전사의 driveState가 false인 경우 요청 거절 또는 특정 처리
+            console.log(`해당 운전사는 운행중이 아닙니다. Driver ID: ${request.driverId}`);
+            // 여기에서 요청 거절 처리 또는 특정 처리를 수행할 수 있습니다.
+          } else {
+            // 해당 운전사에게 요청 전송
+            io.to(driverSocketId).emit('passengerRequestToDriver', request);
+            console.log(`요청을 운전사에게 전송했습니다. Driver ID: ${request.driverId}`);
+          }
+        } else {
+          console.log(`운전사를 찾을 수 없습니다. Driver ID: ${request.driverId}`);
+        }
+      } catch (err) {
+        console.error(`운전사 조회 중 오류 발생: ${err}`);
+      }
     } else {
       console.log(`운전사를 찾을 수 없습니다. Driver ID: ${request.driverId}`);
     }
   });
+  
 
   // 운전사의 응답을 탑승자에게 전송
   socket.on('acceptRejectRequest', (request) => {
     console.log('서버가 받은 운전사의 응답 :', request);
-
+    
+    console.log(request.requestId)
     // requestId를 사용하여 해당 탑승자의 소켓 ID를 가져옵니다.
     const passengerSocketId = clientSocketIdMap.get(request.requestId);
     if (passengerSocketId) {
