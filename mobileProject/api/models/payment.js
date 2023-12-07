@@ -15,7 +15,7 @@ const paymentSchema = new mongoose.Schema({
   // 누가 탑승했는지도 알아야지 ㅇㅇ
   driverId: {
     type: mongoose.Schema.Types.ObjectId, // 택시 기사를 참조하는 ID
-    ref: "driver",
+    ref: "Driver",
   },
   //  여기서 이름, 차량번호 가져오면 끝.
 
@@ -38,6 +38,10 @@ const paymentSchema = new mongoose.Schema({
     // 결제금액
     type: String,
     require: false,
+  },
+  payDate: {
+    type: Date, // 리뷰 작성 날짜
+    default: Date.now,
   },
 });
 

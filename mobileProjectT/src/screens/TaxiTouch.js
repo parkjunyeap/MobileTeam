@@ -58,7 +58,7 @@ const TaxiTouch = () => {
     return () => {
       socket.disconnect();
     }
-  }, [isDriving],[taxiRequests]); // 의존성 배열에 isDriving을 넣어 상태 변경을 감지합니다.
+  }, [isDriving], [taxiRequests]); // 의존성 배열에 isDriving을 넣어 상태 변경을 감지합니다.
 
   // 운행 스위치를 토글할 때 호출될 함수
   const toggleSwitch = async (newValue) => {
@@ -77,10 +77,43 @@ const TaxiTouch = () => {
     }
   };
 
-  const acceptRequest = (request) => {
-    console.log('택시 요청 수락',request);
-    sendResponseToPassenger(request.userId, 'accepted');
+  // 요청을 수락한 후 결제 내역 생성 및 저장
+  const acceptRequest = async (request) => {
+    console.log('택시 요청 수락', request);
+
+    try {
+      // 결제 내역을 생성
+      const payment = {
+        boarderId: request.userId, // 탑승자 ID
+        driverId: driverId, // 택시 기사 ID
+        startPoint: request.startPoint, // 출발지
+        endPoint: request.endPoint, // 목적지
+        pay: request.pay, // 결제 금액 설정
+        payDate:request.requestDate
+      };
+
+      axios
+      .post("http://10.20.60.238:8000/Payment", payment) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
+      .then((response) => {
+        // 요청이 성공적으로 처리될 때의 로직
+        console.log('등록 성공:', response.data);
+      })
+      .catch((error) => {
+        // 요청이 실패했을 때의 오류 처리
+        console.error('등록 오류:', error);
+      });
+
+      // 요청을 수락한 후, 화면에서 해당 요청을 제거합니다.
+      const updatedRequests = taxiRequests.filter((item) => item.id !== request.id);
+      setTaxiRequests(updatedRequests);
+
+      // 서버에 요청 수락을 보냅니다.
+      sendResponseToPassenger(request.userId, 'accepted');
+    } catch (error) {
+      console.error('요청 수락 오류:', error);
+    }
   };
+
 
   const rejectRequest = (request) => {
     console.log('택시 요청 거절');
@@ -91,7 +124,7 @@ const TaxiTouch = () => {
 
   const sendResponseToPassenger = (requestId, response) => {
     // 서버로 요청 ID와 응답 상태를 보냅니다.
-    console.log(requestId,response)
+    console.log(requestId, response)
     socket.emit('acceptRejectRequest', { requestId, status: response });
   };
 

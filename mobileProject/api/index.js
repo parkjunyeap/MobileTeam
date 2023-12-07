@@ -1205,6 +1205,7 @@ app.delete("/Review/del/:writeId", async (req, res) => {
   }
 });
 
+//택시운전사 상태 업데이트
 app.post("/UpDriveState", async (req, res) => {
   const userId = req.body.userId;
   const upDS = await Driver.findOneAndUpdate(
@@ -1226,6 +1227,32 @@ app.post("/UpDriveState", async (req, res) => {
     });
 })
 
+//택시 운전가 수락
+app.post("/Payment", async (req, res) => {
+  try {
+    // POST 요청에서 전달된 데이터 추출
+    const { boarderId, driverId, startPoint, endPoint, pay, payDate } = req.body;
+
+    // Payment 모델을 사용하여 새로운 결제 내역 생성
+    const payment = new Payment({
+      boarderId,
+      driverId,
+      startPoint,
+      endPoint,
+      pay,
+      payDate,
+    });
+
+    // 결제 내역을 MongoDB에 저장
+    await payment.save();
+
+    // 저장된 데이터를 클라이언트에 응답
+    res.status(201).json({ message: '결제 내역이 성공적으로 저장되었습니다.' });
+  } catch (error) {
+    console.error('결제 내역 저장 오류:', error);
+    res.status(500).json({ message: '결제 내역을 저장하는 중 오류가 발생했습니다.' });
+  }
+});
 //socket.io
 const portR = 8001
 // 연결된 클라이언트를 저장하기 위한 맵 (MongoDB ID와 Socket ID 매핑)
