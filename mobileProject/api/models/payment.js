@@ -15,7 +15,7 @@ const paymentSchema = new mongoose.Schema({
   // 누가 탑승했는지도 알아야지 ㅇㅇ
   driverId: {
     type: mongoose.Schema.Types.ObjectId, // 택시 기사를 참조하는 ID
-    ref: "driver",
+    ref: "Driver",
   },
   //  여기서 이름, 차량번호 가져오면 끝.
 
@@ -34,22 +34,14 @@ const paymentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-
-  //   carNumber: {
-  //     //차량번호   ---> 기사아이디로 대체가능  기사아이디에서 기사이름 참조 , 차량번호 참조
-  //     type: String,
-  //     required: false,
-  //   },
-  //   carName: {
-  //     // 기사이름 ....> 기사아이디로 대체가능  기사아이디에서 기사이름 참조 , 차량번호 참조
-  //     type: String,
-  //     require: false,
-  //   },
-
   pay: {
     // 결제금액
     type: String,
     require: false,
+  },
+  payDate: {
+    type: Date, // 리뷰 작성 날짜
+    default: Date.now,
   },
 });
 

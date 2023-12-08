@@ -13,6 +13,12 @@ app.use(bodyParser.urlencoded({ extended: false })); // URL 인코딩된 데이�
 app.use(bodyParser.json()); // JSON 데이터를 파싱하는 bodyParser 미들웨어를 사용하도록 설정합니다.
 app.use(passport.initialize()); // 앱에 passport 미들웨어를 초기화하여 사용하도록 설정합니다.
 const jwt = require("jsonwebtoken"); // jsonwebtoken 모듈을 가져옵니다. JWT(JSON Web Tokens)를 생성하고 검증하는 데 사용됩니다.
+
+const http = require('http')
+const socketIo = require('socket.io');
+const server = http.createServer(app);
+const io = socketIo(server);
+
 mongoose
   .connect("mongodb+srv://bab0234:bab0234@cluster0.gp66aaf.mongodb.net/", {
     useNewUrlParser: true,
@@ -36,6 +42,7 @@ const Driver = require("./models/driver"); // 드라이버가 왜 자꾸 누락�
 const Review = require("./models/review");
 const ReviewT = require("./models/reviewT"); // 택시기사 리뷰 db 따로뺏쥬
 const Payment = require("./models/payment");
+const Request = require("./models/requestT")
 const Booking = require("./models/booking");
 
 // 예약 저장 됨.. 근데 너무간단
@@ -722,8 +729,7 @@ app.post("/FindTaxiMateDetail", async (req, res) => {
       "infoSetting.favoriteEndPoint": favoriteEndPoint,
     });
 
-    //   // 지역별로 검색할 수 잇게 바꿈일단
-    // });
+    //지역별로 검색할 수 잇게 바꿈일단
     console.log("Searched by 도/시", userPC);
     console.log("Searched by 주 이용 위치", userSE);
     if ((!userPC || userPC.length === 0) && (!userSE || userSE.length === 0)) {
@@ -949,6 +955,54 @@ app.get("/driverList/payment/:userId", async (req, res) => {
     res.status(500).json({ message: "서버 오류 발생", error: error });
   }
 });
+
+app.post("/UpDriveState", async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    console.log(req.body.driveState)
+    const updatedDriver = await Driver.findOneAndUpdate(
+      { _id: userId },
+      { $set: { driveState: req.body.driveState } }, // 부울 값 그대로 설정
+      { new: true }
+    );
+    console.log(updatedDriver)
+    if (!updatedDriver) {
+      return res.status(404).json({ message: "운전사를 찾을 수 없습니다." });
+    }
+
+    // 업데이트된 운전사 정보가 이미 반환됨
+    res.status(200).json({ message: "운행상태 변경 완료.", updatedDriver });
+  } catch (err) {
+    console.error("운행상태 변경 실패", err);
+    res.status(500).json({ message: "에러 발생 변경 못함" });
+  }
+});
+
+
+
+
+
+//기사 요청 받는 부분
+app.get("/confirmRequest/:driverId", async (req, res) => {
+  try {
+    const driverId = req.params.driverId;
+
+    // 요청 ID를 사용하여 요청 정보를 조회
+    const request = await Request.findById({ driverId: driverId });
+
+    if (!request) {
+      return res.status(404).json({ message: "요청을 찾을 수 없습니다." });
+    }
+
+    // 여기에서 운전사의 확인 로직을 수행하고 필요한 응답을 반환
+
+    res.status(200).json({ request });
+  } catch (error) {
+    console.error("오류:", error.message);
+    res.status(500).json({ message: "서버 오류가 발생했습니다." });
+  }
+});
+
 
 // 부킹 드라이버
 app.get("/driverList/booking/:userId", async (req, res) => {
@@ -1180,4 +1234,184 @@ app.get("/taxiLocationFind", async (req, res) => {
     console.error("택시 위치 검색 오류:", error);
     res.status(500).json({ error: "서버 오류 발생" });
   }
+});
+
+/// ? 지도를 불러옴 택시유저의
+
+app.post("/taxiLocation", async (req, res) => {
+  // 택시 위치 켰을 때 업데이트
+
+  // 여기서 userId는 택시기사 id요
+  // 클라이언트로부터 userId, latitude, longitude를 받아서 처리
+
+  try {
+    const { userId, latitude, longitude } = req.body;
+
+    console.log("이게 왜 서버에 안불러와?", userId, latitude, longitude);
+
+    const driver = await Driver.findOneAndUpdate(
+      { _id: userId },
+      {
+        latitude: req.body.latitude,
+        longitude: req.body.longitude,
+      },
+      { new: true, upsert: true }
+    );
+
+    if (!driver) {
+      return res.status(404).json({ message: "드라이버를 찾을 수 없습니다." });
+    }
+
+    // 응답 보내기
+    res.status(200).json({ message: "위치 데이터 업데이트 완료" });
+  } catch (error) {
+    console.error("위치 업데이트 오류:", error);
+    res.status(500).json({ message: "위치 업데이트 중 오류 발생" });
+  }
+});
+
+app.get("/taxiLocationFind", async (req, res) => {
+  try {
+    // latitude와 longitude가 있는 드라이버 찾기
+    const driversWithLocation = await Driver.find({
+      latitude: { $exists: true, $ne: null }, // 존재하고 null 이 아니냐
+      longitude: { $exists: true, $ne: null }, //
+    });
+
+    console.log("주소가 존재하는 택시드라이버 ", driversWithLocation);
+
+    // 찾은 드라이버들을 JSON 형태로 응답
+    res.status(200).json(driversWithLocation);
+  } catch (error) {
+    console.error("택시 위치 검색 오류:", error);
+    res.status(500).json({ error: "서버 오류 발생" });
+  }
+});
+
+//택시운전사 상태 업데이트
+app.post("/UpDriveState", async (req, res) => {
+  const userId = req.body.userId;
+  const upDS = await Driver.findOneAndUpdate(
+    { _id: userId },
+    { $set: { driverState: req.body.driverState } },
+    { new: true }
+  );
+  // 데이터베이스에 새로운 사용자 저장 시도
+  upDS
+    .save()
+    .then(() => {
+      // 저장 성공 시 200 상태 코드와 함께 성공 메시지 응답
+      res.status(200).json({ message: "운행상태 변경완료." });
+    })
+    .catch((err) => {
+      // 저장 실패 시 콘솔에 에러 로깅하고 500 상태 코드로 클라이언트에게 오류 메시지 응답
+      console.log("에러발생 변경못함", err);
+      res.status(500).json({ message: "에러발생 변경못함" });
+    });
+})
+
+//택시 운전가 수락
+app.post("/Payment", async (req, res) => {
+  try {
+    // POST 요청에서 전달된 데이터 추출
+    const { boarderId, driverId, startPoint, endPoint, pay, payDate } = req.body;
+
+    // Payment 모델을 사용하여 새로운 결제 내역 생성
+    const payment = new Payment({
+      boarderId,
+      driverId,
+      startPoint,
+      endPoint,
+      pay,
+      payDate,
+    });
+
+    // 결제 내역을 MongoDB에 저장
+    await payment.save();
+
+    // 저장된 데이터를 클라이언트에 응답
+    res.status(201).json({ message: '결제 내역이 성공적으로 저장되었습니다.' });
+  } catch (error) {
+    console.error('결제 내역 저장 오류:', error);
+    res.status(500).json({ message: '결제 내역을 저장하는 중 오류가 발생했습니다.' });
+  }
+});
+//socket.io
+const portR = 8001
+// 연결된 클라이언트를 저장하기 위한 맵 (MongoDB ID와 Socket ID 매핑)
+const clientSocketIdMap = new Map();
+
+server.listen(portR, () => {
+  console.log(`io 서버 실행 중, 포트 ${portR}`);
+});
+io.on('connection', (socket) => {
+  socket.on('passengerConnect', (passengerId) => {
+    console.log(`탑승자가 연결되었습니다. Passenger ID: ${passengerId}`);
+    clientSocketIdMap.set(passengerId, socket.id);
+  });
+
+  // 운전사 연결 이벤트
+  socket.on('driverConnect', (driverId) => {
+    console.log(`운전사가 연결되었습니다. Driver ID: ${driverId}`);
+    clientSocketIdMap.set(driverId, socket.id);
+  });
+
+  // 탑승자의 요청을 운전사에게 전송
+  socket.on('passengerRequest', async (request) => {
+    console.log('탑승자의 요청이 수신되었습니다.', request);
+    const driverSocketId = clientSocketIdMap.get(request.driverId);
+    const driver = await Driver.findOne({ _id: request.driverId});
+    console.log(driver)
+  
+    if (driverSocketId) {
+      // Mongoose 모델을 사용하여 운전사를 찾음
+      try {
+        if (driver) {
+          if (driver.driveState === false) {
+            // 운전사의 driveState가 false인 경우 요청 거절 또는 특정 처리
+            console.log(`해당 운전사는 운행중이 아닙니다. Driver ID: ${request.driverId}`);
+            // 여기에서 요청 거절 처리 또는 특정 처리를 수행할 수 있습니다.
+          } else {
+            // 해당 운전사에게 요청 전송
+            io.to(driverSocketId).emit('passengerRequestToDriver', request);
+            console.log(`요청을 운전사에게 전송했습니다. Driver ID: ${request.driverId}`);
+          }
+        } else {
+          console.log(`운전사를 찾을 수 없습니다. Driver ID: ${request.driverId}`);
+        }
+      } catch (err) {
+        console.error(`운전사 조회 중 오류 발생: ${err}`);
+      }
+    } else {
+      console.log(`운전사를 찾을 수 없습니다. Driver ID: ${request.driverId}`);
+    }
+  });
+  
+
+  // 운전사의 응답을 탑승자에게 전송
+  socket.on('acceptRejectRequest', (request) => {
+    console.log('서버가 받은 운전사의 응답 :', request);
+    
+    console.log(request.requestId)
+    // requestId를 사용하여 해당 탑승자의 소켓 ID를 가져옵니다.
+    const passengerSocketId = clientSocketIdMap.get(request.requestId);
+    if (passengerSocketId) {
+      // 해당 탑승자에게 운전사의 응답 전송
+      io.to(passengerSocketId).emit('acceptRejectRequestToPassenger', request);
+      console.log(`운전사의 응답을 탑승자에게 전송했습니다. Request ID: ${request.requestId}`);
+    } else {
+      console.log(`탑승자를 찾을 수 없습니다. Request ID: ${request.requestId}`);
+    }
+  });
+
+  // 연결 해제 시 매핑 정보 제거
+  socket.on('disconnect', () => {
+    for (const [id, socketId] of clientSocketIdMap.entries()) {
+      if (socketId === socket.id) {
+        clientSocketIdMap.delete(id);
+        console.log(`클라이언트가 연결을 해제했습니다. ID: ${id}`);
+        break;
+      }
+    }
+  });
 });

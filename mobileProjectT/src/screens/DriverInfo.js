@@ -17,10 +17,11 @@ import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
 import locationData from "../locationData";
 
-const DriverInfo = ({ route }) => {
-  // route.params에서 정보를 추출합니다.
-  // MyInfoStackNavigator를 통해 전달된 params가 있는지 확인합니다.
-  const info = route.params || {};
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "../firebaseConfig";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+const DriverInfo = () => {
   const { userId, setUserId } = useContext(UserType);
   // 각 정보가 제공되지 않았을 경우를 대비해 기본값을 설정합니다.
   const [email, setEmail] = useState("");
@@ -38,6 +39,12 @@ const DriverInfo = ({ route }) => {
   const [selectedCity, setSelectedCity] = useState(
     locationData[Object.keys(locationData)[0]][0]
   );
+
+  // Firebase 앱 초기화
+  const app = initializeApp(firebaseConfig);
+
+  // Firebase Storage 인스턴스 얻기
+  const storage = getStorage(app);
 
   useEffect(() => {
     const getMyTaxiInfo = async () => {
@@ -72,15 +79,30 @@ const DriverInfo = ({ route }) => {
   }, []);
 
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      if (!result.canceled) {
+        const asset = result.assets[0];
+        const imageName = asset.uri.substring(asset.uri.lastIndexOf("/") + 1);
+
+        const response = await fetch(asset.uri);
+        const blob = await response.blob();
+
+        //const storage = getStorage(); // Firebase Storage 인스턴스를 얻어옵니다.
+        const storageRef = ref(storage, `rn-photo/${imageName}`); // storageRef 생성
+        await uploadBytes(storageRef, blob); // 파일 업로드
+
+        const downloadURL = await getDownloadURL(storageRef); // 업로드한 파일의 다운로드 URL 얻기
+        setImage(downloadURL);
+      }
+    } catch (error) {
+      console.error("오류 발생:", error);
     }
   };
 

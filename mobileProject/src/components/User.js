@@ -1,7 +1,15 @@
 // 유저 친구요청 , 요청보냄, 친구 , 그리고 리뷰남기기, 리뷰보기 등 하나의 컴포넌트에서 다 할 수 있음요.
 
 import React, { useState, useContext, useEffect } from "react";
-import { StyleSheet, Text, View, Image, Pressable, Modal } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Pressable,
+  Modal,
+  Alert,
+} from "react-native";
 import { UserType } from "../UserContext";
 import { useNavigation } from "@react-navigation/native";
 
@@ -179,7 +187,6 @@ const User = ({ item }) => {
                   styles.button,
                   styles.buttonClose,
                   { marginRight: 10, marginTop: 10 },
-                  !userFriends.includes(item._id) && styles.buttonDisabled, // 친구가 아닐 때 스타일 추가
                 ]}
                 onPress={() => {
                   if (userFriends.includes(item._id)) {
@@ -187,9 +194,14 @@ const User = ({ item }) => {
                       selectedUserId: item._id,
                       selectedUserName: item.name,
                     });
+                  } else {
+                    // Alert으로 "친구가 아닙니다" 메시지 표시
+                    Alert.alert(
+                      "친구가 아닙니다",
+                      "리뷰를 남기려면 친구가 되어야 합니다."
+                    );
                   }
                 }}
-                disabled={!userFriends.includes(item._id)} // 친구가 아닐 때 버튼 비활성화
               >
                 <Text style={styles.textStyle}>리뷰 남기기</Text>
               </Pressable>
