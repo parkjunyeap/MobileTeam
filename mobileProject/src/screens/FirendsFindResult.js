@@ -33,7 +33,7 @@ const FirendsFindResult = () => {
     <View>
       <ScrollView>
         <View style={{ padding: 15 }}>
-          {userPCs && userSEs ? (
+          {userPCs || userSEs ? (
             [...new Set([...userPCs, ...userSEs])].length > 0 ? (
               [...new Set([...userPCs, ...userSEs])].map((item, index) => <User key={index} item={item} />)
             ) : (

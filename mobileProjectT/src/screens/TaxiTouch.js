@@ -10,7 +10,7 @@ const TaxiTouch = () => {
   const { userId, setUserId } = useContext(UserType);
   const [isDriving, setIsDriving] = useState(false);//일단 socket.io하기 전에 일단true
   const driverId = userId;
-  const socket = io("http://localhost:8001");
+  const socket = io("http://192.168.219.104:8001");
 
   const [taxiRequests, setTaxiRequests] = useState([]);
 
@@ -59,7 +59,7 @@ const TaxiTouch = () => {
       console.log(newDriveState)
       // 서버에 운전 상태 업데이트를 요청하고, 요청이 성공하면 클라이언트 상태 업데이트
       await axios
-        .post("http://localhost:8000/UpDriveState", newDriveState)
+        .post("http://192.168.219.104:8000/UpDriveState", newDriveState)
     } catch (error) {
       console.error('운전 상태 업데이트 오류:', error);
     }
@@ -81,7 +81,7 @@ const TaxiTouch = () => {
       };
 
       axios
-      .post("http://localhost:8000/Payment", payment) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
+      .post("http://192.168.219.104:8000/Payment", payment) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
       .then((response) => {
         // 요청이 성공적으로 처리될 때의 로직
         console.log('등록 성공:', response.data);
