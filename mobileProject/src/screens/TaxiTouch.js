@@ -74,7 +74,7 @@ export default function GoogleMapsScreen() {
   function taxiDriversMarker() {
     // 드라이버 위치정보 모두 갖고와서 locations 배열에 담아주기.
     axios
-      .get("http://10.20.64.131:8000/taxiLocationFind/") // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
+      .get("http://172.30.1.76:8000/taxiLocationFind/") // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
       .then((response) => {
         console.log("현재 갖고온 택시기사들 정보:", response.data); // 전부 찍힘.
 

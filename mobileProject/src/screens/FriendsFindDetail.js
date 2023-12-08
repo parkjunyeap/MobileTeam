@@ -114,7 +114,7 @@ const FriendsFindDetail = () => {
 
     console.log("서버로 보낼 상세 설정부분 :", findTaxiInfo);
     axios
-      .post("http://10.20.64.131:8000/FindTaxiMateDetail", findTaxiInfo)
+      .post("http://172.30.1.76:8000/FindTaxiMateDetail", findTaxiInfo)
       .then(function (response) {
         //console.log(response);
         const userPCs = response.data.userPC;

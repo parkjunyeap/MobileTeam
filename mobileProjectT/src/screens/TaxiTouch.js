@@ -83,7 +83,7 @@ const TaxiTouch = () => {
         console.log("드라이버 로케이션", driverLocation);
 
         axios
-          .post("http://10.20.64.131:8000/taxiLocation", driverLocation) //
+          .post("http://172.30.1.76:8000/taxiLocation", driverLocation) //
           .then((response) => {
             console.log("리스폰 ", response);
           })
