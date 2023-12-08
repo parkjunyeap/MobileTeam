@@ -99,7 +99,7 @@ export default TaxiTouch = () => {
 
   console.log(userId);
   const passengerId = userId;
-  const socket = io("http://10.20.64.91:8001");
+  const socket = io("http://192.168.0.14:8001");
 
   // 아이템 선택 및 모달 표시 함수
   const handleSelectItem = (item) => {
@@ -167,7 +167,7 @@ export default TaxiTouch = () => {
     try {
       // axios.get 호출을 await으로 기다립니다
       const response = await axios.get(
-        "http://10.20.64.91:8000/taxiLocationFind/"
+        "http://192.168.0.14:8000/taxiLocationFind/"
       );
 
       console.log("현재 갖고온 택시기사들 정보:", response.data);
@@ -407,6 +407,7 @@ export default TaxiTouch = () => {
               const { lat, lng } = details.geometry.location;
               setOrigin({ latitude: lat, longitude: lng });
               // moveToLocation(lat, lng);
+
               mapRef.current.animateToRegion(
                 {
                   latitude: lat,
@@ -417,7 +418,9 @@ export default TaxiTouch = () => {
                 2000
               );
             }
-            // setStartPoint(data.description);   // 이거해주면 시작점으로 감
+
+            setStartPoint(data.description);
+            // 이거해주면 시작점으로 감
           }}
           query={{
             key: GOOGLE_MAPS_API_KEY,
@@ -664,16 +667,6 @@ const styles = StyleSheet.create({
     borderRadius: 5, // slight roundness to the corners
     overflow: "hidden", // ensures the borderRadius is respected
   },
-
-  // showsUserLocation: {
-  //   top: 10,
-  // },
-
-  // showsUserLocationButton: {
-  //   position: "absolute", // 화면에 고정
-  //   right: 10, // 오른쪽에서 10의 간격을 둠
-  //   bottom: 10, // 하단에서 10의 간격을 둠
-  // },
 
   centeredView: {
     flex: 1,
