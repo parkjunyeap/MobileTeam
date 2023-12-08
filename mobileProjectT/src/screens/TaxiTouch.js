@@ -5,18 +5,23 @@ import {
   View,
   Switch,
   TouchableOpacity,
+  ScrollView,
   Alert,
 } from "react-native";
+import * as Location from "expo-location";
 import { UserType } from "../UserContext";
 import jwt_decode from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import * as Location from "expo-location";
+import io from "socket.io-client";
 
 const TaxiTouch = () => {
   const { userId, setUserId } = useContext(UserType);
-  const [isDriving, setIsDriving] = useState(false);
-  const [taxiRequest, setTaxiRequest] = useState(null);
+  const [isDriving, setIsDriving] = useState(false); //일단 socket.io하기 전에 일단true
+  const driverId = userId;
+  const socket = io("http://10.20.64.91:8001");
+
+  const [taxiRequests, setTaxiRequests] = useState([]); // 택시 요청 배열
 
   const [latitude, setLatitude] = useState(null); // 서버 디비에 보낼 위도
   const [longitude, setLongitude] = useState(null); // 경도
@@ -24,49 +29,44 @@ const TaxiTouch = () => {
   const [location, setLocation] = useState(null); // 현재 지역  불러옴
   const [errorMsg, setErrorMsg] = useState(null); // 에러메시지 출력
 
-  useEffect(() => {}, []); // useEffect의 두 번째 매개변수는 빈 배열로 유지합니다.
+  const fetchUsers = async () => {
+    const token = await AsyncStorage.getItem("authToken");
+    const decodedToken = jwt_decode(token);
+    const userId = decodedToken.userId;
+    console.log("UserId:", userId);
+    setUserId(userId);
+  };
 
-  //
-
-  // 위치 경도
-
-  let text = "Waiting..";
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
-
-  console.log(text);
   // 운행 스위치 상태가 바뀔 때마다 실행되는 useEffect
-  useEffect(() => {
-    const fetchUsers = async () => {
-      // console.log("함수가 잘임폴트됐는지", MaterialIcons);
-      // console.log("jwtDecode 이거임폴트가안되네", jwt_decode);
-      // // 잘되는지
-      // console.log(AsyncStorage, "그냥함수자체가 import 잘됐는지?");
+  useEffect(
+    () => {
+      fetchUsers();
 
-      const token = await AsyncStorage.getItem("authToken");
-      // console.log("홈에선 토큰이있는데 Token:", token);
-      // console.log("decoded 토큰 접근");
-      const decodedToken = jwt_decode(token);
-      // console.log(
-      //   "여기에서 디코드 토큰이 만들어졌어야하는건데 안됐으면 jwt_decode가 안돌아가는거네"
-      // );
-      //console.log("Decoded Token:", decodedToken);
-      const userId = decodedToken.userId;
-      console.log("UserId:", userId);
-      setUserId(userId);
+      socket.connect();
+      socket.emit("driverConnect", driverId);
+
+      //요청 받음
+      socket.on("passengerRequestToDriver", (requestD) => {
+        console.log("택시 요청이 도착했습니다.", requestD);
+        setTaxiRequests((prevTaxiRequests) => [...prevTaxiRequests, requestD]);
+        console.log(taxiRequests);
+      });
+      // 탑승자로부터의 요청을 처리하는 예시
+      socket.on("passengerRequest", (request) => {
+        console.log("탑승자로부터 요청을 받았습니다.", request);
+
+        // 요청을 처리하고 응답을 보내는 코드 작성
+      });
 
       (async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
+        let { status } = await Location.requestForegroundPermissionsAsync(); // 위치 정보 불러오기 동의하냐??
         if (status !== "granted") {
           setErrorMsg("Permission to access location was denied");
           return;
         }
 
-        let location = await Location.getCurrentPositionAsync({});
-        setLocation(location);
+        let location = await Location.getCurrentPositionAsync({}); // 현재 위치 받아오기
+        setLocation(location); //
 
         setLatitude(location.coords.latitude);
         setLongitude(location.coords.longitude);
@@ -83,7 +83,7 @@ const TaxiTouch = () => {
         console.log("드라이버 로케이션", driverLocation);
 
         axios
-          .post("http://10.20.64.131:8000/taxiLocation", driverLocation) //
+          .post("http://10.20.64.91:8000/taxiLocation", driverLocation) //
           .then((response) => {
             console.log("리스폰 ", response);
           })
@@ -91,32 +91,83 @@ const TaxiTouch = () => {
             console.log("서버에 위치정보 오류", error);
           });
       })();
-    };
-    if (isDriving) {
-      // 백엔드에서 데이터를 가져오는 것으로 가정
-      setTaxiRequest({
-        distance: "6.5KM",
-        duration: "11분",
-        pickup: "백화점",
-        dropoff: "시민공원",
-      });
-    } else {
-      setTaxiRequest(null);
-    }
-    fetchUsers();
-  }, [isDriving]); // 의존성 배열에 isDriving을 넣어 상태 변경을 감지합니다.
+
+      return () => {
+        socket.disconnect();
+      };
+    },
+    [isDriving],
+    [taxiRequests]
+  ); // 의존성 배열에 isDriving을 넣어 상태 변경을 감지합니다.
 
   // 운행 스위치를 토글할 때 호출될 함수
-  const toggleSwitch = () => {
-    setIsDriving((previousState) => !previousState);
+  const toggleSwitch = async (newValue) => {
+    try {
+      setIsDriving(newValue); // 클라이언트 상태 업데이트
+      const newDriveState = {
+        userId: userId,
+        driveState: newValue,
+      };
+      console.log(newDriveState);
+      // 서버에 운전 상태 업데이트를 요청하고, 요청이 성공하면 클라이언트 상태 업데이트
+      await axios.post("http://10.20.64.91:8000/UpDriveState", newDriveState);
+    } catch (error) {
+      console.error("운전 상태 업데이트 오류:", error);
+    }
   };
 
-  const acceptRequest = () => {
-    console.log("택시 요청 수락");
+  // 요청을 수락한 후 결제 내역 생성 및 저장
+  const acceptRequest = async (request) => {
+    console.log("택시 요청 수락", request);
+
+    try {
+      // 결제 내역을 생성
+      const payment = {
+        boarderId: request.userId, // 탑승자 ID
+        driverId: driverId, // 택시 기사 ID
+        startPoint: request.startPoint, // 출발지
+        endPoint: request.endPoint, // 목적지
+        pay: request.pay, // 결제 금액 설정
+        payDate: request.requestDate,
+      };
+
+      axios
+        .post("http://10.20.64.91:8000/Payment", payment) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
+        .then((response) => {
+          // 요청이 성공적으로 처리될 때의 로직
+          console.log("등록 성공:", response.data);
+        })
+        .catch((error) => {
+          // 요청이 실패했을 때의 오류 처리
+          console.error("등록 오류:", error);
+        });
+
+      // 요청을 수락한 후, 화면에서 해당 요청을 제거합니다.
+      const updatedRequests = taxiRequests.filter(
+        (item) => item.id !== request.id
+      );
+      setTaxiRequests(updatedRequests);
+
+      // 서버에 요청 수락을 보냅니다.
+      sendResponseToPassenger(request.userId, "accepted");
+    } catch (error) {
+      console.error("요청 수락 오류:", error);
+    }
   };
 
-  const rejectRequest = () => {
+  const rejectRequest = (request) => {
     console.log("택시 요청 거절");
+    const updatedRequests = taxiRequests.filter(
+      (item) => item.id !== request.id
+    );
+    setTaxiRequests(updatedRequests);
+    sendResponseToPassenger(request.userId, "rejected");
+  };
+
+  const sendResponseToPassenger = (requestId, response) => {
+    // 서버로 요청 ID와 응답 상태를 보냅니다.
+    console.log(requestId, response);
+    socket.emit("acceptRejectRequest", { requestId, status: response });
   };
 
   return (
@@ -126,7 +177,7 @@ const TaxiTouch = () => {
 
       {/* 택시 운행중 스위치와 레이블 */}
       <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>택시 운행중</Text>
+        <Text style={styles.switchLabel}>택시 Call Off</Text>
         <Switch
           trackColor={{ false: "#767577", true: "#81b0ff" }}
           thumbColor={isDriving ? "#f5dd4b" : "#f4f3f4"}
@@ -134,33 +185,36 @@ const TaxiTouch = () => {
           onValueChange={toggleSwitch}
           value={isDriving}
         />
+        <Text style={styles.switchLabel}> On</Text>
       </View>
-
-      {/* 택시 요청 정보 카드 */}
-      {isDriving && taxiRequest && (
-        <View style={styles.infoCard}>
-          <Text
-            style={styles.distance}
-          >{`${taxiRequest.distance} ${taxiRequest.duration}`}</Text>
-          <Text
-            style={styles.route}
-          >{`${taxiRequest.pickup}  ${taxiRequest.dropoff}`}</Text>
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity
-              style={[styles.button, styles.acceptButton]}
-              onPress={acceptRequest}
-            >
-              <Text style={styles.buttonText}>수락</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.button, styles.rejectButton]}
-              onPress={rejectRequest}
-            >
-              <Text style={styles.buttonText}>거절</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
+      <ScrollView style={{ width: "90%" }}>
+        {/* 택시 요청 정보 카드 */}
+        {isDriving &&
+          taxiRequests.map((request) => (
+            <View key={request.id} style={styles.infoCard}>
+              <Text style={styles.distance}>
+                탑승자와의 거리 : {`${request.distance}`} Km
+              </Text>
+              <Text style={styles.route}>{`${request.startPoint}`}</Text>
+              <Text style={styles.route}> ↓ </Text>
+              <Text style={styles.route}>{`${request.endPoint}`}</Text>
+              <View style={styles.buttonsContainer}>
+                <TouchableOpacity
+                  style={[styles.button, styles.acceptButton]}
+                  onPress={() => acceptRequest(request)}
+                >
+                  <Text style={styles.buttonText}>수락</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, styles.rejectButton]}
+                  onPress={() => rejectRequest(request)}
+                >
+                  <Text style={styles.buttonText}>거절</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))}
+      </ScrollView>
     </View>
   );
 };
@@ -190,7 +244,6 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   infoCard: {
-    width: "90%", // 카드 너비
     backgroundColor: "#fff",
     borderRadius: 10,
     padding: 20,
@@ -231,6 +284,19 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 14,
+    color: "#fff",
+    textAlign: "center",
+  },
+  // 새로고침 버튼 스타일
+  refreshButton: {
+    backgroundColor: "#007bff",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginTop: 20, // 버튼과 스위치 사이 간격 조절
+  },
+  refreshButtonText: {
+    fontSize: 16,
     color: "#fff",
     textAlign: "center",
   },
