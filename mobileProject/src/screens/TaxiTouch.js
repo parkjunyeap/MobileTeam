@@ -1,69 +1,9 @@
-import { StyleSheet, Text, View, TouchableOpacity,Alert } from "react-native";
-import { UserType } from "../UserContext";
-import { useContext, useEffect } from "react";
-import io from 'socket.io-client';
+import io from "socket.io-client";
 
-// import { MapView } from "react-native-maps";
-const TaxiTouch = () => {
-  const { userId, setUserId } = useContext(UserType);
-  console.log(userId)
-  const passengerId = userId
-  const socket = io("http://localhost:8001");
-
-  useEffect(() => {
-    // 컴포넌트가 마운트될 때 Socket.io 서버에 연결합니다.
-    socket.connect();
-    // 탑승자 연결 이벤트를 서버로 전송
-    socket.emit('passengerConnect', passengerId)
-    // 탑승자가 서버로부터 메시지를 받을 때
-
-    socket.on('acceptRejectRequestToPassenger', (message) => {
-      console.log('운전사의 응답을 받았습니다.', message);
-      const { requestId, status } = message;
-  
-      if (status === 'accepted') {
-        Alert.alert('요청 수락', '운전사가 요청을 수락했습니다.');
-        console.log('운전사가 요청을 수락했습니다.')
-      } else if (status === 'rejected') {
-        Alert.alert('요청 거절', '운전사가 요청을 거절했습니다.');
-        console.log('운전사가 요청을 거절했습니다.')
-      }
-    });
-    // 컴포넌트가 언마운트될 때 연결을 해제합니다.
-    return () => {
-      socket.disconnect();
-    }
-  }, []);
-
-  const requestD = {
-    userId: userId,
-    driverId: "656b0d69cadb44c3b89e1e7e",
-    startPoint: "천안아산역",
-    endPoint: "선문대학교",
-    requestDate: new Date(),
-    pay: "10000",
-    distance: "0.5"
-  }
-  //서버로 전달
-  const requestDtoS = () => {
-    console.log("임시 데이터 확인 :", requestD)
-    socket.emit('passengerRequest', requestD);
-  }
-
-  return (
-    <View style={styles.container}>
-      {/* <MapView style={styles.maps} /> */}
-      <Text> 택시맵 </Text>
-      <TouchableOpacity
-        onPress={requestDtoS}
-      >
-        <Text>요청</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
 import React, { useState, useEffect, useRef, useContext } from "react";
 import {
+  TouchableOpacity,
+  Alert,
   View,
   Image,
   Text,
@@ -71,12 +11,14 @@ import {
   SafeAreaView,
   Button,
   Modal,
+  Pressable,
 } from "react-native";
 import MapView, { Callout, PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_MAPS_API_KEY } from "../config/constants";
 import MapViewDirections from "react-native-maps-directions";
 import axios from "axios";
+import { useNavigation } from "@react-navigation/native";
 
 import Driver from "../components/Driver";
 
@@ -91,40 +33,54 @@ import * as Location from "expo-location";
 
 import { UserType } from "../UserContext";
 
-// 함수 선언 부
-async function requestLocationPermission() {
-  if (Platform.OS === "ios") {
-    const res = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-    return res === RESULTS.GRANTED;
-  } else {
-    const res = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-    return res === RESULTS.GRANTED;
+// import { MapView } from "react-native-maps";
+export default TaxiTouch = () => {
+  const navigation = useNavigation(); // 네비게이션 쓰겠다;;
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      // 필요한 로직 추가
+      setIsModalVisible(false); // 모달 상태를 비활성화
+    });
+
+    // 화면을 떠날 때 모달 꺼지게.
+    return unsubscribe;
+  }, [navigation]);
+
+  // 함수 선언 부
+  async function requestLocationPermission() {
+    if (Platform.OS === "ios") {
+      const res = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+      return res === RESULTS.GRANTED;
+    } else {
+      const res = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+      return res === RESULTS.GRANTED;
+    }
   }
-}
 
-// 자기 위치 받아와서
-function getLocation() {
-  Geolocation.getCurrentPosition(
-    (position) => {
-      const { latitude, longitude } = position.coords;
-      // 여기서 MapView의 region 또는 initialRegion 설정
+  // 자기 위치 받아와서
+  function getLocation() {
+    Geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        // 여기서 MapView의 region 또는 initialRegion 설정
 
-      setFirstLatitude(latitude);
-      setFirstLongitude(longitude);
+        setFirstLatitude(latitude);
+        setFirstLongitude(longitude);
 
-      // 처음 내 위치 설정
-    },
-    (error) => {
-      console.error(error);
-    },
-    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-  );
-}
-
-export default function GoogleMapsScreen() {
+        // 처음 내 위치 설정
+      },
+      (error) => {
+        console.error(error);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    );
+  }
   const [drivers, setDrivers] = useState([]);
   // 택시 드라이버 배열
   //
+
+  // 모달이 보이냐
 
   const [selectedDriver, setSelectedDriver] = useState(null); // 선택한 드라이버
   const [isModalVisible, setIsModalVisible] = useState(false); // 모달창 뜨는지 안뜨는지? 설정
@@ -147,6 +103,61 @@ export default function GoogleMapsScreen() {
 
   const [taxiLocations, setTaxiLocations] = useState([]); // 택시 기사들의 위치를 받아와서 여기에 적재
 
+  console.log(userId);
+  const passengerId = userId;
+  const socket = io("http://10.20.64.91:8001");
+
+  // 아이템 선택 및 모달 표시 함수
+  const handleSelectItem = (item) => {
+    setSelectedItem(item);
+    setModalVisible(true);
+  };
+
+  // 모달을 닫는 함수
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+
+  useEffect(() => {
+    // 컴포넌트가 마운트될 때 Socket.io 서버에 연결합니다.
+    socket.connect();
+    // 탑승자 연결 이벤트를 서버로 전송
+    socket.emit("passengerConnect", passengerId);
+    // 탑승자가 서버로부터 메시지를 받을 때
+
+    socket.on("acceptRejectRequestToPassenger", (message) => {
+      console.log("운전사의 응답을 받았습니다.", message);
+      const { requestId, status } = message;
+
+      if (status === "accepted") {
+        Alert.alert("요청 수락", "운전사가 요청을 수락했습니다.");
+        console.log("운전사가 요청을 수락했습니다.");
+      } else if (status === "rejected") {
+        Alert.alert("요청 거절", "운전사가 요청을 거절했습니다.");
+        console.log("운전사가 요청을 거절했습니다.");
+      }
+    });
+    // 컴포넌트가 언마운트될 때 연결을 해제합니다.
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  const requestD = {
+    userId: userId,
+    driverId: "656b0d69cadb44c3b89e1e7e",
+    startPoint: "천안아산역",
+    endPoint: "선문대학교",
+    requestDate: new Date(), // 날짜 더미데이터??
+    pay: "10000",
+    distance: "0.5",
+  };
+  //서버로 전달
+  const requestDtoS = () => {
+    console.log("임시 데이터 확인 :", requestD);
+    socket.emit("passengerRequest", requestD);
+  };
+
   // 택시 위치 정보들 갖고오는 함수요
   // 그냥 setDrivers 로 다 넣을겁니다.
 
@@ -154,7 +165,7 @@ export default function GoogleMapsScreen() {
     try {
       // axios.get 호출을 await으로 기다립니다
       const response = await axios.get(
-        "http://localhost:8000/taxiLocationFind/"
+        "http://10.20.64.91:8000/taxiLocationFind/"
       );
 
       console.log("현재 갖고온 택시기사들 정보:", response.data);
@@ -271,6 +282,7 @@ export default function GoogleMapsScreen() {
     setIsModalVisible(true);
   };
 
+  // requestDtos // 이거 서버로 정보넘기는거
   return (
     <SafeAreaView style={styles.container}>
       <MapView
@@ -405,19 +417,188 @@ export default function GoogleMapsScreen() {
       </View>
 
       {/* 모달 컴포넌트 */}
+
+      {/* 모달 창 띄울거를 갖고 와야될것 같음  */}
       {selectedDriver && (
+        // <Modal
+        //   animationType="slide" // 슬라이드로나옴
+        //   transparent={true} //
+        //   visible={isModalVisible}
+        //   onRequestClose={() => setIsModalVisible(false)}
+        // >
+        //   <Driver item={selectedDriver} />
+        // </Modal>
+
         <Modal
-          animationType="slide" // 슬라이드로나옴
-          transparent={true} //
+          animationType="slide"
+          transparent={true}
           visible={isModalVisible}
-          onRequestClose={() => setIsModalVisible(false)}
+          onRequestClose={() => {
+            setIsModalVisible(false);
+          }}
         >
-          <Driver item={selectedDriver} />
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <View style={{ flexDirection: "row" }}>
+                <Image
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 10,
+                    resizeMode: "cover",
+                  }}
+                  source={{ uri: selectedDriver?.image }}
+                  // ㅇ처음엔 사진
+                />
+              </View>
+              <Text style={styles.modalText}> {selectedDriver.name}</Text>
+
+              <Text> 이메일 : {selectedDriver.email}</Text>
+
+              <Text>
+                운행하시는 동네 :
+                {selectedDriver.province === undefined &&
+                selectedDriver.city === undefined
+                  ? "입력안함"
+                  : selectedDriver.province + " " + selectedDriver.city}
+              </Text>
+
+              <Text>
+                차량 번호 :
+                {selectedDriver.carNumber === undefined
+                  ? "입력안함"
+                  : selectedDriver.carNumber}
+              </Text>
+
+              <Text>
+                차종 :
+                {selectedDriver.carName === undefined
+                  ? "입력안함"
+                  : selectedDriver.carName}
+              </Text>
+              <Text>
+                자격증명넘버 :
+                {selectedDriver.licenseNumber === undefined
+                  ? "입력안함"
+                  : selectedDriver.licenseNumber}
+              </Text>
+              <Text>
+                자격증 습득 날짜 :
+                {selectedDriver.getDate === undefined
+                  ? "입력안함"
+                  : selectedDriver.getDate}
+              </Text>
+
+              <Text>
+                운행 상태 :
+                {selectedDriver.driveState === true ? "운행중" : "쉬는중"}
+              </Text>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Pressable
+                  style={[
+                    styles.button,
+                    styles.buttonClose,
+                    { marginRight: 10, marginTop: 10 },
+                    // !userFriends.includes(item._id) && styles.buttonDisabled, // 친구가 아닐 때 스타일 추가
+                  ]}
+                  onPress={() => {
+                    navigation.navigate("writeReview", {
+                      selectedDriverId: selectedDriver._id, // 사실 드라이버 아이디 ,
+                      selectedDriverName: selectedDriver.name, //사실 드라이버 이름
+                    });
+                  }}
+                >
+                  <Text style={styles.textStyle}>리뷰 남기기</Text>
+                  {/* 리뷰 남기기는 되는것같은데??? */}
+                </Pressable>
+
+                {/*  여기 서부터하자 */}
+
+                <Pressable
+                  style={[
+                    styles.button,
+                    styles.buttonClose,
+                    { marginRight: 10, marginTop: 10 },
+                  ]}
+                  onPress={() =>
+                    navigation.navigate("ViewFriendReview", {
+                      // 뷰 프렌드 리뷰로 감 일단 //
+                      selectedDriverId: selectedDriver._id, // 이렇게하면 지금 selectedUserId 도 보내줄 // 사실 드라이버 아이디 ,
+                      selectedDriverName: selectedDriver.name, // 선택한 아이템의 이름도 보내줌 //사실 드라이버 이름
+                    })
+                  }
+                >
+                  <Text style={styles.textStyle}>리뷰 보기</Text>
+                </Pressable>
+
+                <Pressable
+                  style={[styles.button, styles.buttonClose, { marginTop: 10 }]}
+                  onPress={() =>
+                    navigation.navigate("BookingTaxiDriver", {
+                      // 뷰 프렌드 리뷰로 감 일단 //
+                      selectedDriverId: selectedDriver._id, // 이렇게하면 지금 selectedUserId 도 보내줄 // 사실 드라이버 아이디 ,
+                      selectedDriverName: selectedDriver.name, // 선택한 아이템의 이름도 보내줌 //사실 드라이버 이름
+                    })
+                  }
+                >
+                  <Text style={styles.textStyle}>예약</Text>
+                </Pressable>
+
+                <Pressable
+                  style={[
+                    styles.button,
+                    styles.buttonCast,
+                    { marginLeft: 10, marginTop: 10 },
+                  ]}
+                  onPress={() => {
+                    console.log(
+                      userId,
+                      selectedDriver._id,
+                      startPoint,
+                      endPoint
+                    );
+                  }}
+                >
+                  <Text style={styles.textStyle}> 호출 </Text>
+                </Pressable>
+              </View>
+
+              {/* // 그냥 닫기 */}
+              <Pressable
+                style={[
+                  styles.button,
+                  styles.buttonCloseRed,
+                  ,
+                  { marginTop: 10 },
+                ]}
+                onPress={() => setIsModalVisible(false)}
+              >
+                <Text style={styles.textStyle}>닫기</Text>
+              </Pressable>
+            </View>
+          </View>
         </Modal>
       )}
     </SafeAreaView>
+
+    // <View style={styles.container}>
+    //   {/* <MapView style={styles.maps} /> */}
+    //   <Text> 택시맵 </Text>
+    //   <TouchableOpacity
+    //     onPress={requestDtoS}
+    //   >
+    //     <Text>요청</Text>
+    //   </TouchableOpacity>
+    // </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -453,5 +634,55 @@ const styles = StyleSheet.create({
     position: "absolute", // 화면에 고정
     right: 10, // 오른쪽에서 10의 간격을 둠
     bottom: 10, // 하단에서 10의 간격을 둠
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  buttonCloseRed: {
+    backgroundColor: "#DC143C ",
+  },
+
+  buttonCast: {
+    backgroundColor: "#ff7f00",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

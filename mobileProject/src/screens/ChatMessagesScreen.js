@@ -72,7 +72,7 @@ const ChatMessagesScreen = () => {
   const fetchMessages = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8000/messages/${userId}/${recepientId}`
+        `http://10.20.64.91:8000/messages/${userId}/${recepientId}`
       );
       const data = await response.json();
 
@@ -94,7 +94,7 @@ const ChatMessagesScreen = () => {
     const fetchRecepientData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/user/${recepientId}`
+          `http://10.20.64.91:8000/user/${recepientId}`
         );
 
         const data = await response.json();
@@ -125,7 +125,7 @@ const ChatMessagesScreen = () => {
         formData.append("messageText", message);
       }
 
-      const response = await fetch("http://localhost:8000/messages", {
+      const response = await fetch("http://10.20.64.91:8000/messages", {
         method: "POST",
         body: formData,
       });
@@ -198,7 +198,7 @@ const ChatMessagesScreen = () => {
 
   const deleteMessages = async (messageIds) => {
     try {
-      const response = await fetch("http://localhost:8000/deleteMessages", {
+      const response = await fetch("http://10.20.64.91:8000/deleteMessages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -282,21 +282,21 @@ const ChatMessagesScreen = () => {
                 style={[
                   item?.senderId?._id === userId
                     ? {
-                      alignSelf: "flex-end",
-                      backgroundColor: "#DCF8C6",
-                      padding: 8,
-                      maxWidth: "60%",
-                      borderRadius: 7,
-                      margin: 10,
-                    }
+                        alignSelf: "flex-end",
+                        backgroundColor: "#DCF8C6",
+                        padding: 8,
+                        maxWidth: "60%",
+                        borderRadius: 7,
+                        margin: 10,
+                      }
                     : {
-                      alignSelf: "flex-start",
-                      backgroundColor: "white",
-                      padding: 8,
-                      margin: 10,
-                      borderRadius: 7,
-                      maxWidth: "60%",
-                    },
+                        alignSelf: "flex-start",
+                        backgroundColor: "white",
+                        padding: 8,
+                        margin: 10,
+                        borderRadius: 7,
+                        maxWidth: "60%",
+                      },
 
                   isSelected && { width: "100%", backgroundColor: "#F0FFFF" },
                 ]}
@@ -335,21 +335,21 @@ const ChatMessagesScreen = () => {
                 style={[
                   item?.senderId?._id === userId
                     ? {
-                      alignSelf: "flex-end",
-                      backgroundColor: "#DCF8C6",
-                      padding: 8,
-                      maxWidth: "60%",
-                      borderRadius: 7,
-                      margin: 10,
-                    }
+                        alignSelf: "flex-end",
+                        backgroundColor: "#DCF8C6",
+                        padding: 8,
+                        maxWidth: "60%",
+                        borderRadius: 7,
+                        margin: 10,
+                      }
                     : {
-                      alignSelf: "flex-start",
-                      backgroundColor: "white",
-                      padding: 8,
-                      margin: 10,
-                      borderRadius: 7,
-                      maxWidth: "60%",
-                    },
+                        alignSelf: "flex-start",
+                        backgroundColor: "white",
+                        padding: 8,
+                        margin: 10,
+                        borderRadius: 7,
+                        maxWidth: "60%",
+                      },
                 ]}
               >
                 <View>

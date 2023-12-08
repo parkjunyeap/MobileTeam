@@ -12,14 +12,14 @@ const Driver = ({ item }) => {
   const navigation = useNavigation();
   // 화면 이동할 때 모달 상태꺼지게하려고 gpt 가 작성해줌 진짜 되네  addListener focus 를 활용해서 할수있음.
   // 원래는 화면 이동했다가 다시 뒤로와서 화면터치해봤는데 보이지않는 투명 모달 떄문에 터치가 안됐음.
+
   useEffect(() => {
-    // 화면에 진입할 때 실행
     const unsubscribe = navigation.addListener("focus", () => {
       // 필요한 로직 추가
       setModalVisible(false); // 모달 상태를 비활성화
     });
 
-    // 화면을 떠날 때 실행
+    // 화면을 떠날 때 모달 꺼지게.
     return unsubscribe;
   }, [navigation]);
 

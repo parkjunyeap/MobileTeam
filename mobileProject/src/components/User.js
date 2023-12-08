@@ -26,7 +26,7 @@ const User = ({ item }) => {
       try {
         console.log("여기들옴?");
         const response = await fetch(
-          `http://localhost:8000/friend-requests/sent/${userId}`
+          `http://10.20.64.91:8000/friend-requests/sent/${userId}`
         );
 
         const data = await response.json();
@@ -46,7 +46,9 @@ const User = ({ item }) => {
   useEffect(() => {
     const fetchUserFriends = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/friends/${userId}`);
+        const response = await fetch(
+          `http://10.20.64.91:8000/friends/${userId}`
+        );
 
         const data = await response.json();
 
@@ -75,7 +77,7 @@ const User = ({ item }) => {
 
   const sendFriendRequest = async (currentUserId, selectedUserId) => {
     try {
-      const response = await fetch("http://localhost:8000/friend-request", {
+      const response = await fetch("http://10.20.64.91:8000/friend-request", {
         // 친구추가 요청 보내기
         method: "POST",
         headers: {
