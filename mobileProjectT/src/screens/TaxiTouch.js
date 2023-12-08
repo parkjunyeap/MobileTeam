@@ -9,7 +9,6 @@ import io from 'socket.io-client';
 const TaxiTouch = () => {
   const { userId, setUserId } = useContext(UserType);
   const [isDriving, setIsDriving] = useState(false);//일단 socket.io하기 전에 일단true
-  const [taxiRequest, setTaxiRequest] = useState(null);
   const driverId = userId;
   const socket = io("http://localhost:8001");
 
@@ -42,17 +41,6 @@ const TaxiTouch = () => {
       // 요청을 처리하고 응답을 보내는 코드 작성
     });
 
-
-    if (isDriving) {
-      // 백엔드에서 데이터를 가져오는 것으로 가정
-      setTaxiRequest({
-        distance: '6.5KM',
-        pickup: '백화점',
-        dropoff: '시민공원',
-      });
-    } else {
-      setTaxiRequest(null);
-    }
     fetchUsers();
 
     return () => {
