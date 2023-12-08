@@ -19,7 +19,7 @@ const TaxiTouch = () => {
   const { userId, setUserId } = useContext(UserType);
   const [isDriving, setIsDriving] = useState(false); //일단 socket.io하기 전에 일단true
   const driverId = userId;
-  const socket = io("http://10.20.64.91:8001");
+  const socket = io("http://192.168.0.14:8001");
 
   const [taxiRequests, setTaxiRequests] = useState([]); // 택시 요청 배열
 
@@ -83,7 +83,7 @@ const TaxiTouch = () => {
         console.log("드라이버 로케이션", driverLocation);
 
         axios
-          .post("http://10.20.64.91:8000/taxiLocation", driverLocation) //
+          .post("http://192.168.0.14:8000/taxiLocation", driverLocation) //
           .then((response) => {
             console.log("리스폰 ", response);
           })
@@ -110,7 +110,7 @@ const TaxiTouch = () => {
       };
       console.log(newDriveState);
       // 서버에 운전 상태 업데이트를 요청하고, 요청이 성공하면 클라이언트 상태 업데이트
-      await axios.post("http://10.20.64.91:8000/UpDriveState", newDriveState);
+      await axios.post("http://192.168.0.14:8000/UpDriveState", newDriveState);
     } catch (error) {
       console.error("운전 상태 업데이트 오류:", error);
     }
@@ -132,7 +132,7 @@ const TaxiTouch = () => {
       };
 
       axios
-        .post("http://10.20.64.91:8000/Payment", payment) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
+        .post("http://192.168.0.14:8000/Payment", payment) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
         .then((response) => {
           // 요청이 성공적으로 처리될 때의 로직
           console.log("등록 성공:", response.data);
@@ -166,8 +166,9 @@ const TaxiTouch = () => {
 
   const sendResponseToPassenger = (requestId, response) => {
     // 서버로 요청 ID와 응답 상태를 보냅니다.
+
     console.log(requestId, response);
-    socket.emit("acceptRejectRequest", { requestId, status: response });
+    socket.emit("acceptRejectRequest", { requestId, status: response }); // 이게 말하느건데
   };
 
   return (

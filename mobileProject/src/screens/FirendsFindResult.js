@@ -33,13 +33,13 @@ const FirendsFindResult = () => {
     <View>
       <ScrollView>
         <View style={{ padding: 15 }}>
-          {userPCs && userSEs ? (
+          {userPCs || userSEs ? (
             [...new Set([...userPCs, ...userSEs])].length > 0 ? (
               [...new Set([...userPCs, ...userSEs])].map((item, index) => (
                 <User key={index} item={item} />
               ))
             ) : (
-              <Text>No users found.</Text>
+              <Text>친구를 찾을 수 없습니다.</Text>
             )
           ) : (
             <Text>Loading...</Text>

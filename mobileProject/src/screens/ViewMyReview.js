@@ -18,7 +18,7 @@ const ViewMyReview = () => {
     const fetchReviewRequest = async () => {
       try {
         const response = await axios.get(
-          `http://10.20.64.91:8000/reviews/receiver/user/${userId}`
+          `http://192.168.0.14:8000/reviews/receiver/user/${userId}`
         );
         if (response.status === 200) {
           setReviews(response.data); // 서버로부터 받은 데이터를 상태에 저장합니다.

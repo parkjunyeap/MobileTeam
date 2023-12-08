@@ -19,18 +19,10 @@ import { GOOGLE_MAPS_API_KEY } from "../config/constants";
 import MapViewDirections from "react-native-maps-directions";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
-
 import Driver from "../components/Driver";
-
-// 드라이버 객체 모달창 나오게 하기 위해서
-//
-
-// import { PermissionsAndroid, Platform } from "react-native";
-// import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions";
-import Geolocation from "react-native-geolocation-service";
-
 import * as Location from "expo-location";
-
+// 드라이버 객체 모달창 나오게 하기 위해서
+import Geolocation from "react-native-geolocation-service";
 import { UserType } from "../UserContext";
 
 // import { MapView } from "react-native-maps";
@@ -57,6 +49,8 @@ export default TaxiTouch = () => {
       return res === RESULTS.GRANTED;
     }
   }
+
+  const autocompleteRef = useRef(null);
 
   // 자기 위치 받아와서
   function getLocation() {
@@ -145,15 +139,23 @@ export default TaxiTouch = () => {
 
   const requestD = {
     userId: userId,
-    driverId: "656b0d69cadb44c3b89e1e7e",
-    startPoint: "천안아산역",
-    endPoint: "선문대학교",
+    driverId: selectedDriver,
+    startPoint: startPoint,
+    endPoint: endPoint,
     requestDate: new Date(), // 날짜 더미데이터??
     pay: "10000",
     distance: "0.5",
   };
+
+  // userId,
+  // selectedDriver._id,
+  // startPoint,
+  // endPoint
+
   //서버로 전달
   const requestDtoS = () => {
+    //
+    // 리퀘스트 데이터 투 서버
     console.log("임시 데이터 확인 :", requestD);
     socket.emit("passengerRequest", requestD);
   };
@@ -207,6 +209,9 @@ export default TaxiTouch = () => {
   const mapRef = useRef(null);
   // 초기 상태를 null에서 명시적으로 설정합니다.
 
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
   // 위도경도
 
   // 출발지 목적지 정하고 확인누르는 순간
@@ -240,6 +245,43 @@ export default TaxiTouch = () => {
       />
     );
   };
+
+  // 연호가 현재 지도
+  async function getCurrentLocation() {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.error("Location permission denied");
+        return;
+      }
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      setOrigin({ latitude, longitude });
+      mapRef.current.animateToRegion(
+        {
+          latitude,
+          longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        },
+        2000
+      );
+
+      const addressResponse = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
+      const address = addressResponse[0];
+      if (address) {
+        const formattedAddress = `${address.street}, ${address.city}, ${address.region}, ${address.postalCode}, ${address.country}`;
+        if (autocompleteRef.current) {
+          autocompleteRef.current.setAddressText(formattedAddress);
+        }
+      }
+    } catch (error) {
+      console.error("Error getting current location", error);
+    }
+  }
 
   const MyCustomCalloutView = () => {
     return (
@@ -282,6 +324,9 @@ export default TaxiTouch = () => {
     setIsModalVisible(true);
   };
 
+  handleCallButton = () => {
+    axios.post();
+  };
   // requestDtos // 이거 서버로 정보넘기는거
   return (
     <SafeAreaView style={styles.container}>
@@ -307,6 +352,7 @@ export default TaxiTouch = () => {
             }
           />
         )}
+
         {destination && (
           <Marker
             draggable
@@ -353,22 +399,37 @@ export default TaxiTouch = () => {
       </MapView>
       <View style={styles.searchContainer}>
         <GooglePlacesAutocomplete
+          ref={autocompleteRef} // ref 가뭔데?? 추가
           fetchDetails={true}
           placeholder="출발지"
           onPress={(data, details = null) => {
             if (details) {
               const { lat, lng } = details.geometry.location;
               setOrigin({ latitude: lat, longitude: lng });
-              moveToLocation(lat, lng);
+              // moveToLocation(lat, lng);
+              mapRef.current.animateToRegion(
+                {
+                  latitude: lat,
+                  longitude: lng,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                },
+                2000
+              );
             }
-            setStartPoint(data.description);
+            // setStartPoint(data.description);   // 이거해주면 시작점으로 감
           }}
           query={{
             key: GOOGLE_MAPS_API_KEY,
             language: "ko",
           }}
+          styles={{
+            container: { flex: 0 },
+            textInput: { paddingLeft: 20, height: 40 },
+          }}
           onFail={(error) => console.error(error)}
         />
+
         <GooglePlacesAutocomplete
           fetchDetails={true}
           placeholder="목적지"
@@ -386,30 +447,7 @@ export default TaxiTouch = () => {
           }}
           onFail={(error) => console.error(error)}
         />
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="택시 호출"
-            onPress={() => {
-              console.log(
-                "출발지 : ",
-                startPoint,
-                "\n",
-                "목적지 : ",
-                endPoint,
-                "\n",
-                "좌표: ",
-                origin,
-                "\n",
-                "좌표: ",
-                destination,
-                "\n"
-              );
 
-              taxiDriversMarker(); // 이 함수는 택시 정보들을 갖고옴 갖고오고 마커로 찍을거임
-            }}
-            color="#28a745"
-          />
-        </View>
         {/* 그냥 서버로 userId랑 함께 날리면됨. */}
 
         {/* 출발지 도착지 입력하고 택시부르기 누르면 그냥 드라이버 한명 정해서 출발지, 목적지 보내줌  */}
@@ -428,7 +466,6 @@ export default TaxiTouch = () => {
         // >
         //   <Driver item={selectedDriver} />
         // </Modal>
-
         <Modal
           animationType="slide"
           transparent={true}
@@ -564,6 +601,8 @@ export default TaxiTouch = () => {
                       startPoint,
                       endPoint
                     );
+
+                    requestDtoS();
                   }}
                 >
                   <Text style={styles.textStyle}> 호출 </Text>
@@ -614,7 +653,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     position: "absolute",
-    top: 40,
+    top: 25,
     width: "100%",
     padding: 10,
     backgroundColor: "white",
@@ -626,15 +665,16 @@ const styles = StyleSheet.create({
     overflow: "hidden", // ensures the borderRadius is respected
   },
 
-  showsUserLocation: {
-    top: 400,
-  },
+  // showsUserLocation: {
+  //   top: 10,
+  // },
 
-  showsUserLocationButton: {
-    position: "absolute", // 화면에 고정
-    right: 10, // 오른쪽에서 10의 간격을 둠
-    bottom: 10, // 하단에서 10의 간격을 둠
-  },
+  // showsUserLocationButton: {
+  //   position: "absolute", // 화면에 고정
+  //   right: 10, // 오른쪽에서 10의 간격을 둠
+  //   bottom: 10, // 하단에서 10의 간격을 둠
+  // },
+
   centeredView: {
     flex: 1,
     justifyContent: "center",

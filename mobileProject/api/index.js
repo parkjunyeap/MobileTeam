@@ -14,8 +14,8 @@ app.use(bodyParser.json()); // JSON 데이터를 파싱하는 bodyParser 미들�
 app.use(passport.initialize()); // 앱에 passport 미들웨어를 초기화하여 사용하도록 설정합니다.
 const jwt = require("jsonwebtoken"); // jsonwebtoken 모듈을 가져옵니다. JWT(JSON Web Tokens)를 생성하고 검증하는 데 사용됩니다.
 
-const http = require('http')
-const socketIo = require('socket.io');
+const http = require("http");
+const socketIo = require("socket.io");
 const server = http.createServer(app);
 const io = socketIo(server);
 
@@ -42,7 +42,7 @@ const Driver = require("./models/driver"); // 드라이버가 왜 자꾸 누락�
 const Review = require("./models/review");
 const ReviewT = require("./models/reviewT"); // 택시기사 리뷰 db 따로뺏쥬
 const Payment = require("./models/payment");
-const Request = require("./models/requestT")
+const Request = require("./models/requestT");
 const Booking = require("./models/booking");
 
 // 예약 저장 됨.. 근데 너무간단
@@ -734,7 +734,7 @@ app.post("/FindTaxiMateDetail", async (req, res) => {
     console.log("Searched by 주 이용 위치", userSE);
     if ((!userPC || userPC.length === 0) && (!userSE || userSE.length === 0)) {
       // 해당하는 사용자를 찾지 못한 경우 에러 응답
-      return res.status(404).json({ message: "해당되는 사용자가 없습니다." });
+      return res.status(200).json({ userPC, userSE });
     }
 
     // 사용자 정보를 클라이언트에 응답
@@ -959,13 +959,13 @@ app.get("/driverList/payment/:userId", async (req, res) => {
 app.post("/UpDriveState", async (req, res) => {
   try {
     const userId = req.body.userId;
-    console.log(req.body.driveState)
+    console.log(req.body.driveState);
     const updatedDriver = await Driver.findOneAndUpdate(
       { _id: userId },
       { $set: { driveState: req.body.driveState } }, // 부울 값 그대로 설정
       { new: true }
     );
-    console.log(updatedDriver)
+    console.log(updatedDriver);
     if (!updatedDriver) {
       return res.status(404).json({ message: "운전사를 찾을 수 없습니다." });
     }
@@ -977,10 +977,6 @@ app.post("/UpDriveState", async (req, res) => {
     res.status(500).json({ message: "에러 발생 변경 못함" });
   }
 });
-
-
-
-
 
 //기사 요청 받는 부분
 app.get("/confirmRequest/:driverId", async (req, res) => {
@@ -1002,7 +998,6 @@ app.get("/confirmRequest/:driverId", async (req, res) => {
     res.status(500).json({ message: "서버 오류가 발생했습니다." });
   }
 });
-
 
 // 부킹 드라이버
 app.get("/driverList/booking/:userId", async (req, res) => {
@@ -1308,13 +1303,14 @@ app.post("/UpDriveState", async (req, res) => {
       console.log("에러발생 변경못함", err);
       res.status(500).json({ message: "에러발생 변경못함" });
     });
-})
+});
 
 //택시 운전가 수락
 app.post("/Payment", async (req, res) => {
   try {
     // POST 요청에서 전달된 데이터 추출
-    const { boarderId, driverId, startPoint, endPoint, pay, payDate } = req.body;
+    const { boarderId, driverId, startPoint, endPoint, pay, payDate } =
+      req.body;
 
     // Payment 모델을 사용하여 새로운 결제 내역 생성
     const payment = new Payment({
@@ -1330,82 +1326,95 @@ app.post("/Payment", async (req, res) => {
     await payment.save();
 
     // 저장된 데이터를 클라이언트에 응답
-    res.status(201).json({ message: '결제 내역이 성공적으로 저장되었습니다.' });
+    res.status(201).json({ message: "결제 내역이 성공적으로 저장되었습니다." });
   } catch (error) {
-    console.error('결제 내역 저장 오류:', error);
-    res.status(500).json({ message: '결제 내역을 저장하는 중 오류가 발생했습니다.' });
+    console.error("결제 내역 저장 오류:", error);
+    res
+      .status(500)
+      .json({ message: "결제 내역을 저장하는 중 오류가 발생했습니다." });
   }
 });
 //socket.io
-const portR = 8001
+const portR = 8001;
 // 연결된 클라이언트를 저장하기 위한 맵 (MongoDB ID와 Socket ID 매핑)
 const clientSocketIdMap = new Map();
 
 server.listen(portR, () => {
   console.log(`io 서버 실행 중, 포트 ${portR}`);
 });
-io.on('connection', (socket) => {
-  socket.on('passengerConnect', (passengerId) => {
+io.on("connection", (socket) => {
+  socket.on("passengerConnect", (passengerId) => {
     console.log(`탑승자가 연결되었습니다. Passenger ID: ${passengerId}`);
     clientSocketIdMap.set(passengerId, socket.id);
   });
 
   // 운전사 연결 이벤트
-  socket.on('driverConnect', (driverId) => {
+  socket.on("driverConnect", (driverId) => {
     console.log(`운전사가 연결되었습니다. Driver ID: ${driverId}`);
     clientSocketIdMap.set(driverId, socket.id);
   });
 
   // 탑승자의 요청을 운전사에게 전송
-  socket.on('passengerRequest', async (request) => {
-    console.log('탑승자의 요청이 수신되었습니다.', request);
-    const driverSocketId = clientSocketIdMap.get(request.driverId);
-    const driver = await Driver.findOne({ _id: request.driverId});
-    console.log(driver)
-  
+  socket.on("passengerRequest", async (request) => {
+    console.log("탑승자의 요청이 수신되었습니다.", request);
+    const driverSocketId = clientSocketIdMap.get(request.driverId._id);
+    const driver = await Driver.findOne({ _id: request.driverId._id });
+    console.log(driver);
+
     if (driverSocketId) {
       // Mongoose 모델을 사용하여 운전사를 찾음
       try {
         if (driver) {
           if (driver.driveState === false) {
             // 운전사의 driveState가 false인 경우 요청 거절 또는 특정 처리
-            console.log(`해당 운전사는 운행중이 아닙니다. Driver ID: ${request.driverId}`);
+            console.log(
+              `해당 운전사는 운행중이 아닙니다. Driver ID: ${request.driverId._id}`
+            );
             // 여기에서 요청 거절 처리 또는 특정 처리를 수행할 수 있습니다.
           } else {
             // 해당 운전사에게 요청 전송
-            io.to(driverSocketId).emit('passengerRequestToDriver', request);
-            console.log(`요청을 운전사에게 전송했습니다. Driver ID: ${request.driverId}`);
+            io.to(driverSocketId).emit("passengerRequestToDriver", request); // 보내는거
+            console.log(
+              `요청을 운전사에게 전송했습니다. Driver ID: ${request.driverId._id}`
+            );
           }
         } else {
-          console.log(`운전사를 찾을 수 없습니다. Driver ID: ${request.driverId}`);
+          console.log(
+            `운전사를 찾을 수 없습니다. Driver ID: ${request.driverId._id}`
+          );
         }
       } catch (err) {
         console.error(`운전사 조회 중 오류 발생: ${err}`);
       }
     } else {
-      console.log(`운전사를 찾을 수 없습니다. Driver ID: ${request.driverId}`);
+      console.log(
+        `운전사를 찾을 수 없습니다1. Driver ID: ${request.driverId._id}`
+      );
     }
   });
-  
 
   // 운전사의 응답을 탑승자에게 전송
-  socket.on('acceptRejectRequest', (request) => {
-    console.log('서버가 받은 운전사의 응답 :', request);
-    
-    console.log(request.requestId)
+  socket.on("acceptRejectRequest", (request) => {
+    console.log("서버가 받은 운전사의 응답 :", request);
+
+    console.log(request.requestId);
     // requestId를 사용하여 해당 탑승자의 소켓 ID를 가져옵니다.
     const passengerSocketId = clientSocketIdMap.get(request.requestId);
     if (passengerSocketId) {
       // 해당 탑승자에게 운전사의 응답 전송
-      io.to(passengerSocketId).emit('acceptRejectRequestToPassenger', request);
-      console.log(`운전사의 응답을 탑승자에게 전송했습니다. Request ID: ${request.requestId}`);
+      io.to(passengerSocketId).emit("acceptRejectRequestToPassenger", request);
+      console.log(
+        `운전사의 응답을 탑승자에게 전송했습니다. Request ID: ${request.requestId}`
+      );
     } else {
-      console.log(`탑승자를 찾을 수 없습니다. Request ID: ${request.requestId}`);
+      console.log(
+        `탑승자를 찾을 수 없습니다. Request ID: ${request.requestId}`
+      );
     }
   });
 
   // 연결 해제 시 매핑 정보 제거
-  socket.on('disconnect', () => {
+  socket.on("disconnect", () => {
     for (const [id, socketId] of clientSocketIdMap.entries()) {
       if (socketId === socket.id) {
         clientSocketIdMap.delete(id);
