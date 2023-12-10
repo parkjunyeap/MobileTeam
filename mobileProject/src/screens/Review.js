@@ -64,6 +64,22 @@ const Review = () => {
       .then((response) => {
         console.log(response);
         Alert.alert("등록 성공!!", "성공적으로 등록되었습니다");
+
+        // 여기에 푸시 알림 코드를 추가합니다
+        axios
+          .post(`https://app.nativenotify.com/api/indie/notification`, {
+            subID: receiverId, // 받는 사람의 고유 ID
+            appId: 16556,
+            appToken: "EUD53vLmHh5vU3iX2Rph5g",
+            title: "새로운 리뷰가 도착했습니다",
+            message: "당신에 대한 새로운 리뷰가 있습니다. 확인해보세요!",
+          })
+          .then((response) => {
+            console.log("Push notification sent successfully:", response);
+          })
+          .catch((error) => {
+            console.log("Error sending push notification:", error);
+          });
       })
       .catch((error) => {
         console.log(error.message);

@@ -22,7 +22,10 @@ import jwt_decode from "jwt-decode"; // 유튜브에선 이렇게 import 하네
 import axios from "axios";
 
 import User from "../components/User";
-const HomeScreen = () => {
+
+import { registerIndieID, unregisterIndieDevice } from "native-notify";
+
+export default function HomeScreen() {
   const navigation = useNavigation();
   const { userId, setUserId } = useContext(UserType);
   const [users, setUsers] = useState([]);
@@ -87,6 +90,10 @@ const HomeScreen = () => {
       // );
       console.log("Decoded Token:", decodedToken);
       const userId = decodedToken.userId;
+
+      // 여기에 로그인 성공 하고 토큰을 디코딩해서 유저아이디에 넣어줍니다....
+      registerIndieID(userId, 16556, "EUD53vLmHh5vU3iX2Rph5g");
+
       console.log("UserId:", userId);
       setUserId(userId);
 
@@ -121,9 +128,9 @@ const HomeScreen = () => {
       </ScrollView>
     </View>
   );
-};
+}
 1;
-export default HomeScreen;
+// export default HomeScreen;
 
 const styles = StyleSheet.create({});
 

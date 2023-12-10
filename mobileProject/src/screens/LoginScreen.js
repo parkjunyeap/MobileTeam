@@ -14,7 +14,9 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const LoginScreen = () => {
+import { registerIndieID, unregisterIndieDevice } from "native-notify"; // 알림뜨게하기 위해서 필요..
+
+export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation(); // 이게있어야 화면 옮길 수 있음.
@@ -41,6 +43,8 @@ const LoginScreen = () => {
   //   checkLoginStatus();
   // }, []); //useEffect에 있는 []는 이 코드를 앱이 시작될 때 딱 한 번만 실행
 
+  // 이 토큰 값이 존재하는 이유가
+  // 로그인 여러번 하기 귀찮아서 ㅇㅇ
   const handleLogin = () => {
     const user = {
       email: email,
@@ -50,11 +54,15 @@ const LoginScreen = () => {
     axios
       .post("http://10.20.33.204:8000/login", user)
       .then((response) => {
-        console.log(response);
+        console.log("응답", response, "여기까지가 응답끝");
         const token = response.data.token;
 
         console.log("token이 만들어지긴 하는거야?", token);
         AsyncStorage.setItem("authToken", token);
+
+        // 여기에 Native Notify 등록 코드를 추가합니다.
+
+        // token 을 쓰면 안되나보다;;
 
         navigation.replace("bottom"); //
         // 바텀탭에 택시찾기 로 가려면?
@@ -170,8 +178,8 @@ const LoginScreen = () => {
       </KeyboardAvoidingView>
     </View>
   );
-};
+}
 
-export default LoginScreen;
+// export default LoginScreen;
 
 const styles = StyleSheet.create({});
