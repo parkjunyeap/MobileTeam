@@ -24,6 +24,7 @@ import axios from "axios";
 import User from "../components/User";
 
 import { registerIndieID, unregisterIndieDevice } from "native-notify";
+// gha
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -98,7 +99,7 @@ export default function HomeScreen() {
       setUserId(userId);
 
       axios
-        .get(`http://10.20.33.204:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
+        .get(`http://192.168.0.14:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
         .then((response) => {
           console.log("Response data:", response.data); // 전부 찍힘.
           setUsers(response.data);

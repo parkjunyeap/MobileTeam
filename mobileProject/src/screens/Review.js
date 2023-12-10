@@ -14,7 +14,7 @@ import { UserType } from "../UserContext";
 import { useContext } from "react";
 // import useFetch from "../../hook/useFetch"; //  useFecth 갖고옴 안씀 저번에 모프 교수님이 참고하라고 알려준거
 
-const Review = () => {
+export default function Review() {
   const { userId } = useContext(UserType);
 
   const navigation = useNavigation(); // 이게있어야 화면 옮길 수 있음.
@@ -53,32 +53,38 @@ const Review = () => {
     let apiEndpoint;
     if (selectedDriverId) {
       // 택시 기사에게 보내는 리뷰
-      apiEndpoint = "http://10.20.33.204:8000/write/driverReviews";
+      apiEndpoint = "http://192.168.0.14:8000/write/driverReviews";
     } else {
       // 일반 사용자에게 보내는 리뷰
-      apiEndpoint = "http://10.20.33.204:8000/write/reviews";
+      apiEndpoint = "http://192.168.0.14:8000/write/reviews";
     }
 
     axios
       .post(apiEndpoint, reviewData)
       .then((response) => {
-        console.log(response);
+        console.log("리스폰은 리뷰보내서 온 리스폰:", response);
         Alert.alert("등록 성공!!", "성공적으로 등록되었습니다");
 
         // 여기에 푸시 알림 코드를 추가합니다
         axios
-          .post(`https://app.nativenotify.com/api/indie/notification`, {
-            subID: receiverId, // 받는 사람의 고유 ID
-            appId: 16556,
-            appToken: "EUD53vLmHh5vU3iX2Rph5g",
-            title: "새로운 리뷰가 도착했습니다",
-            message: "당신에 대한 새로운 리뷰가 있습니다. 확인해보세요!",
-          })
+          .post(
+            `https://app.nativenotify.com/api/indie/notification`,
+            {
+              subID: reviewData.receiverId, // 받는 사람의 고유 ID
+              appId: 16556,
+              appToken: "EUD53vLmHh5vU3iX2Rph5g",
+              title: "새로운 리뷰가 도착했습니다",
+              message: "당신에 대한 새로운 리뷰가 있습니다. 확인해보세요!",
+            },
+            {
+              timeout: 10000, // 요청이 10초 이내에 완료되지 않으면 중단
+            }
+          )
           .then((response) => {
-            console.log("Push notification sent successfully:", response);
+            console.log("잘 푸쉬알림 갔음.:", response);
           })
           .catch((error) => {
-            console.log("Error sending push notification:", error);
+            console.log("푸쉬알림 에러뜸:", error);
           });
       })
       .catch((error) => {
@@ -114,7 +120,7 @@ const Review = () => {
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -152,5 +158,3 @@ const styles = StyleSheet.create({
     textAlignVertical: "top", // 텍스트 상단 정렬
   },
 });
-
-export default Review;

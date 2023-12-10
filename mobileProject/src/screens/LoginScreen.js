@@ -14,8 +14,6 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { registerIndieID, unregisterIndieDevice } from "native-notify"; // 알림뜨게하기 위해서 필요..
-
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -52,7 +50,7 @@ export default function LoginScreen() {
     };
 
     axios
-      .post("http://10.20.33.204:8000/login", user)
+      .post("http://192.168.0.14:8000/login", user)
       .then((response) => {
         console.log("응답", response, "여기까지가 응답끝");
         const token = response.data.token;
