@@ -1356,7 +1356,6 @@ io.on("connection", (socket) => {
   });
 
   // 클라이언트로부터 메시지를 받았을 때 처리
-  // 클라이언트로부터 메시지를 받았을 때 처리
   socket.on("sendMessage", async (formData) => {
     try {
       // formData에서 필요한 정보 추출

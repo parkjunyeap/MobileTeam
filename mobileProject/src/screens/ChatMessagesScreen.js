@@ -26,7 +26,7 @@ import EmojiSelector from "react-native-emoji-selector";
 import { UserType } from "../UserContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
-import io from "socket.io-client";
+import io from "socket.io-client"; // 소켓통신위해서 .
 
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "../firebaseConfig";
@@ -43,7 +43,7 @@ const ChatMessagesScreen = () => {
   const { recepientId } = route.params;
   const [message, setMessage] = useState("");
   const { userId, setUserId } = useContext(UserType);
-  const socket = io("http://10.20.33.204:8001");
+  const socket = io("http://10.20.33.204:8001"); // 이런식으로 socket = io(주소) 해주고.
   const scrollViewRef = useRef(null);
 
   // Firebase 앱 초기화
@@ -100,6 +100,8 @@ const ChatMessagesScreen = () => {
       socket.off("receiveMessage");
     };
   }, []);
+
+  // socket.on(리시브메시지 )
 
   useEffect(() => {
     const fetchRecepientData = async () => {
