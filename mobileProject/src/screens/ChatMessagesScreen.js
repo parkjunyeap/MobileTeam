@@ -26,6 +26,7 @@ import EmojiSelector from "react-native-emoji-selector";
 import { UserType } from "../UserContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
+import io from "socket.io-client";
 
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "../firebaseConfig";
@@ -42,7 +43,7 @@ const ChatMessagesScreen = () => {
   const { recepientId } = route.params;
   const [message, setMessage] = useState("");
   const { userId, setUserId } = useContext(UserType);
-
+  const socket = io("http://192.168.219.104:8001");
   const scrollViewRef = useRef(null);
 
   // Firebase 앱 초기화
@@ -68,7 +69,7 @@ const ChatMessagesScreen = () => {
   const handleEmojiPress = () => {
     setShowEmojiSelector(!showEmojiSelector);
   };
-
+  //채팅 내역 불러옴
   const fetchMessages = async () => {
     try {
       const response = await fetch(
@@ -77,9 +78,10 @@ const ChatMessagesScreen = () => {
       const data = await response.json();
 
       if (response.ok) {
+        // 가져온 메시지 데이터를 messages 배열에 설정
         setMessages(data);
       } else {
-        console.log("error showing messags", response.status.message);
+        console.log("error showing messages", response.status.message);
       }
     } catch (error) {
       console.log("error fetching messages", error);
@@ -88,6 +90,15 @@ const ChatMessagesScreen = () => {
 
   useEffect(() => {
     fetchMessages();
+    socket.on("receiveMessage", (message) => {
+      // 새 메시지를 messages 배열에 추가
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
+    // 컴포넌트가 언마운트될 때 소켓 리스너 제거
+    return () => {
+      socket.off("receiveMessage");
+    };
   }, []);
 
   useEffect(() => {
@@ -107,36 +118,23 @@ const ChatMessagesScreen = () => {
 
     fetchRecepientData();
   }, []);
+
   const handleSend = async (messageType, imageUri) => {
     try {
-      const formData = new FormData();
-      formData.append("senderId", userId);
-      formData.append("recepientId", recepientId);
+      const sendMS = {
+        senderId: userId,
+        recepientId: recepientId,
+        messageType: messageType,
+        message: message,
+        imageUrl: imageUri,
+        timeStamp: new Date(),
+      };
 
-      //if the message type id image or a normal text
-      if (messageType === "image") {
-        formData.append("messageType", "image");
-        formData.append("imageFile", {
-          uri: imageUri,
-          name: "image.jpg",
-          type: "image/jpeg",
-        });
-      } else {
-        formData.append("messageType", "text");
-        formData.append("messageText", message);
-      }
+      socket.emit("sendMessage", sendMS);
 
-      const response = await fetch("http://192.168.0.14:8000/messages", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.ok) {
-        setMessage("");
-        setSelectedImage("");
-
-        fetchMessages();
-      }
+      setMessage("");
+      setSelectedImage("");
+      await fetchMessages();
     } catch (error) {
       console.log("error in sending the message", error);
     }
@@ -170,7 +168,7 @@ const ChatMessagesScreen = () => {
                   borderRadius: 15,
                   resizeMode: "cover",
                 }}
-                source={{ uri: recepientData?.image }}
+                source={{ uri: recepientData?.imageUrl }}
               />
 
               <Text style={{ marginLeft: 5, fontSize: 15, fontWeight: "bold" }}>
@@ -241,11 +239,11 @@ const ChatMessagesScreen = () => {
         const blob = await response.blob();
 
         //const storage = getStorage(); // Firebase Storage 인스턴스를 얻어옵니다.
-        const storageRef = ref(storage, `rn-photo/${imageName}`); // storageRef 생성
+        const storageRef = ref(storage, `rn-photoM/${imageName}`); // storageRef 생성
         await uploadBytes(storageRef, blob); // 파일 업로드
 
         const downloadURL = await getDownloadURL(storageRef); // 업로드한 파일의 다운로드 URL 얻기
-        setImage(downloadURL);
+        handleSend("image", downloadURL);
       }
     } catch (error) {
       console.error("오류 발생:", error);
@@ -281,24 +279,18 @@ const ChatMessagesScreen = () => {
                 onLongPress={() => handleSelectMessage(item)}
                 key={index}
                 style={[
-                  item?.senderId?._id === userId
-                    ? {
-                        alignSelf: "flex-end",
-                        backgroundColor: "#DCF8C6",
-                        padding: 8,
-                        maxWidth: "60%",
-                        borderRadius: 7,
-                        margin: 10,
-                      }
-                    : {
-                        alignSelf: "flex-start",
-                        backgroundColor: "white",
-                        padding: 8,
-                        margin: 10,
-                        borderRadius: 7,
-                        maxWidth: "60%",
-                      },
-
+                  {
+                    alignSelf:
+                      item?.senderId?._id === userId
+                        ? "flex-end"
+                        : "flex-start",
+                    backgroundColor:
+                      item?.senderId?._id === userId ? "#DCF8C6" : "white",
+                    padding: 8,
+                    margin: 10,
+                    borderRadius: 7,
+                    maxWidth: "60%",
+                  },
                   isSelected && { width: "100%", backgroundColor: "#F0FFFF" },
                 ]}
               >
@@ -318,18 +310,14 @@ const ChatMessagesScreen = () => {
                     marginTop: 5,
                   }}
                 >
-                  {formatTime(item.timeStamp)}
+                  {formatTime(item?.timeStamp)}
                 </Text>
               </Pressable>
             );
           }
 
           if (item.messageType === "image") {
-            const baseUrl =
-              "/Users/sujananand/Build/messenger-project/api/files/";
-            const imageUrl = item.imageUrl;
-            const filename = imageUrl.split("/").pop();
-            const source = { uri: baseUrl + filename };
+            const imageUrl = item?.imageUrl;
             return (
               <Pressable
                 key={index}
@@ -355,7 +343,7 @@ const ChatMessagesScreen = () => {
               >
                 <View>
                   <Image
-                    source={source}
+                    src={imageUrl}
                     style={{ width: 200, height: 200, borderRadius: 7 }}
                   />
                   <Text

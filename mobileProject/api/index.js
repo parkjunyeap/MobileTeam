@@ -17,7 +17,12 @@ const jwt = require("jsonwebtoken"); // jsonwebtoken 모듈을 가져옵니다. 
 const http = require("http");
 const socketIo = require("socket.io");
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: "http://localhost:19006", // 허용할 출처를 여기에 설정
+    methods: ["GET", "POST"], // 허용할 HTTP 메서드
+  },
+});
 
 mongoose
   .connect("mongodb+srv://bab0234:bab0234@cluster0.gp66aaf.mongodb.net/", {
@@ -1334,6 +1339,8 @@ app.post("/Payment", async (req, res) => {
       .json({ message: "결제 내역을 저장하는 중 오류가 발생했습니다." });
   }
 });
+
+app.use(cors());
 //socket.io
 const portR = 8001;
 // 연결된 클라이언트를 저장하기 위한 맵 (MongoDB ID와 Socket ID 매핑)
@@ -1348,6 +1355,37 @@ io.on("connection", (socket) => {
     clientSocketIdMap.set(passengerId, socket.id);
   });
 
+  // 클라이언트로부터 메시지를 받았을 때 처리
+  // 클라이언트로부터 메시지를 받았을 때 처리
+  socket.on("sendMessage", async (formData) => {
+    try {
+      // formData에서 필요한 정보 추출
+      const senderId = formData.senderId;
+      const recepientId = formData.recepientId;
+      const messageType = formData.messageType;
+
+      // 이곳에서 메시지를 처리하고 저장하는 로직을 추가
+      // 예를 들어, MongoDB를 사용해 메시지를 저장할 수 있습니다.
+
+      // MongoDB를 사용하여 메시지 저장 (mongoose 모델이 있다고 가정)
+      const newMessage = new Message({
+        senderId: senderId,
+        recepientId: recepientId,
+        messageType: messageType,
+        message: formData.message, // 텍스트 메시지
+        imageUrl: formData.imageUrl, // 이미지 메시지
+        timestamp: new Date(),
+      });
+      await newMessage.save();
+      // 저장한 메시지를 다른 클라이언트에게 다시 보내는 예제 코드
+      console.log("보낼 : ", newMessage);
+      io.emit("receiveMessage", formData);
+      //io.to(recepientId).emit('receiveMessage', formData);
+    } catch (error) {
+      console.error("Error processing and saving the message:", error);
+    }
+  });
+
   // 운전사 연결 이벤트
   socket.on("driverConnect", (driverId) => {
     console.log(`운전사가 연결되었습니다. Driver ID: ${driverId}`);
@@ -1357,8 +1395,8 @@ io.on("connection", (socket) => {
   // 탑승자의 요청을 운전사에게 전송
   socket.on("passengerRequest", async (request) => {
     console.log("탑승자의 요청이 수신되었습니다.", request);
-    const driverSocketId = clientSocketIdMap.get(request.driverId._id);
-    const driver = await Driver.findOne({ _id: request.driverId._id });
+    const driverSocketId = clientSocketIdMap.get(request.driverId);
+    const driver = await Driver.findOne({ _id: request.driverId });
     console.log(driver);
 
     if (driverSocketId) {
