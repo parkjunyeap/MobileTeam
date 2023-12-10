@@ -28,7 +28,7 @@ const ViewBookingDriver = () => {
             text: "확인",
             onPress: async () => {
               await axios.delete(
-                `http://192.168.0.14:8000/Booking/del/${bookingId}`
+                `http://10.20.33.204:8000/Booking/del/${bookingId}`
               );
               setBooking((prevBookings) =>
                 prevBookings.filter((b) => b._id !== bookingId)
@@ -48,7 +48,7 @@ const ViewBookingDriver = () => {
     const bookingRequest = async () => {
       try {
         const response = await axios.get(
-          `http://192.168.0.14:8000/Booking/driverId/${userId}` // 기사가 로그인했을때도 같음.
+          `http://10.20.33.204:8000/Booking/driverId/${userId}` // 기사가 로그인했을때도 같음.
         );
         if (response.status === 200) {
           setBooking(response.data); //결제내역 을 로그인한유저기준으로 갖고옴
