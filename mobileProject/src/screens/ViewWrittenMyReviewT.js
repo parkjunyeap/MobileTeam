@@ -16,7 +16,7 @@ const ViewWrittenMyReview = () => {
     const fetchReviewRequest = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/reviewsT/sender/${userId}` // T가 들어가있음. reviewT에서 가져오는거임이건.
+          `http://192.168.0.14:8000/reviewsT/sender/${userId}` // T가 들어가있음. reviewT에서 가져오는거임이건.
           // ㅇㅋ
         );
         if (response.status === 200) {

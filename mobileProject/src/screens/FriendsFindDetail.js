@@ -24,7 +24,7 @@ import locationData from "../locationData";
 
 const FriendsFindDetail = () => {
   const { userId, setUserId } = useContext(UserType); // 여기서 유저 누구로 로그인햇는지 .
-  const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일'];
+  const daysOfWeek = ["월", "화", "수", "목", "금", "토", "일"];
   // const [keyboardHeight, setKeyboardHeight] = useState(0); // 키보드 높이?
 
   console.log({ userId });
@@ -98,10 +98,9 @@ const FriendsFindDetail = () => {
   const navigation = useNavigation(); // 네비게이션 객체 가져오기
 
   const handleSaveButtonClick = () => {
-
     const transformedSelectedDays = selectedDays
-      .map((selected, index) => selected ? daysOfWeek[index] : null)
-      .filter(day => day !== null);
+      .map((selected, index) => (selected ? daysOfWeek[index] : null))
+      .filter((day) => day !== null);
 
     console.log("선택한 도:", selectedProvince);
     console.log("선택한 시:", selectedCity);
@@ -127,7 +126,7 @@ const FriendsFindDetail = () => {
 
     console.log("서버로 보낼 상세 설정부분 :", findTaxiInfo);
     axios
-      .post("http://localhost:8000/FindTaxiMateDetail", findTaxiInfo)
+      .post("http://192.168.0.14:8000/FindTaxiMateDetail", findTaxiInfo)
       .then(function (response) {
         //console.log(response);
         const userPCs = response.data.userPC;
@@ -278,10 +277,20 @@ const FriendsFindDetail = () => {
             {daysOfWeek.map((day, index) => (
               <TouchableOpacity
                 key={day}
-                style={[styles.dayButton, selectedDays[index] && styles.selectedDay]}
+                style={[
+                  styles.dayButton,
+                  selectedDays[index] && styles.selectedDay,
+                ]}
                 onPress={() => toggleDay(index)}
               >
-                <Text style={[styles.dayText, selectedDays[index] && styles.selectedDayText]}>{day}</Text>
+                <Text
+                  style={[
+                    styles.dayText,
+                    selectedDays[index] && styles.selectedDayText,
+                  ]}
+                >
+                  {day}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -349,24 +358,24 @@ const styles = StyleSheet.create({
     overflow: "hidden", // ensures the borderRadius is respected
   },
   Dcontainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     padding: 5,
   },
   dayButton: {
     padding: 10,
     borderWidth: 1,
-    borderColor: '#fff',
+    borderColor: "#fff",
     borderRadius: 50,
   },
   selectedDay: {
-    backgroundColor: '#28a745', // 선택된 요일의 배경색
+    backgroundColor: "#28a745", // 선택된 요일의 배경색
   },
-  selectedDayText:{
-    color: 'white',
+  selectedDayText: {
+    color: "white",
   },
   dayText: {
-    color: 'black', // 텍스트 색상은 흰색
+    color: "black", // 텍스트 색상은 흰색
   },
 });
 

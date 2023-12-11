@@ -114,7 +114,7 @@ const MyTaxiMateInfo = () => {
   const viewTaxiMateInfo = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8000/ViewTaxiMateInfo/${userId}`
+        `http://192.168.0.14:8000/ViewTaxiMateInfo/${userId}`
       );
       const transformSelectedDays = (selectedDays) => {
         const daysOfWeek = ["월", "화", "수", "목", "금", "토", "일"];
@@ -176,7 +176,7 @@ const MyTaxiMateInfo = () => {
     const viewTaxiMateInfo = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/ViewTaxiMateInfo/${userId}`
+          `http://192.168.0.14:8000/ViewTaxiMateInfo/${userId}`
         );
 
         const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
@@ -230,7 +230,7 @@ const MyTaxiMateInfo = () => {
 
     // 유저택시정보저장
     axios
-      .post("http://localhost:8000/setTaxiMateInfo", userTaxiInfo)
+      .post("http://192.168.0.14:8000/setTaxiMateInfo", userTaxiInfo)
       .then(function (response) {
         //console.log(response);
         Alert.alert(

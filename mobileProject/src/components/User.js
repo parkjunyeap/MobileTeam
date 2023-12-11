@@ -21,7 +21,7 @@ const User = ({ item }) => {
   // 현재 로그인 한 사람 누군지 알수있으려고
   const [friendRequests, sentFriendRequests] = useState([]); // 친구요청 보낸 유저배열
   const [userFriends, setUserFriends] = useState([]); // 친구인 유저 배열
-  const socket = io("http://localhost:8001"); // 이런식으로 socket = io(주소) 해주고.
+  const socket = io("http://192.168.0.14:8001"); // 이런식으로 socket = io(주소) 해주고.
 
   useEffect(() => {
     // 요청 보낸사람 이거
@@ -29,7 +29,7 @@ const User = ({ item }) => {
       try {
         //console.log("여기들옴?");
         const response = await fetch(
-          `http://localhost:8000/friend-requests/sent/${userId}`
+          `http://192.168.0.14:8000/friend-requests/sent/${userId}`
         );
 
         const data = await response.json();
@@ -51,7 +51,7 @@ const User = ({ item }) => {
   //   const fetchUserFriends = async () => {
   //     try {
   //       const response = await fetch(
-  //         `http://localhost:8000/friends/${userId}`
+  //         `http://192.168.0.14:8000/friends/${userId}`
   //       );
 
   //       const data = await response.json();
@@ -73,7 +73,9 @@ const User = ({ item }) => {
   useEffect(() => {
     const fetchUserFriends = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/friends/${userId}`);
+        const response = await fetch(
+          `http://192.168.0.14:8000/friends/${userId}`
+        );
 
         const data = await response.json();
 
@@ -143,7 +145,7 @@ const User = ({ item }) => {
 
   const sendFriendRequest = async (currentUserId, selectedUserId) => {
     try {
-      const response = await fetch("http://localhost:8000/friend-request", {
+      const response = await fetch("http://192.168.0.14:8000/friend-request", {
         // 친구추가 요청 보내기
         method: "POST",
         headers: {

@@ -99,7 +99,7 @@ export default TaxiTouch = () => {
 
   console.log(userId);
   const passengerId = userId;
-  const socket = io("http://localhost:8001");
+  const socket = io("http://192.168.0.14:8001");
 
   // 아이템 선택 및 모달 표시 함수
   const handleSelectItem = (item) => {
@@ -167,7 +167,7 @@ export default TaxiTouch = () => {
     try {
       // axios.get 호출을 await으로 기다립니다
       const response = await axios.get(
-        "http://localhost:8000/taxiLocationFind/"
+        "http://192.168.0.14:8000/taxiLocationFind/"
       );
 
       console.log("현재 갖고온 택시기사들 정보:", response.data);
@@ -194,7 +194,7 @@ export default TaxiTouch = () => {
     }
   }
 
-  console.log("여기 드라이버들도 잘 들어왔음 ", drivers);
+  // console.log("여기 드라이버들도 잘 들어왔음 ", drivers);
 
   const handleStartLocationChange = (value) => {
     console.log("설정될 출발지:", value);
@@ -237,14 +237,15 @@ export default TaxiTouch = () => {
     taxiDriversMarker(); // 받아온거를 이제 latitude , longitude 를 위도, 경도를 배열에 적재요.
   }, []);
 
-
   // 연호가 현재 지도
-  const [routeInfo, setRouteInfo] = useState({ distance: null, duration: null });
+  const [routeInfo, setRouteInfo] = useState({
+    distance: null,
+    duration: null,
+  });
   // 차량 마커 위치를 위한 상태
   const [carMarkerPosition, setCarMarkerPosition] = useState(null);
   // 애니메이션을 위한 인터벌 참조
   const animationInterval = useRef(null);
-
 
   async function getCurrentLocation() {
     try {
@@ -336,7 +337,7 @@ export default TaxiTouch = () => {
           longitudeDelta: 0.1,
         }}
         showsUserLocation={true} // 사용자 위치 표시 활성화
-      // 기본위치 바뀌는건데 잘못 했음. 연호가할거
+        // 기본위치 바뀌는건데 잘못 했음. 연호가할거
       >
         {origin && (
           <Marker
@@ -360,7 +361,7 @@ export default TaxiTouch = () => {
         {carMarkerPosition && (
           <Marker coordinate={carMarkerPosition}>
             <Image
-              source={require('../../assets/carMarker.png')}
+              source={require("../../assets/carMarker.png")}
               style={styles.carMarker}
             />
           </Marker>
@@ -381,7 +382,7 @@ export default TaxiTouch = () => {
               // 경로 정보 업데이트
               setRouteInfo({
                 distance: result.distance, // 거리 (km)
-                duration: result.duration  // 소요 시간 (분)
+                duration: result.duration, // 소요 시간 (분)
               });
               // 애니메이션 시작
               animateCarMarker(result.coordinates, result.duration);
@@ -398,8 +399,12 @@ export default TaxiTouch = () => {
               latitude: parseFloat(driver.latitude),
               longitude: parseFloat(driver.longitude),
             }}
-            onPress={() => handleMarkerPress(driver)} // 여기에서 driver 객체 전달
+            onPress={() => handleMarkerPress(driver)}
           >
+            <Image
+              source={require("../../assets/carMarker.png")}
+              style={{ width: 40, height: 40 }} // 여기서 이미지 크기를 조절합니다.
+            />
           </Marker>
         ))}
       </MapView>
@@ -449,10 +454,18 @@ export default TaxiTouch = () => {
 
               if (origin && details) {
                 // 지도가 출발지와 목적지를 모두 포함하도록 조정
-                mapRef.current.fitToCoordinates([origin, { latitude: lat, longitude: lng }], {
-                  edgePadding: { top: 150, right: 100, bottom: 100, left: 100 },
-                  animated: true,
-                });
+                mapRef.current.fitToCoordinates(
+                  [origin, { latitude: lat, longitude: lng }],
+                  {
+                    edgePadding: {
+                      top: 150,
+                      right: 100,
+                      bottom: 100,
+                      left: 100,
+                    },
+                    animated: true,
+                  }
+                );
               }
             }
             setEndPoint(data.description);
@@ -467,12 +480,11 @@ export default TaxiTouch = () => {
         <View>
           {routeInfo.distance && routeInfo.duration && (
             <Text>
-              거리: {routeInfo.distance.toFixed(2)} km,
-              시간: {Math.round(routeInfo.duration)} 분
+              거리: {routeInfo.distance.toFixed(2)} km, 시간:{" "}
+              {Math.round(routeInfo.duration)} 분
             </Text>
           )}
         </View>
-
 
         {/* 그냥 서버로 userId랑 함께 날리면됨. */}
 
@@ -511,7 +523,7 @@ export default TaxiTouch = () => {
                     resizeMode: "cover",
                   }}
                   source={{ uri: selectedDriver?.image }}
-                // ㅇ처음엔 사진
+                  // ㅇ처음엔 사진
                 />
               </View>
               <Text style={styles.modalText}> {selectedDriver.name}</Text>
@@ -521,7 +533,7 @@ export default TaxiTouch = () => {
               <Text>
                 운행하시는 동네 :
                 {selectedDriver.province === undefined &&
-                  selectedDriver.city === undefined
+                selectedDriver.city === undefined
                   ? "입력안함"
                   : selectedDriver.province + " " + selectedDriver.city}
               </Text>

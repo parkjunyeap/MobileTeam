@@ -54,9 +54,9 @@ export default function HomeScreen() {
     setUserId(userId);
 
     axios
-      .get(`http://localhost:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
+      .get(`http://192.168.0.14:8000/users/${userId}`) // 본인아이디넘겨서 본인만 빼고 나오게 만듦.
       .then((response) => {
-        console.log("Response data:", response.data); // 전부 찍힘.
+        // console.log("Response data:", response.data); // 전부 찍힘.
         setUsers(response.data);
       })
       .catch((error) => {
@@ -113,7 +113,9 @@ export default function HomeScreen() {
     fetchUsers();
   }, []); // 처음 렌더링 될때 한번만 실행되고 , 이걸로
 
-  console.log("로그인한사람 친구들 ", userId.friends); // 로그인한 친구 아이디
+  // console.log("로그인한사람 친구들 ", userId.friends); // 로그인한 친구 아이디
+  // 이렇게는 안뜲
+
   // console.log("users", users);
 
   // 이거 users 너무 많이 나와서 주석처리함.

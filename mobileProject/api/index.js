@@ -19,7 +19,7 @@ const socketIo = require("socket.io");
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:19006", // 허용할 출처를 여기에 설정
+    origin: "http://192.168.0.14:19006", // 허용할 출처를 여기에 설정
     methods: ["GET", "POST"], // 허용할 HTTP 메서드
   },
 });
@@ -1425,9 +1425,11 @@ io.on("connection", (socket) => {
   // 탑승자의 요청을 운전사에게 전송
   socket.on("passengerRequest", async (request) => {
     console.log("탑승자의 요청이 수신되었습니다.", request);
-    const driverSocketId = clientSocketIdMap.get(request.driverId);
-    const driver = await Driver.findOne({ _id: request.driverId });
-    console.log(driver);
+    const driverSocketId = clientSocketIdMap.get(request.driverId._id);
+
+    console.log(driverSocketId, "드라이버소켓아이디");
+    const driver = await Driver.findOne({ _id: request.driverId._id });
+    console.log(driver, "드라이버");
 
     if (driverSocketId) {
       // Mongoose 모델을 사용하여 운전사를 찾음
