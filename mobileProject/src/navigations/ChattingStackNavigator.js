@@ -11,7 +11,7 @@ import FriendsFindDetail from "../screens/FriendsFindDetail";
 import ViewMyReview from "../screens/ViewMyReview"; // 이름바꿔야함.
 import Review from "../screens/Review";
 import ViewFriendReview from "../screens/ViewFriendReview";
-import FriendsFindResult from "../screens/FirendsFindResult";
+import FriendsFindResult from "../screens/FriendsFindResult";
 
 const Stack = createStackNavigator();
 

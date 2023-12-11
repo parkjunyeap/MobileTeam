@@ -35,6 +35,7 @@ import locationData from "../locationData";
 // 지역 2차원배열 로된거 갖고옴
 
 const MyTaxiMateInfo = () => {
+  const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일'];
   // 이렇게하면 로그인한유저 갖고올 수 있음.
   const { userId, setUserId } = useContext(UserType);
 
@@ -58,6 +59,7 @@ const MyTaxiMateInfo = () => {
   );
   const [favoriteStartLocation, setFavoriteStartLocation] = useState(""); // 아산
   const [favoriteEndLocation, setFavoriteEndLocation] = useState(""); //천안
+  const [selectedDays, setSelectedDays] = useState(new Array(7).fill(false));
 
   const [favoriteTime1, setFavoriteTime1] = useState({
     hour: "01",
@@ -67,7 +69,6 @@ const MyTaxiMateInfo = () => {
     hour: "01",
     minute: "00",
   });
-
 
   const pickImage = async () => {
     try {
@@ -97,19 +98,28 @@ const MyTaxiMateInfo = () => {
     }
   };
 
-
   const onProvinceChange = (province) => {
     setSelectedProvince(province);
     const citiesForProvince = locationData[province];
     setSelectedCity(citiesForProvince[0]);
   };
 
+  const toggleDay = (index) => {
+    const newSelectedDays = [...selectedDays];
+    newSelectedDays[index] = !newSelectedDays[index];
+    setSelectedDays(newSelectedDays);
+  };
+
   // 서버에서 택시친구 정보 갖고오기
   const viewTaxiMateInfo = async () => {
     try {
       const response = await fetch(
-        `http://192.168.219.104:8000/ViewTaxiMateInfo/${userId}`
+        `http://localhost:8000/ViewTaxiMateInfo/${userId}`
       );
+      const transformSelectedDays = (selectedDays) => {
+        const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일'];
+        return daysOfWeek.map(day => selectedDays.includes(day));
+      };
 
       const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
       // setRecepientData(data);
@@ -124,9 +134,9 @@ const MyTaxiMateInfo = () => {
       // 위 로그로 data.infoSetting.favoriteStartPoint 이거는 잘 불러와진것같아 .
       setFavoriteStartLocation(data.infoSetting.favoriteStartPoint || ""); // 원래이럼
       // setFavoriteStartLocation(data.infoSetting.favoriteStartPoint); // 이렇게바꿔도 똑같고.
-
       console.log("data 즐겨타는 목적지:", data.infoSetting.favoriteEndPoint);
       setFavoriteEndLocation(data.infoSetting.favoriteEndPoint || "");
+      setSelectedDays(transformSelectedDays(data.infoSetting.selectedDays) || []);
       setFavoriteTime1({
         hour: data.infoSetting.favoriteTimeFrame1.hour || "01",
         minute: data.infoSetting.favoriteTimeFrame1.minute || "00",
@@ -164,7 +174,7 @@ const MyTaxiMateInfo = () => {
     const viewTaxiMateInfo = async () => {
       try {
         const response = await fetch(
-          `http://192.168.219.104:8000/ViewTaxiMateInfo/${userId}`
+          `http://localhost:8000/ViewTaxiMateInfo/${userId}`
         );
 
         const data = await response.json(); // 택시 친구 정보 json 으로 가져옴 .
@@ -174,13 +184,11 @@ const MyTaxiMateInfo = () => {
         console.log("불러온 data:", data);
         setSelectedProvince(data.infoSetting.province || "충청남도");
         setSelectedCity(data.infoSetting.city || "아산시");
-        console.log(
-          "data 즐겨타는출발지:",
-          data.infoSetting.favoriteStartPoint
-        );
+        console.log("data 즐겨타는출발지:", data.infoSetting.favoriteStartPoint);
         setFavoriteStartLocation(data.infoSetting.favoriteStartPoint || ""); // 원래이럼
         // setFavoriteStartLocation(data.infoSetting.favoriteStartPoint); // 이렇게바꿔도 똑같고.
         setFavoriteEndLocation(data.infoSetting.favoriteEndPoint || "");
+        setSelectedDays(data.infoSetting.selectedDays || [])
         setFavoriteTime1({
           hour: data.infoSetting.favoriteTimeFrame1.hour || "01",
           minute: data.infoSetting.favoriteTimeFrame1.minute || "00",
@@ -198,6 +206,11 @@ const MyTaxiMateInfo = () => {
     viewTaxiMateInfo();
   }, []); //useEffect에 있는 []는 이 코드를 앱이 시작될 때 딱 한 번만 실행
   const handleSaveButtonClick = () => {
+
+    const transformedSelectedDays = selectedDays
+      .map((selected, index) => selected ? daysOfWeek[index] : null)
+      .filter(day => day !== null);
+
     const userTaxiInfo = {
       userId: userId, // 로그인 한 사람 id
       image: image,
@@ -205,6 +218,7 @@ const MyTaxiMateInfo = () => {
       city: selectedCity, // 시
       favoriteStartPoint: favoriteStartLocation, // 출발지,
       favoriteEndPoint: favoriteEndLocation, // 도착지
+      selectedDays: transformedSelectedDays,
       favoriteTimeFrame1: [favoriteTime1.hour, favoriteTime1.minute], // 시간1
       favoriteTimeFrame2: [favoriteTime2.hour, favoriteTime2.minute], // 시간2
     };
@@ -212,11 +226,11 @@ const MyTaxiMateInfo = () => {
 
     // 유저택시정보저장
     axios
-      .post("http://192.168.219.104:8000/setTaxiMateInfo", userTaxiInfo)
+      .post("http://localhost:8000/setTaxiMateInfo", userTaxiInfo)
       .then(function (response) {
         //console.log(response);
         Alert.alert(
-          
+
           "사용자 택시 정보 저장 성공!!",
           "성공적으로 저장되었습니다"
         );
@@ -310,7 +324,18 @@ const MyTaxiMateInfo = () => {
           <MaterialCommunityIcons name="map-marker" size={20} />
         </View>
       </View>
-
+      <View style={styles.Dcontainer}>
+        <Text>해당 요일</Text>
+        {daysOfWeek.map((day, index) => (
+          <TouchableOpacity
+            key={day}
+            style={[styles.dayButton, selectedDays[index] && styles.selectedDay]}
+            onPress={() => toggleDay(index)}
+          >
+            <Text style={[styles.dayText, selectedDays[index] && styles.selectedDayText]}>{day}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
       <Text> 즐겨타는 시간대 1</Text>
       <TimePicker
         selectedHour={favoriteTime1.hour}
@@ -425,6 +450,26 @@ const styles = StyleSheet.create({
   },
   regionText: {
     fontSize: 20,
+  },
+  Dcontainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 20,
+  },
+  dayButton: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#fff',
+    borderRadius: 50,
+  },
+  selectedDay: {
+    backgroundColor: '#28a745', // 선택된 요일의 배경색
+  },
+  selectedDayText:{
+    color: 'white',
+  },
+  dayText: {
+    color: 'black', // 텍스트 색상은 흰색
   },
 });
 

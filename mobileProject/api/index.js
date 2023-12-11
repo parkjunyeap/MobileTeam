@@ -579,6 +579,7 @@ app.post("/setTaxiMateInfo", async (req, res) => {
           city: req.body.city,
           favoriteStartPoint: req.body.favoriteStartPoint,
           favoriteEndPoint: req.body.favoriteEndPoint,
+          selectedDays: req.body.selectedDays,
           favoriteTimeFrame1: {
             hour: req.body.favoriteTimeFrame1[0],
             minute: req.body.favoriteTimeFrame1[1],
@@ -742,7 +743,7 @@ app.get("/reviews/receiver/driver/:userId", async (req, res) => {
 
 app.post("/FindTaxiMateDetail", async (req, res) => {
   try {
-    const { province, city, favoriteStartPoint, favoriteEndPoint } = req.body;
+    const { province, city, favoriteStartPoint, favoriteEndPoint, selectedDays } = req.body;
     // MongoDB에서 사용자 정보를 조회
     console.log("데이터 확인 :", req.body);
 
@@ -753,11 +754,25 @@ app.post("/FindTaxiMateDetail", async (req, res) => {
     const userSE = await User.find({
       "infoSetting.favoriteStartPoint": favoriteStartPoint,
       "infoSetting.favoriteEndPoint": favoriteEndPoint,
+      "infoSetting.selectedDays":{ $in: selectedDays }
     });
 
     //지역별로 검색할 수 잇게 바꿈일단
-    console.log("Searched by 도/시", userPC);
-    console.log("Searched by 주 이용 위치", userSE);
+    if (userPC.length > 0) {
+      userPC.forEach(user => {
+        console.log("Searched by 도/시", user._id);
+      });
+    } else {
+      console.log("Searched by 도/시 - No Results Found");
+    }
+    if (userSE.length > 0) {
+      userSE.forEach(user => {
+        console.log("Searched by 주 이용 위치", user._id);
+      });
+    } else {
+      console.log("Searched by 주 이용 위치 - No Results Found");
+    }
+    //console.log("Searched by 주 이용 위치", userSE);
     if ((!userPC || userPC.length === 0) && (!userSE || userSE.length === 0)) {
       // 해당하는 사용자를 찾지 못한 경우 에러 응답
       return res.status(200).json({ userPC, userSE });
@@ -1282,10 +1297,10 @@ io.on('connection', (socket) => {
       const senderId = formData.senderId;
       const recepientId = formData.recepientId;
       const messageType = formData.messageType;
-  
+
       // 이곳에서 메시지를 처리하고 저장하는 로직을 추가
       // 예를 들어, MongoDB를 사용해 메시지를 저장할 수 있습니다.
-      
+
       // MongoDB를 사용하여 메시지 저장 (mongoose 모델이 있다고 가정)
       const newMessage = new Message({
         senderId: senderId,
@@ -1297,7 +1312,7 @@ io.on('connection', (socket) => {
       });
       await newMessage.save();
       // 저장한 메시지를 다른 클라이언트에게 다시 보내는 예제 코드
-      console.log("보낼 : ",newMessage)
+      console.log("보낼 : ", newMessage)
       io.emit('receiveMessage', formData);
       //io.to(recepientId).emit('receiveMessage', formData);
     } catch (error) {
