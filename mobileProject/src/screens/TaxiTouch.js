@@ -239,7 +239,13 @@ export default TaxiTouch = () => {
 
 
   // 연호가 현재 지도
+  const [routeInfo, setRouteInfo] = useState({ distance: null, duration: null });
+  // 차량 마커 위치를 위한 상태
   const [carMarkerPosition, setCarMarkerPosition] = useState(null);
+  // 애니메이션을 위한 인터벌 참조
+  const animationInterval = useRef(null);
+
+
   async function getCurrentLocation() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -288,9 +294,14 @@ export default TaxiTouch = () => {
     );
   }
 
-  function animateCarMarker(coordinates) {
+  function animateCarMarker(coordinates, duration) {
     let step = 0;
     const numSteps = coordinates.length - 1;
+
+    // 경로의 각 단계 사이의 시간 간격을 계산합니다.
+    // duration은 분 단위로 제공되므로, 밀리초 단위로 변환합니다.
+    const intervalTime = (duration * 60 * 1000) / numSteps;
+
     const interval = setInterval(() => {
       if (step < numSteps) {
         setCarMarkerPosition(coordinates[step]);
@@ -298,7 +309,7 @@ export default TaxiTouch = () => {
       } else {
         clearInterval(interval);
       }
-    }, 1000);
+    }, intervalTime);
   }
 
   // 마커 클릭 시 이벤트 핸들러
@@ -355,14 +366,6 @@ export default TaxiTouch = () => {
           </Marker>
         )}
 
-        {movingMarkerPosition && (
-          <Marker coordinate={movingMarkerPosition}>
-            <Image
-              source={require('../../assets/carMarker.png')}
-              style={styles.carMarker}
-            />
-          </Marker>
-        )}
         {origin && destination && (
           <MapViewDirections
             origin={origin}
@@ -374,6 +377,14 @@ export default TaxiTouch = () => {
               console.log(result.coordinates);
               setRouteCoordinates(result.coordinates);
               animateCarMarker(result.coordinates);
+
+              // 경로 정보 업데이트
+              setRouteInfo({
+                distance: result.distance, // 거리 (km)
+                duration: result.duration  // 소요 시간 (분)
+              });
+              // 애니메이션 시작
+              animateCarMarker(result.coordinates, result.duration);
             }}
           />
         )}
@@ -452,6 +463,16 @@ export default TaxiTouch = () => {
           }}
           onFail={(error) => console.error(error)}
         />
+
+        <View>
+          {routeInfo.distance && routeInfo.duration && (
+            <Text>
+              거리: {routeInfo.distance.toFixed(2)} km,
+              시간: {Math.round(routeInfo.duration)} 분
+            </Text>
+          )}
+        </View>
+
 
         {/* 그냥 서버로 userId랑 함께 날리면됨. */}
 
@@ -715,8 +736,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   carMarker: {
-    width: 30, 
-    height: 30, 
+    width: 30,
+    height: 30,
   },
   modalText: {
     marginBottom: 15,
