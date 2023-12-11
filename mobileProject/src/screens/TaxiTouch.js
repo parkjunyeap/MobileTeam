@@ -99,7 +99,7 @@ export default TaxiTouch = () => {
 
   console.log(userId);
   const passengerId = userId;
-  const socket = io("http://172.30.1.78:8001");
+  const socket = io("http://10.20.33.159:8001");
 
   // 아이템 선택 및 모달 표시 함수
   const handleSelectItem = (item) => {
@@ -167,7 +167,7 @@ export default TaxiTouch = () => {
     try {
       // axios.get 호출을 await으로 기다립니다
       const response = await axios.get(
-        "http://172.30.1.78:8000/taxiLocationFind/"
+        "http://10.20.33.159:8000/taxiLocationFind/"
       );
 
       console.log("현재 갖고온 택시기사들 정보:", response.data);
@@ -283,14 +283,6 @@ export default TaxiTouch = () => {
     }
   }
 
-  const MyCustomCalloutView = () => {
-    return (
-      <View>
-        <Text>MyCustomCalloutVieww22</Text>
-      </View>
-    );
-  };
-
   async function moveToLocation(latitude, longitude) {
     mapRef.current.animateToRegion(
       {
@@ -377,7 +369,7 @@ export default TaxiTouch = () => {
             onReady={(result) => {
               console.log(result.coordinates);
               setRouteCoordinates(result.coordinates);
-              animateMarker();
+              animateMarker(result.coordinates);
             }}
           />
         )}
@@ -440,7 +432,14 @@ export default TaxiTouch = () => {
             if (details) {
               const { lat, lng } = details.geometry.location;
               setDestination({ latitude: lat, longitude: lng });
-              moveToLocation(lat, lng);
+             
+              if (origin && details) {
+                // 지도가 출발지와 목적지를 모두 포함하도록 조정
+                mapRef.current.fitToCoordinates([origin, { latitude: lat, longitude: lng }], {
+                  edgePadding: { top: 150, right: 100, bottom: 100, left: 100 },
+                  animated: true,
+                });
+              }
             }
             setEndPoint(data.description);
           }}

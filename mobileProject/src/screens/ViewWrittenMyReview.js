@@ -27,7 +27,7 @@ const ViewWrittenMyReview = () => {
   //           text: "확인", // 확인누르면
   //           onPress: async () => {
   //             await axios.delete(
-  //               `http://172.30.1.78:8000/Review/del/${writeId}`
+  //               `http://10.20.33.159:8000/Review/del/${writeId}`
   //             );
   //             setBooking((prevReviews) =>
   //               prevReviews.filter((b) => b._id !== writeId)
@@ -49,7 +49,7 @@ const ViewWrittenMyReview = () => {
     const fetchReviewRequest = async () => {
       try {
         const response = await axios.get(
-          `http://172.30.1.78:8000/reviews/sender/${userId}`
+          `http://10.20.33.159:8000/reviews/sender/${userId}`
         );
         if (response.status === 200) {
           setReviews(response.data); // 서버로부터 받은 데이터를 상태에 저장합니다.
