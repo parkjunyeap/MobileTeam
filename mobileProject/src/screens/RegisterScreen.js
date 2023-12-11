@@ -75,7 +75,7 @@ const RegisterScreen = () => {
 
     // send a POST  request to the backend API to register the user
     axios
-      .post("http://10.20.33.159:8000/register", user) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
+      .post("http://10.20.60.231:8000/register", user) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
       .then((response) => {
         // 그러면. res 로 잘됏나 안됏나 받음. 그리고 메시지띄움. 그리고 set으로 다른거 다 빈칸으로만듬
         console.log(response);

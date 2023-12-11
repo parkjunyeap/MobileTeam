@@ -99,7 +99,7 @@ export default TaxiTouch = () => {
 
   console.log(userId);
   const passengerId = userId;
-  const socket = io("http://10.20.33.159:8001");
+  const socket = io("http://10.20.60.231:8001");
 
   // 아이템 선택 및 모달 표시 함수
   const handleSelectItem = (item) => {
@@ -167,7 +167,7 @@ export default TaxiTouch = () => {
     try {
       // axios.get 호출을 await으로 기다립니다
       const response = await axios.get(
-        "http://10.20.33.159:8000/taxiLocationFind/"
+        "http://10.20.60.231:8000/taxiLocationFind/"
       );
 
       console.log("현재 갖고온 택시기사들 정보:", response.data);
@@ -217,7 +217,7 @@ export default TaxiTouch = () => {
   // 출발지 목적지 정하고 확인누르는 순간
   useEffect(() => {
     if (origin) {
-      setMovingMarkerPosition(origin);
+      setCarMarkerPosition(origin);
     }
   }, [origin]);
 
@@ -237,16 +237,9 @@ export default TaxiTouch = () => {
     taxiDriversMarker(); // 받아온거를 이제 latitude , longitude 를 위도, 경도를 배열에 적재요.
   }, []);
 
-  const MyCustomMarkerView = () => {
-    return (
-      <Image
-        style={{ width: 30, height: 30 }}
-        source={require("../../assets/carMarker.png")}
-      />
-    );
-  };
 
   // 연호가 현재 지도
+  const [carMarkerPosition, setCarMarkerPosition] = useState(null);
   async function getCurrentLocation() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -295,19 +288,18 @@ export default TaxiTouch = () => {
     );
   }
 
-  const animateMarker = () => {
+  function animateCarMarker(coordinates) {
     let step = 0;
-    const numSteps = routeCoordinates.length - 1;
+    const numSteps = coordinates.length - 1;
     const interval = setInterval(() => {
-      // 마커 위치를 업데이트합니다.
-      if (step <= numSteps) {
-        setMovingMarkerPosition(routeCoordinates[step]);
+      if (step < numSteps) {
+        setCarMarkerPosition(coordinates[step]);
         step++;
       } else {
         clearInterval(interval);
       }
     }, 1000);
-  };
+  }
 
   // 마커 클릭 시 이벤트 핸들러
   const handleMarkerPress = (driver) => {
@@ -333,7 +325,7 @@ export default TaxiTouch = () => {
           longitudeDelta: 0.1,
         }}
         showsUserLocation={true} // 사용자 위치 표시 활성화
-        // 기본위치 바뀌는건데 잘못 했음. 연호가할거
+      // 기본위치 바뀌는건데 잘못 했음. 연호가할거
       >
         {origin && (
           <Marker
@@ -354,9 +346,21 @@ export default TaxiTouch = () => {
             }
           />
         )}
+        {carMarkerPosition && (
+          <Marker coordinate={carMarkerPosition}>
+            <Image
+              source={require('../../assets/carMarker.png')}
+              style={styles.carMarker}
+            />
+          </Marker>
+        )}
+
         {movingMarkerPosition && (
           <Marker coordinate={movingMarkerPosition}>
-            <MyCustomMarkerView />
+            <Image
+              source={require('../../assets/carMarker.png')}
+              style={styles.carMarker}
+            />
           </Marker>
         )}
         {origin && destination && (
@@ -369,7 +373,7 @@ export default TaxiTouch = () => {
             onReady={(result) => {
               console.log(result.coordinates);
               setRouteCoordinates(result.coordinates);
-              animateMarker(result.coordinates);
+              animateCarMarker(result.coordinates);
             }}
           />
         )}
@@ -385,7 +389,6 @@ export default TaxiTouch = () => {
             }}
             onPress={() => handleMarkerPress(driver)} // 여기에서 driver 객체 전달
           >
-            <MyCustomMarkerView />
           </Marker>
         ))}
       </MapView>
@@ -432,7 +435,7 @@ export default TaxiTouch = () => {
             if (details) {
               const { lat, lng } = details.geometry.location;
               setDestination({ latitude: lat, longitude: lng });
-             
+
               if (origin && details) {
                 // 지도가 출발지와 목적지를 모두 포함하도록 조정
                 mapRef.current.fitToCoordinates([origin, { latitude: lat, longitude: lng }], {
@@ -487,7 +490,7 @@ export default TaxiTouch = () => {
                     resizeMode: "cover",
                   }}
                   source={{ uri: selectedDriver?.image }}
-                  // ㅇ처음엔 사진
+                // ㅇ처음엔 사진
                 />
               </View>
               <Text style={styles.modalText}> {selectedDriver.name}</Text>
@@ -497,7 +500,7 @@ export default TaxiTouch = () => {
               <Text>
                 운행하시는 동네 :
                 {selectedDriver.province === undefined &&
-                selectedDriver.city === undefined
+                  selectedDriver.city === undefined
                   ? "입력안함"
                   : selectedDriver.province + " " + selectedDriver.city}
               </Text>
@@ -710,6 +713,10 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     textAlign: "center",
+  },
+  carMarker: {
+    width: 30, 
+    height: 30, 
   },
   modalText: {
     marginBottom: 15,

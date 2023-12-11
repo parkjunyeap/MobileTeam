@@ -37,7 +37,7 @@ const BookingList = () => {
             text: "확인",
             onPress: async () => {
               await axios.delete(
-                `http://10.20.33.159:8000/Booking/del/${bookingId}`
+                `http://10.20.60.231:8000/Booking/del/${bookingId}`
               );
               setBooking((prevBookings) =>
                 prevBookings.filter((b) => b._id !== bookingId)
@@ -57,7 +57,7 @@ const BookingList = () => {
     const bookingRequest = async () => {
       try {
         const response = await axios.get(
-          `http://10.20.33.159:8000/Booking/boarderId/${userId}`
+          `http://10.20.60.231:8000/Booking/boarderId/${userId}`
         );
         if (response.status === 200) {
           setBooking(response.data); //결제내역 을 로그인한유저기준으로 갖고옴
