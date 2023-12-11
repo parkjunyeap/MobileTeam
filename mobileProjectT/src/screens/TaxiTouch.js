@@ -20,7 +20,7 @@ export default function TaxiTouch() {
   const { userId, setUserId } = useContext(UserType);
   const [isDriving, setIsDriving] = useState(false); //일단 socket.io하기 전에 일단true
   const driverId = userId;
-  const socket = io("http://10.20.60.231:8001");
+  const socket = io("http://localhost:8001");
 
   const [taxiRequests, setTaxiRequests] = useState([]); // 택시 요청 배열
 
@@ -86,7 +86,7 @@ export default function TaxiTouch() {
         console.log("드라이버 로케이션", driverLocation);
 
         axios
-          .post("http://10.20.60.231:8000/taxiLocation", driverLocation) //
+          .post("http://localhost:8000/taxiLocation", driverLocation) //
           .then((response) => {
             console.log("리스폰 ", response);
           })
@@ -113,7 +113,7 @@ export default function TaxiTouch() {
       };
       console.log(newDriveState);
       // 서버에 운전 상태 업데이트를 요청하고, 요청이 성공하면 클라이언트 상태 업데이트
-      await axios.post("http://10.20.60.231:8000/UpDriveState", newDriveState);
+      await axios.post("http://localhost:8000/UpDriveState", newDriveState);
     } catch (error) {
       console.error("운전 상태 업데이트 오류:", error);
     }
@@ -135,7 +135,7 @@ export default function TaxiTouch() {
       };
 
       axios
-        .post("http://10.20.60.231:8000/Payment", payment) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
+        .post("http://localhost:8000/Payment", payment) // 로컬호스트/8000번으로 레지스터 Url, user 객체를줌
         .then((response) => {
           // 요청이 성공적으로 처리될 때의 로직
           console.log("등록 성공:", response.data);

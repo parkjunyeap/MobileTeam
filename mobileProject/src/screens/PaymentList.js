@@ -44,7 +44,7 @@ const PaymentList = () => {
     const paymentRequest = async () => {
       try {
         const response = await axios.get(
-          `http://10.20.60.231:8000/payments/boarderId/${userId}`
+          `http://localhost:8000/payments/boarderId/${userId}`
         );
         if (response.status === 200) {
           setPayments(response.data); //결제내역 을 로그인한유저기준으로 갖고옴
