@@ -27,13 +27,14 @@ const User = ({ item }) => {
     // 요청 보낸사람 이거
     const fetchFriendRequests = async () => {
       try {
-        console.log("여기들옴?");
+        //console.log("여기들옴?");
         const response = await fetch(
+          `http://localhost:8000/friend-requests/sent/${userId}`
           `http://localhost:8000/friend-requests/sent/${userId}`
         );
 
         const data = await response.json();
-        console.log("리스폰은 ", data);
+        //console.log("리스폰은 ", data);
         if (response.ok) {
           sentFriendRequests(data);
         } else {
@@ -130,8 +131,8 @@ const User = ({ item }) => {
     };
   }, []);
 
-  console.log("친구 요청 보낸사람", friendRequests);
-  console.log("친구인 사람", userFriends);
+  //console.log("친구 요청 보낸사람", friendRequests);
+  //console.log("친구인 사람", userFriends);
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -143,6 +144,7 @@ const User = ({ item }) => {
 
   const sendFriendRequest = async (currentUserId, selectedUserId) => {
     try {
+      const response = await fetch("http://localhost:8000/friend-request", {
       const response = await fetch("http://localhost:8000/friend-request", {
         // 친구추가 요청 보내기
         method: "POST",
@@ -215,36 +217,38 @@ const User = ({ item }) => {
                 ? "입력안함"
                 : item.infoSetting.province + " " + item.infoSetting.city}
             </Text>
-
             <Text>
-              즐겨 타는 출발지 :
+              즐겨 타는 출발지 :</Text>
+            <Text>
               {item.infoSetting === undefined
                 ? "입력안함"
                 : item.infoSetting.favoriteStartPoint}
             </Text>
             <Text>
-              즐겨 가는 목적지 :
+              즐겨 가는 목적지 :</Text>
+            <Text>
               {item.infoSetting === undefined
                 ? "입력안함"
                 : item.infoSetting.favoriteEndPoint}
             </Text>
             <Text>
+              요일 :
+              {item.infoSetting?.selectedDays
+                ? ` ${item.infoSetting.selectedDays}`
+                : "해당 없음"}
+            </Text>
+            <Text>
               즐겨 타는 시간대 1 :
-              {item.infoSetting === undefined
-                ? "입력안함"
-                : item.infoSetting.favoriteTimeFrame1.hour +
-                  " : " +
-                  item.infoSetting.favoriteTimeFrame1.minute}
+              {item.infoSetting?.favoriteTimeFrame1
+                ? `${item.infoSetting.favoriteTimeFrame1.hour} : ${item.infoSetting.favoriteTimeFrame1.minute}`
+                : "입력안함"}
             </Text>
             <Text>
               즐겨 타는 시간대 2 :
-              {item.infoSetting === undefined
-                ? "입력안함"
-                : item.infoSetting.favoriteTimeFrame2.hour +
-                  " : " +
-                  item.infoSetting.favoriteTimeFrame2.minute}
+              {item.infoSetting?.favoriteTimeFrame2
+                ? `${item.infoSetting.favoriteTimeFrame2.hour} : ${item.infoSetting.favoriteTimeFrame2.minute}`
+                : "입력안함"}
             </Text>
-
             <View
               style={{
                 flexDirection: "row",
@@ -414,7 +418,7 @@ const styles = StyleSheet.create({
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center",
+    textAlign: "left",
     fontSize: 16,
     fontWeight: "bold",
   },

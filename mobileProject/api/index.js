@@ -588,6 +588,7 @@ app.post("/setTaxiMateInfo", async (req, res) => {
           city: req.body.city,
           favoriteStartPoint: req.body.favoriteStartPoint,
           favoriteEndPoint: req.body.favoriteEndPoint,
+          selectedDays: req.body.selectedDays,
           favoriteTimeFrame1: {
             hour: req.body.favoriteTimeFrame1[0],
             minute: req.body.favoriteTimeFrame1[1],
@@ -727,8 +728,14 @@ app.get("/reviews/receiver/driver/:userId", async (req, res) => {
 
 app.post("/FindTaxiMateDetail", async (req, res) => {
   try {
-    const { userId, province, city, favoriteStartPoint, favoriteEndPoint } =
-      req.body;
+    const {
+      userId,
+      province,
+      city,
+      favoriteStartPoint,
+      favoriteEndPoint,
+      selectedDays,
+    } = req.body;
     // MongoDB에서 사용자 정보를 조회
     console.log("데이터 확인 :", req.body);
 
@@ -741,11 +748,25 @@ app.post("/FindTaxiMateDetail", async (req, res) => {
       _id: { $ne: userId },
       "infoSetting.favoriteStartPoint": favoriteStartPoint,
       "infoSetting.favoriteEndPoint": favoriteEndPoint,
+      "infoSetting.selectedDays": { $in: selectedDays },
     });
 
     //지역별로 검색할 수 잇게 바꿈일단
-    console.log("Searched by 도/시", userPC);
-    console.log("Searched by 주 이용 위치", userSE);
+    if (userPC.length > 0) {
+      userPC.forEach((user) => {
+        console.log("Searched by 도/시", user._id);
+      });
+    } else {
+      console.log("Searched by 도/시 - No Results Found");
+    }
+    if (userSE.length > 0) {
+      userSE.forEach((user) => {
+        console.log("Searched by 주 이용 위치", user._id);
+      });
+    } else {
+      console.log("Searched by 주 이용 위치 - No Results Found");
+    }
+    //console.log("Searched by 주 이용 위치", userSE);
     if ((!userPC || userPC.length === 0) && (!userSE || userSE.length === 0)) {
       // 해당하는 사용자를 찾지 못한 경우 에러 응답
       return res.status(200).json({ userPC, userSE });
@@ -1386,6 +1407,7 @@ io.on("connection", (socket) => {
       });
       await newMessage.save();
       // 저장한 메시지를 다른 클라이언트에게 다시 보내는 예제 코드
+
       console.log("보낼 : ", newMessage);
       io.emit("receiveMessage", formData);
       //io.to(recepientId).emit('receiveMessage', formData);

@@ -57,6 +57,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false,
       },
+      selectedDays: {
+        type: [String],
+        enum: ['월', '화', '수', '목', '금', '토', '일'], // 유효한 값 제한
+        default: [], // 기본값은 선택되지 않은 상태
+        required:false
+      },
       favoriteTimeFrame1: {
         hour: {
           type: String,

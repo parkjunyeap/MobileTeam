@@ -8,7 +8,7 @@ import {
   Button,
   KeyboardAvoidingView,
   ScrollView,
-  Keyboard,
+  TouchableOpacity,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
@@ -24,7 +24,7 @@ import locationData from "../locationData";
 
 const FriendsFindDetail = () => {
   const { userId, setUserId } = useContext(UserType); // 여기서 유저 누구로 로그인햇는지 .
-
+  const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일'];
   // const [keyboardHeight, setKeyboardHeight] = useState(0); // 키보드 높이?
 
   console.log({ userId });
@@ -40,6 +40,7 @@ const FriendsFindDetail = () => {
 
   const [favoriteEndLocation, setFavoriteEndLocation] = useState([]);
   const [favoriteEndLocationI, setFavoriteEndLocationI] = useState([]);
+  const [selectedDays, setSelectedDays] = useState(new Array(7).fill(false));
   // // 키보드 화면 안가려지게 안되는데용?
   // useEffect(() => {
   //   const keyboardDidShowListener = Keyboard.addListener(
@@ -67,6 +68,12 @@ const FriendsFindDetail = () => {
     setSelectedCity(citiesForProvince[0]);
   };
 
+  const toggleDay = (index) => {
+    const newSelectedDays = [...selectedDays];
+    newSelectedDays[index] = !newSelectedDays[index];
+    setSelectedDays(newSelectedDays);
+  };
+
   const handleStartLocationChange = (start_place) => {
     setFavoriteStartLocation([...favoriteStartLocation, start_place]);
   };
@@ -91,6 +98,11 @@ const FriendsFindDetail = () => {
   const navigation = useNavigation(); // 네비게이션 객체 가져오기
 
   const handleSaveButtonClick = () => {
+
+    const transformedSelectedDays = selectedDays
+      .map((selected, index) => selected ? daysOfWeek[index] : null)
+      .filter(day => day !== null);
+
     console.log("선택한 도:", selectedProvince);
     console.log("선택한 시:", selectedCity);
     console.log(
@@ -108,6 +120,7 @@ const FriendsFindDetail = () => {
       city: selectedCity, // 시
       favoriteStartPoint: favoriteStartLocation.map((item) => item.description), // 출발지,
       favoriteEndPoint: favoriteEndLocation.map((item) => item.description),
+      selectedDays: transformedSelectedDays,
     };
 
     // 데이터 다 저장해서 .,.,.
@@ -260,6 +273,18 @@ const FriendsFindDetail = () => {
               <Text key={item.place_id}>{item && item.description}</Text>
             ))}
           </Text>
+          <View style={styles.Dcontainer}>
+            <Text>요일</Text>
+            {daysOfWeek.map((day, index) => (
+              <TouchableOpacity
+                key={day}
+                style={[styles.dayButton, selectedDays[index] && styles.selectedDay]}
+                onPress={() => toggleDay(index)}
+              >
+                <Text style={[styles.dayText, selectedDays[index] && styles.selectedDayText]}>{day}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
         {/* 버튼 style 먹이느라 */}
         <View style={styles.buttonContainer}>
@@ -322,6 +347,26 @@ const styles = StyleSheet.create({
     flex: 1, // each button will take half of the container width
     borderRadius: 5, // slight roundness to the corners
     overflow: "hidden", // ensures the borderRadius is respected
+  },
+  Dcontainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 5,
+  },
+  dayButton: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#fff',
+    borderRadius: 50,
+  },
+  selectedDay: {
+    backgroundColor: '#28a745', // 선택된 요일의 배경색
+  },
+  selectedDayText:{
+    color: 'white',
+  },
+  dayText: {
+    color: 'black', // 텍스트 색상은 흰색
   },
 });
 

@@ -44,6 +44,7 @@ const ChatMessagesScreen = () => {
   const [message, setMessage] = useState("");
   const { userId, setUserId } = useContext(UserType);
   const socket = io("http://localhost:8001"); // 이런식으로 socket = io(주소) 해주고.
+  const socket = io("http://localhost:8001");
   const scrollViewRef = useRef(null);
 
   // Firebase 앱 초기화
@@ -75,6 +76,8 @@ const ChatMessagesScreen = () => {
       const response = await fetch(
         `http://localhost:8000/messages/${userId}/${recepientId}`
       );
+      // 서버에서 메시지를 가져올 때 필요한 API 요청
+      const response = await fetch(`http://localhost:8000/messages/${userId}/${recepientId}`);
       const data = await response.json();
 
       if (response.ok) {
@@ -108,6 +111,7 @@ const ChatMessagesScreen = () => {
       // 받
       try {
         const response = await fetch(
+          `http://localhost:8000/user/${recepientId}`
           `http://localhost:8000/user/${recepientId}`
         );
 
@@ -199,6 +203,7 @@ const ChatMessagesScreen = () => {
 
   const deleteMessages = async (messageIds) => {
     try {
+      const response = await fetch("http://localhost:8000/deleteMessages", {
       const response = await fetch("http://localhost:8000/deleteMessages", {
         method: "POST",
         headers: {
