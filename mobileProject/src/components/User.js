@@ -30,8 +30,6 @@ const User = ({ item }) => {
         //console.log("여기들옴?");
         const response = await fetch(
           `http://localhost:8000/friend-requests/sent/${userId}`
-          `http://localhost:8000/friend-requests/sent/${userId}`
-          `http://localhost:8000/friend-requests/sent/${userId}`
         );
 
         const data = await response.json();
@@ -146,8 +144,6 @@ const User = ({ item }) => {
   const sendFriendRequest = async (currentUserId, selectedUserId) => {
     try {
       const response = await fetch("http://localhost:8000/friend-request", {
-      const response = await fetch("http://localhost:8000/friend-request", {
-      const response = await fetch("http://localhost:8000/friend-request", {
         // 친구추가 요청 보내기
         method: "POST",
         headers: {
@@ -219,16 +215,14 @@ const User = ({ item }) => {
                 ? "입력안함"
                 : item.infoSetting.province + " " + item.infoSetting.city}
             </Text>
-            <Text>
-              즐겨 타는 출발지 :</Text>
+            <Text>즐겨 타는 출발지 :</Text>
             <Text>
               {item.infoSetting === undefined
                 ? "입력안함"
                 : item.infoSetting.favoriteStartPoint}
             </Text>
             <Text>즐겨 가는 목적지 :</Text>
-            <Text>
-              즐겨 가는 목적지 :</Text>
+            <Text>즐겨 가는 목적지 :</Text>
             <Text>
               {item.infoSetting === undefined
                 ? "입력안함"
