@@ -217,7 +217,7 @@ export default TaxiTouch = () => {
   // 출발지 목적지 정하고 확인누르는 순간
   useEffect(() => {
     if (origin) {
-      setMovingMarkerPosition(origin);
+      setCarMarkerPosition(origin);
     }
   }, [origin]);
 
@@ -237,16 +237,15 @@ export default TaxiTouch = () => {
     taxiDriversMarker(); // 받아온거를 이제 latitude , longitude 를 위도, 경도를 배열에 적재요.
   }, []);
 
-  const MyCustomMarkerView = () => {
-    return (
-      <Image
-        style={{ width: 30, height: 30 }}
-        source={require("../../assets/carMarker.png")}
-      />
-    );
-  };
 
   // 연호가 현재 지도
+  const [routeInfo, setRouteInfo] = useState({ distance: null, duration: null });
+  // 차량 마커 위치를 위한 상태
+  const [carMarkerPosition, setCarMarkerPosition] = useState(null);
+  // 애니메이션을 위한 인터벌 참조
+  const animationInterval = useRef(null);
+
+
   async function getCurrentLocation() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -283,14 +282,6 @@ export default TaxiTouch = () => {
     }
   }
 
-  const MyCustomCalloutView = () => {
-    return (
-      <View>
-        <Text>MyCustomCalloutVieww22</Text>
-      </View>
-    );
-  };
-
   async function moveToLocation(latitude, longitude) {
     mapRef.current.animateToRegion(
       {
@@ -303,19 +294,23 @@ export default TaxiTouch = () => {
     );
   }
 
-  const animateMarker = () => {
+  function animateCarMarker(coordinates, duration) {
     let step = 0;
-    const numSteps = routeCoordinates.length - 1;
+    const numSteps = coordinates.length - 1;
+
+    // 경로의 각 단계 사이의 시간 간격을 계산합니다.
+    // duration은 분 단위로 제공되므로, 밀리초 단위로 변환합니다.
+    const intervalTime = (duration * 60 * 1000) / numSteps;
+
     const interval = setInterval(() => {
-      // 마커 위치를 업데이트합니다.
-      if (step <= numSteps) {
-        setMovingMarkerPosition(routeCoordinates[step]);
+      if (step < numSteps) {
+        setCarMarkerPosition(coordinates[step]);
         step++;
       } else {
         clearInterval(interval);
       }
-    }, 1000);
-  };
+    }, intervalTime);
+  }
 
   // 마커 클릭 시 이벤트 핸들러
   const handleMarkerPress = (driver) => {
@@ -341,7 +336,7 @@ export default TaxiTouch = () => {
           longitudeDelta: 0.1,
         }}
         showsUserLocation={true} // 사용자 위치 표시 활성화
-        // 기본위치 바뀌는건데 잘못 했음. 연호가할거
+      // 기본위치 바뀌는건데 잘못 했음. 연호가할거
       >
         {origin && (
           <Marker
@@ -362,11 +357,15 @@ export default TaxiTouch = () => {
             }
           />
         )}
-        {movingMarkerPosition && (
-          <Marker coordinate={movingMarkerPosition}>
-            <MyCustomMarkerView />
+        {carMarkerPosition && (
+          <Marker coordinate={carMarkerPosition}>
+            <Image
+              source={require('../../assets/carMarker.png')}
+              style={styles.carMarker}
+            />
           </Marker>
         )}
+
         {origin && destination && (
           <MapViewDirections
             origin={origin}
@@ -377,7 +376,15 @@ export default TaxiTouch = () => {
             onReady={(result) => {
               console.log(result.coordinates);
               setRouteCoordinates(result.coordinates);
-              animateMarker();
+              animateCarMarker(result.coordinates);
+
+              // 경로 정보 업데이트
+              setRouteInfo({
+                distance: result.distance, // 거리 (km)
+                duration: result.duration  // 소요 시간 (분)
+              });
+              // 애니메이션 시작
+              animateCarMarker(result.coordinates, result.duration);
             }}
           />
         )}
@@ -393,7 +400,6 @@ export default TaxiTouch = () => {
             }}
             onPress={() => handleMarkerPress(driver)} // 여기에서 driver 객체 전달
           >
-            <MyCustomMarkerView />
           </Marker>
         ))}
       </MapView>
@@ -440,7 +446,14 @@ export default TaxiTouch = () => {
             if (details) {
               const { lat, lng } = details.geometry.location;
               setDestination({ latitude: lat, longitude: lng });
-              moveToLocation(lat, lng);
+
+              if (origin && details) {
+                // 지도가 출발지와 목적지를 모두 포함하도록 조정
+                mapRef.current.fitToCoordinates([origin, { latitude: lat, longitude: lng }], {
+                  edgePadding: { top: 150, right: 100, bottom: 100, left: 100 },
+                  animated: true,
+                });
+              }
             }
             setEndPoint(data.description);
           }}
@@ -450,6 +463,16 @@ export default TaxiTouch = () => {
           }}
           onFail={(error) => console.error(error)}
         />
+
+        <View>
+          {routeInfo.distance && routeInfo.duration && (
+            <Text>
+              거리: {routeInfo.distance.toFixed(2)} km,
+              시간: {Math.round(routeInfo.duration)} 분
+            </Text>
+          )}
+        </View>
+
 
         {/* 그냥 서버로 userId랑 함께 날리면됨. */}
 
@@ -488,7 +511,7 @@ export default TaxiTouch = () => {
                     resizeMode: "cover",
                   }}
                   source={{ uri: selectedDriver?.image }}
-                  // ㅇ처음엔 사진
+                // ㅇ처음엔 사진
                 />
               </View>
               <Text style={styles.modalText}> {selectedDriver.name}</Text>
@@ -498,7 +521,7 @@ export default TaxiTouch = () => {
               <Text>
                 운행하시는 동네 :
                 {selectedDriver.province === undefined &&
-                selectedDriver.city === undefined
+                  selectedDriver.city === undefined
                   ? "입력안함"
                   : selectedDriver.province + " " + selectedDriver.city}
               </Text>
@@ -711,6 +734,10 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     textAlign: "center",
+  },
+  carMarker: {
+    width: 30,
+    height: 30,
   },
   modalText: {
     marginBottom: 15,

@@ -114,7 +114,6 @@ export default function TaxiTouch() {
       console.log(newDriveState);
       // 서버에 운전 상태 업데이트를 요청하고, 요청이 성공하면 클라이언트 상태 업데이트
       await axios.post("http://localhost:8000/UpDriveState", newDriveState);
-      await axios.post("http://localhost:8000/UpDriveState", newDriveState);
     } catch (error) {
       console.error("운전 상태 업데이트 오류:", error);
     }

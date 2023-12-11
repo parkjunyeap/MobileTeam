@@ -44,7 +44,6 @@ const ChatMessagesScreen = () => {
   const [message, setMessage] = useState("");
   const { userId, setUserId } = useContext(UserType);
   const socket = io("http://localhost:8001"); // 이런식으로 socket = io(주소) 해주고.
-
   const scrollViewRef = useRef(null);
 
   // Firebase 앱 초기화

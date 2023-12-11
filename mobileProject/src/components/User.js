@@ -31,6 +31,7 @@ const User = ({ item }) => {
         const response = await fetch(
           `http://localhost:8000/friend-requests/sent/${userId}`
           `http://localhost:8000/friend-requests/sent/${userId}`
+          `http://localhost:8000/friend-requests/sent/${userId}`
         );
 
         const data = await response.json();
@@ -146,6 +147,7 @@ const User = ({ item }) => {
     try {
       const response = await fetch("http://localhost:8000/friend-request", {
       const response = await fetch("http://localhost:8000/friend-request", {
+      const response = await fetch("http://localhost:8000/friend-request", {
         // 친구추가 요청 보내기
         method: "POST",
         headers: {
@@ -224,6 +226,7 @@ const User = ({ item }) => {
                 ? "입력안함"
                 : item.infoSetting.favoriteStartPoint}
             </Text>
+            <Text>즐겨 가는 목적지 :</Text>
             <Text>
               즐겨 가는 목적지 :</Text>
             <Text>
