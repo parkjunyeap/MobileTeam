@@ -43,7 +43,7 @@ const ChatMessagesScreen = () => {
   const { recepientId } = route.params;
   const [message, setMessage] = useState("");
   const { userId, setUserId } = useContext(UserType);
-  const socket = io("http://10.20.64.189:8001"); // 이런식으로 socket = io(주소) 해주고.
+  const socket = io("http://localhost:8001"); // 이런식으로 socket = io(주소) 해주고.
   const scrollViewRef = useRef(null);
 
   // Firebase 앱 초기화
@@ -73,7 +73,7 @@ const ChatMessagesScreen = () => {
   const fetchMessages = async () => {
     try {
       const response = await fetch(
-        `http://10.20.64.189:8000/messages/${userId}/${recepientId}`
+        `http://localhost:8000/messages/${userId}/${recepientId}`
       );
       const data = await response.json();
 
@@ -108,7 +108,7 @@ const ChatMessagesScreen = () => {
       // 받
       try {
         const response = await fetch(
-          `http://10.20.64.189:8000/user/${recepientId}`
+          `http://localhost:8000/user/${recepientId}`
         );
 
         const data = await response.json();
@@ -199,7 +199,7 @@ const ChatMessagesScreen = () => {
 
   const deleteMessages = async (messageIds) => {
     try {
-      const response = await fetch("http://10.20.64.189:8000/deleteMessages", {
+      const response = await fetch("http://localhost:8000/deleteMessages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
