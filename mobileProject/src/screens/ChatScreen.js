@@ -16,7 +16,7 @@ const ChatScreen = () => {
     const acceptedFriendsList = async () => {
       try {
         const response = await fetch(
-          `http://192.168.0.14:8000/accepted-friends/${userId}`
+          `http://10.20.64.189:8000/accepted-friends/${userId}`
         );
         // 왜안됨
         const data = await response.json();
@@ -31,6 +31,8 @@ const ChatScreen = () => {
 
     acceptedFriendsList();
   }, []);
+
+  // 처음
   console.log("friends", acceptedFriends);
   return (
     <ScrollView showsVerticalScrollIndicator={false}>

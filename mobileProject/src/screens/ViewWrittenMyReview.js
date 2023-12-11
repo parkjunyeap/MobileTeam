@@ -1,7 +1,7 @@
 // 내가 친구에게 쓴 리뷰 확인하는 화면
 
 import React, { useState, useEffect, useContext } from "react";
-import { View, FlatList, StyleSheet, Text, Image } from "react-native";
+import { View, FlatList, StyleSheet, Text } from "react-native";
 import { UserType } from "../UserContext";
 import axios from "axios";
 
@@ -10,38 +10,38 @@ const ViewWrittenMyReview = () => {
   const { userId } = useContext(UserType);
   const [reviews, setReviews] = useState([]); // 리뷰 데이터 상태
 
-  // // 리뷰 삭제
-  // const deleteReview = async (writeId) => {
-  //   try {
-  //     // 사용자에게 예약 취소를 확인
-  //     Alert.alert(
-  //       "리뷰 삭제", // 제목
-  //       "리뷰를 삭제하시겠습니까?", // 메시지
-  //       [
-  //         {
-  //           text: "취소",
-  //           onPress: () => console.log("취소됨"),
-  //           style: "cancel",
-  //         },
-  //         {
-  //           text: "확인", // 확인누르면
-  //           onPress: async () => {
-  //             await axios.delete(
-  //               `http://192.168.0.14:8000/Review/del/${writeId}`
-  //             );
-  //             setBooking((prevReviews) =>
-  //               prevReviews.filter((b) => b._id !== writeId)
-  //             );
-  //             alert("성공적으로 예약을 취소하였습니다.");
-  //           },
-  //         },
-  //       ],
-  //       { cancelable: false }
-  //     );
-  //   } catch (err) {
-  //     console.error("Error deleting Review:", err);
-  //   }
-  // };
+  // 리뷰 삭제
+  const deleteReview = async (writeId) => {
+    try {
+      // 사용자에게 예약 취소를 확인
+      Alert.alert(
+        "리뷰 삭제", // 제목
+        "리뷰를 삭제하시겠습니까?", // 메시지
+        [
+          {
+            text: "취소",
+            onPress: () => console.log("취소됨"),
+            style: "cancel",
+          },
+          {
+            text: "확인", // 확인누르면
+            onPress: async () => {
+              await axios.delete(
+                `http://10.20.64.189:8000/Review/del/${writeId}`
+              );
+              setBooking((prevReviews) =>
+                prevReviews.filter((b) => b._id !== writeId)
+              );
+              alert("성공적으로 예약을 취소하였습니다.");
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    } catch (err) {
+      console.error("Error deleting Review:", err);
+    }
+  };
 
   // 유저아이디 갖고온거를 senderId랑 비교함.
   useEffect(() => {
@@ -49,7 +49,7 @@ const ViewWrittenMyReview = () => {
     const fetchReviewRequest = async () => {
       try {
         const response = await axios.get(
-          `http://192.168.0.14:8000/reviews/sender/${userId}`
+          `http://10.20.64.189:8000/reviews/sender/${userId}`
         );
         if (response.status === 200) {
           setReviews(response.data); // 서버로부터 받은 데이터를 상태에 저장합니다.
@@ -65,8 +65,9 @@ const ViewWrittenMyReview = () => {
   return (
     <FlatList
       data={reviews} // 서버로부터 받은 리뷰 데이터를 사용합니다.
-      renderItem={({ item }) => <ReviewItem item={item} />} // 리뷰 삭제도
-      // onDelete={deleteReview}
+      renderItem={({ item }) => (
+        <ReviewItem item={item} onDelete={deleteReview} />
+      )} // 리뷰 삭제도
       keyExtractor={(item) => item._id.toString()} // MongoDB의 _id를 사용합니다.
       ListEmptyComponent={
         <Text style={styles.emptyListStyle}>

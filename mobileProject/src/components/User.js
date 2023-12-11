@@ -13,12 +13,15 @@ import {
 import { UserType } from "../UserContext";
 import { useNavigation } from "@react-navigation/native";
 
+import io from "socket.io-client"; // 소켓통신위해서 .
+
 const User = ({ item }) => {
   const { userId } = useContext(UserType);
   const [requestSent, setRequestSent] = useState(false); // 요청 처음엔 실패
   // 현재 로그인 한 사람 누군지 알수있으려고
   const [friendRequests, sentFriendRequests] = useState([]); // 친구요청 보낸 유저배열
   const [userFriends, setUserFriends] = useState([]); // 친구인 유저 배열
+  const socket = io("http://10.20.64.189:8001"); // 이런식으로 socket = io(주소) 해주고.
 
   useEffect(() => {
     // 요청 보낸사람 이거
@@ -26,7 +29,7 @@ const User = ({ item }) => {
       try {
         console.log("여기들옴?");
         const response = await fetch(
-          `http://192.168.0.14:8000/friend-requests/sent/${userId}`
+          `http://10.20.64.189:8000/friend-requests/sent/${userId}`
         );
 
         const data = await response.json();
@@ -43,11 +46,35 @@ const User = ({ item }) => {
     fetchFriendRequests();
   }, []);
 
+  // 이거 친구가 됐나? 그렇다면
+  // useEffect(() => {
+  //   const fetchUserFriends = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `http://10.20.64.189:8000/friends/${userId}`
+  //       );
+
+  //       const data = await response.json();
+
+  //       if (response.ok) {
+  //         setUserFriends(data);
+  //       } else {
+  //         console.log("에러 친구", response.status);
+  //       }
+  //     } catch (error) {
+  //       console.log("Error message", error);
+  //     }
+  //   };
+  //   fetchUserFriends();
+  // }, []);
+
+  // 친구이냐
+
   useEffect(() => {
     const fetchUserFriends = async () => {
       try {
         const response = await fetch(
-          `http://192.168.0.14:8000/friends/${userId}`
+          `http://10.20.64.189:8000/friends/${userId}`
         );
 
         const data = await response.json();
@@ -61,7 +88,48 @@ const User = ({ item }) => {
         console.log("Error message", error);
       }
     };
+
     fetchUserFriends();
+
+    // // 친구 요청 수락 이벤트 수신 리스너    // 왓으면 바로 업데이트되고
+    // socket.on("friendRequestAccepted", (newFriend) => {
+    //   // 새로운 친구 데이터를 기존의 친구 목록에 추가
+    //   console.log("친구요청수락한거 왔음.", newFriend);
+
+    //   console.log(userFriends);
+    //   setUserFriends((prevFriends) => [...prevFriends, newFriend]);
+    //   console.log(userFriends);
+    // });
+
+    // socket.on("friendRequestAccepted", (newFriend) => {
+    //   console.log("새 친구 데이터 로그:", newFriend); // 새 친구 데이터 로그
+    //   setUserFriends((prevFriends) => {
+    //     console.log("이전 친구 목록 로그:", prevFriends); // 이전 친구 목록 로그
+    //     const updatedFriends = [...prevFriends, newFriend];
+    //     console.log("업데이트된 친구 목록 로그:", updatedFriends); // 업데이트된 친구 목록 로그
+    //     return updatedFriends;
+    //   });
+    // });
+
+    socket.on("friendRequestAccepted", (data) => {
+      // 소켓io 로 요청한거 받는다는거를 받음
+      const newFriendId = data.newFriend._id; // newFriend 객체에서 ID 추출
+      console.log("Received new friend ID:", newFriendId);
+      setUserFriends((prevFriends) => {
+        if (prevFriends.includes(newFriendId)) {
+          // 이미 친구 목록에 있다면 추가하지 않음
+          return prevFriends;
+        }
+        return [...prevFriends, newFriendId]; // ID만 추가
+      });
+    });
+
+    // 초기 친구 목록 로드
+
+    // 컴포넌트 언마운트 시 리스너 제거
+    return () => {
+      socket.off("friendRequestAccepted");
+    };
   }, []);
 
   console.log("친구 요청 보낸사람", friendRequests);
@@ -77,7 +145,7 @@ const User = ({ item }) => {
 
   const sendFriendRequest = async (currentUserId, selectedUserId) => {
     try {
-      const response = await fetch("http://192.168.0.14:8000/friend-request", {
+      const response = await fetch("http://10.20.64.189:8000/friend-request", {
         // 친구추가 요청 보내기
         method: "POST",
         headers: {
@@ -92,6 +160,8 @@ const User = ({ item }) => {
         setRequestSent(true);
         // 친구 요청이 성공적으로 완료되었다면, userFriends 상태 업데이트
         // setUserFriends((prevFriends) => [...prevFriends, selectedUserId]);
+
+        // 위에 이거?
         console.log("ok 되서 잘 됐다고 뜸?");
       }
     } catch (error) {

@@ -2,8 +2,14 @@ import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 import formatDate from "../../hook/formatDate";
 
+import { useContext } from "react";
+
+import { UserType } from "../UserContext";
+
 // 근데 리뷰가 다이어져있어서 ,, 여기에서 아이디도 받아서 받는아이디랑
 const ReviewItem = ({ item, onDelete }) => {
+  const { userId } = useContext(UserType); // 유저아이디
+
   // 삭제도받아서
   const { _id, senderName, receiverName, rating, reviewDate, comment } = item;
 
@@ -11,7 +17,7 @@ const ReviewItem = ({ item, onDelete }) => {
   const ratingStars = Array(rating).fill("★").join("");
 
   const handleDelete = () => {
-    onDelete(item._id); // 예약 아이디를 사용하여 삭제 함수 호출
+    onDelete(item._id); // 리뷰 아이디이용 삭제가능
   };
 
   return (
@@ -23,11 +29,11 @@ const ReviewItem = ({ item, onDelete }) => {
         <Text style={styles.text}>{comment}</Text>
 
         {/* 현재 로그인한 사용자와 senderName이 일치할 때만 삭제 버튼 표시 */}
-        {/* {currentUser === senderName && (
+        {userId === senderName && (
           <TouchableOpacity style={styles.cancelButton} onPress={handleDelete}>
             <Text style={styles.cancelButtonText}>삭제</Text>
           </TouchableOpacity>
-        )} */}
+        )}
 
         {/* 하려다말음 */}
       </View>

@@ -382,11 +382,15 @@ app.get("/friend-request/:userId", async (req, res) => {
 });
 
 //endpoint to accept a friend-request of a particular person
+//친구추가 요청 수락하면 여기 서버API
 app.post("/friend-request/accept", async (req, res) => {
   try {
     const { senderId, recepientId } = req.body;
 
-    //retrieve the documents of sender and the recipient
+    // senderId가 요청한사람
+    // recepientId가 받은 사람
+
+    // 송신자 , 수신자 검색
     const sender = await User.findById(senderId);
     const recepient = await User.findById(recepientId);
 
@@ -404,6 +408,11 @@ app.post("/friend-request/accept", async (req, res) => {
 
     await sender.save();
     await recepient.save();
+    //friendRequestAccepted
+
+    // 객체로 오고있었음 . 이거  recepient.id =>
+    io.emit("friendRequestAccepted", { newFriend: recepient });
+    // 수락받았다는걸 io 로 보냄
 
     res.status(200).json({ message: "Friend Request accepted successfully" });
   } catch (error) {

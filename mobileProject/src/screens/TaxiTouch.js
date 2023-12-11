@@ -99,7 +99,7 @@ export default TaxiTouch = () => {
 
   console.log(userId);
   const passengerId = userId;
-  const socket = io("http://192.168.0.14:8001");
+  const socket = io("http://10.20.64.189:8001");
 
   // 아이템 선택 및 모달 표시 함수
   const handleSelectItem = (item) => {
@@ -167,7 +167,7 @@ export default TaxiTouch = () => {
     try {
       // axios.get 호출을 await으로 기다립니다
       const response = await axios.get(
-        "http://192.168.0.14:8000/taxiLocationFind/"
+        "http://10.20.64.189:8000/taxiLocationFind/"
       );
 
       console.log("현재 갖고온 택시기사들 정보:", response.data);
