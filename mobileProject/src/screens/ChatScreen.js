@@ -18,6 +18,7 @@ const ChatScreen = () => {
         const response = await fetch(
           `http://192.168.0.14:8000/accepted-friends/${userId}`
         );
+        // 왜안됨
         const data = await response.json();
 
         if (response.ok) {
