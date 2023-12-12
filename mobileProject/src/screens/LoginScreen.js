@@ -50,7 +50,7 @@ export default function LoginScreen() {
     };
 
     axios
-      .post("http://192.168.0.14:8000/login", user)
+      .post("http://10.20.34.180:8000/login", user)
       .then((response) => {
         console.log("응답", response, "여기까지가 응답끝");
         const token = response.data.token;

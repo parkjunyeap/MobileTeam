@@ -25,7 +25,7 @@ const ViewDriverReview = () => {
     const fetchReviewRequest = async () => {
       try {
         const response = await axios.get(
-          `http://192.168.0.14:8000/reviews/receiver/driver/${userId}` // 택시기사 의 리뷰
+          `http://10.20.34.180:8000/reviews/receiver/driver/${userId}` // 택시기사 의 리뷰
         );
         if (response.status === 200) {
           setReviews(response.data); // 서버로부터 받은 데이터를 상태에 저장합니다.

@@ -19,7 +19,7 @@ const socketIo = require("socket.io");
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://192.168.0.14:19006", // 허용할 출처를 여기에 설정
+    origin: "http://10.20.34.180:19006", // 허용할 출처를 여기에 설정
     methods: ["GET", "POST"], // 허용할 HTTP 메서드
   },
 });
@@ -1410,7 +1410,6 @@ io.on("connection", (socket) => {
 
       console.log("보낼 : ", newMessage);
       io.emit("receiveMessage", formData);
-      //io.to(recepientId).emit('receiveMessage', formData);
     } catch (error) {
       console.error("Error processing and saving the message:", error);
     }

@@ -96,10 +96,14 @@ export default TaxiTouch = () => {
   const { userId, setUserId } = useContext(UserType); // 로그인한 유저
 
   const [taxiLocations, setTaxiLocations] = useState([]); // 택시 기사들의 위치를 받아와서 여기에 적재
+  const [routeInfo, setRouteInfo] = useState({
+    distance: "",
+    duration: null,
+  });
 
   console.log(userId);
   const passengerId = userId;
-  const socket = io("http://192.168.0.14:8001");
+  const socket = io("http://10.20.34.180:8001");
 
   // 아이템 선택 및 모달 표시 함수
   const handleSelectItem = (item) => {
@@ -137,14 +141,30 @@ export default TaxiTouch = () => {
     };
   }, []);
 
+  // const requestD = {
+  //   userId: userId,
+  //   driverId: selectedDriver,
+  //   startPoint: startPoint,
+  //   endPoint: endPoint,
+  //   requestDate: new Date(), // 날짜 더미데이터??
+  //   pay: "10000",
+  //   distance: "0.5",
+  // };
+
+  const payCalc =
+    4000 +
+    (routeCoordinates.distance > 1.4
+      ? 0.12 * (routeCoordinates.distance - 1.4)
+      : 0);
+
   const requestD = {
     userId: userId,
     driverId: selectedDriver,
     startPoint: startPoint,
     endPoint: endPoint,
     requestDate: new Date(), // 날짜 더미데이터??
-    pay: "10000",
-    distance: "0.5",
+    pay: payCalc,
+    distance: routeInfo.distance,
   };
 
   // userId,
@@ -167,7 +187,7 @@ export default TaxiTouch = () => {
     try {
       // axios.get 호출을 await으로 기다립니다
       const response = await axios.get(
-        "http://192.168.0.14:8000/taxiLocationFind/"
+        "http://10.20.34.180:8000/taxiLocationFind/"
       );
 
       console.log("현재 갖고온 택시기사들 정보:", response.data);
@@ -238,10 +258,7 @@ export default TaxiTouch = () => {
   }, []);
 
   // 연호가 현재 지도
-  const [routeInfo, setRouteInfo] = useState({
-    distance: null,
-    duration: null,
-  });
+
   // 차량 마커 위치를 위한 상태
   const [carMarkerPosition, setCarMarkerPosition] = useState(null);
   // 애니메이션을 위한 인터벌 참조
