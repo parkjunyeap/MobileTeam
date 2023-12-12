@@ -178,6 +178,7 @@ export default TaxiTouch = () => {
     // 리퀘스트 데이터 투 서버
     console.log("임시 데이터 확인 :", requestD);
     socket.emit("passengerRequest", requestD);
+    Alert.alert("호출!!", "택시를 호출하였습니다");
   };
 
   // 택시 위치 정보들 갖고오는 함수요

@@ -24,6 +24,8 @@ const io = socketIo(server, {
   },
 });
 
+// const usersRouter = require('./routes/users');
+
 mongoose
   .connect("mongodb+srv://bab0234:bab0234@cluster0.gp66aaf.mongodb.net/", {
     useNewUrlParser: true,
