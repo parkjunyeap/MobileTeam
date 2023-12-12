@@ -53,10 +53,10 @@ export default function Review() {
     let apiEndpoint;
     if (selectedDriverId) {
       // 택시 기사에게 보내는 리뷰
-      apiEndpoint = "http://192.168.219.104:8000/write/driverReviews";
+      apiEndpoint = "http://localhost:8000/write/driverReviews";
     } else {
       // 일반 사용자에게 보내는 리뷰
-      apiEndpoint = "http://192.168.219.104:8000/write/reviews";
+      apiEndpoint = "http://localhost:8000/write/reviews";
     }
 
     axios
