@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const jwt = require("jsonwebtoken"); // jsonwebtoken 모듈을 가져옵니다. JWT(JSON Web Tokens)를 생성하고 검증하는 데 사용됩니다.
+
 const User = require("../models/user")
 const Driver = require("../models/driver")
 
