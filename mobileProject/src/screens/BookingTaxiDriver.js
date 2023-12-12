@@ -27,6 +27,7 @@ const BookingTaxiDriver = () => {
   const [formattedTime, setFormattedTime] = useState("");
 
   const onChange = (event, selectedDate) => {
+    // 시간 정하기
     const currentDate = selectedDate || date;
     setShow(Platform.OS === "ios");
     setDate(currentDate);
@@ -45,8 +46,8 @@ const BookingTaxiDriver = () => {
   const { userId } = useContext(UserType);
   const navigation = useNavigation();
   const route = useRoute();
-  const selectedDriverId = route.params.selectedDriverId;
-  const selectedDriverName = route.params.selectedDriverName;
+  const selectedDriverId = route.params.selectedDriverId; // 라우트 파라미터에서 선택된 드라이버의 ID를 가져옴
+  const selectedDriverName = route.params.selectedDriverName; // 라우트 파라미터에서 선택된 드라이버의 이름을 가져옴
 
   const [boarderId, setBoarderId] = useState(userId);
   const [driverId, setDriverId] = useState(selectedDriverId);
@@ -140,7 +141,7 @@ const BookingTaxiDriver = () => {
             placeholder="목적지를 입력하세요"
             onPress={(data) => handleEndLocationChange(data.description)}
             query={{ key: MAP_KEY, language: "ko", components: "country:kr" }}
-            debounce={400}
+            debounce={400} // 0.4 초 후에 입력한 지도를 완성해서 보여줌
           />
         </View>
 

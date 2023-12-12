@@ -97,8 +97,8 @@ const Driver = ({ item }) => {
                 ]}
                 onPress={() => {
                   navigation.navigate("writeReview", {
-                    selectedDriverId: item._id, // 사실 드라이버 아이디 ,
-                    selectedDriverName: item.name, //사실 드라이버 이름
+                    selectedDriverId: item._id, // 선택된 드라이버 아이디 ,
+                    selectedDriverName: item.name, //선택된 드라이버 이름 가져감
                   });
                 }}
               >
@@ -106,7 +106,7 @@ const Driver = ({ item }) => {
                 {/* 리뷰 남기기는 되는것같은데??? */}
               </Pressable>
 
-              {/*  여기 서부터하자 */}
+              {/*  여기서부터 하자 */}
 
               <Pressable
                 style={[

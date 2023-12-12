@@ -5,6 +5,8 @@ import { Clipboard } from "react-native";
 import formatDate from "../../hook/formatDate";
 import axios from "axios";
 const BookingItem = ({ item, onDelete }) => {
+  // 예약에 들어갈  변수데이터를 받아서
+  // 삭제 할 수 있는 함수도 갖고옴
   const {
     _id, // 이렇게 받는게 맞나?
 
@@ -17,8 +19,6 @@ const BookingItem = ({ item, onDelete }) => {
   } = item;
 
   console.log("부킹아이디잘갖고옴", item);
-
-  console.log(Clipboard);
 
   const handleDelete = () => {
     onDelete(item._id); // 예약 아이디를 사용하여 삭제 함수 호출
