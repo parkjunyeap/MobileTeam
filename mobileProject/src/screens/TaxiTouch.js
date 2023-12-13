@@ -395,7 +395,7 @@ export default TaxiTouch = () => {
             onReady={(result) => {
               console.log(result.coordinates);
               setRouteCoordinates(result.coordinates);
-              animateCarMarker(result.coordinates);
+              
 
               // 경로 정보 업데이트
               setRouteInfo({
